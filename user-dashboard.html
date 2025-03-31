@@ -1,0 +1,1339 @@
+<div class="dashboard-container">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h3><i class="fas fa-user-circle"></i> User Dashboard</h3>
+    </div>
+    <button class="tablink active" onclick="openTab('joined-events')">
+      <i class="fas fa-check-circle"></i> Joined Events
+    </button>
+    <button class="tablink" onclick="openTab('all-events')">
+      <i class="fas fa-calendar-alt"></i> All Events
+    </button>
+    <button class="tablink" onclick="openTab('notifications')">
+      <i class="fas fa-bell"></i> Notifications
+    </button>
+    <button class="tablink" onclick="openTab('profile')">
+      <i class="fas fa-id-card"></i> Profile
+    </button>
+    
+    <button class="logout-btn" onclick="logout()">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+  </div>
+
+  <div class="content">
+    <div id="joined-events" class="tabcontent">
+      <div class="section-title">
+        <h2>Your Joined Events</h2>
+      </div>
+      <p class="section-description">Events you've registered for will appear here.</p>
+      <div class="events-grid" id="joined-events-grid">
+        <!-- Joined events will be dynamically populated here -->
+      </div>
+    </div>
+
+    <div id="all-events" class="tabcontent" style="display:none">
+      <div class="section-title">
+        <h2>Upcoming Events</h2>
+      </div>
+      <p class="section-description">Discover and join exciting events organized by our community.</p>
+      <div class="events-grid" id="all-events-grid">
+        <!-- All events will be dynamically populated here -->
+      </div>
+    </div>
+    
+    <div id="notifications" class="tabcontent" style="display:none">
+      <div class="section-title">
+        <h2>Your Notifications</h2>
+      </div>
+      <p class="section-description">Stay updated with the latest announcements and event information.</p>
+      <div class="notifications-container" id="notifications-list">
+        <!-- Notifications will be dynamically populated here -->
+        <div class="loading-spinner">
+          <i class="fas fa-circle-notch fa-spin"></i> Loading notifications...
+        </div>
+      </div>
+    </div>
+    
+    <div id="profile" class="tabcontent" style="display:none">
+      <div class="section-title">
+        <h2>Your Profile</h2>
+      </div>
+      <div class="profile-container">
+        <div class="profile-header">
+          <div class="profile-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <h3 id="profileName">Loading...</h3>
+          <p id="profileEmail">Loading...</p>
+        </div>
+        
+        <div class="profile-stats">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+            <div class="stat-value" id="eventsJoined">0</div>
+            <div class="stat-label">Events Joined</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+            <div class="stat-value" id="eventsWon">0</div>
+            <div class="stat-label">Competitions Won</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+            <div class="stat-value" id="joinDate">-</div>
+            <div class="stat-label">Member Since</div>
+          </div>
+        </div>
+        
+        <div class="profile-details">
+          <h3>Personal Information</h3>
+          <div class="profile-field">
+            <div class="field-label"><i class="fas fa-university"></i> Branch</div>
+            <div class="field-value" id="userBranch">-</div>
+          </div>
+          <div class="profile-field">
+            <div class="field-label"><i class="fas fa-graduation-cap"></i> Batch</div>
+            <div class="field-value" id="userBatch">-</div>
+          </div>
+          <div class="profile-field">
+            <div class="field-label"><i class="fas fa-phone"></i> Contact</div>
+            <div class="field-value" id="userContact">-</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Event Modal -->
+  <div class="modal" id="eventModal">
+    <div class="modal-content">
+      <button class="close-modal">&times;</button>
+      <h2 class="modal-title" id="modalEventTitle"></h2>
+      <span class="modal-date" id="modalEventDate"></span>
+      <img src="" alt="Event Image" class="modal-image" id="modalEventImage">
+      <div class="modal-body" id="modalEventBody">
+        <!-- Event details will be populated here -->
+      </div>
+      <div class="event-actions">
+        <a href="#" class="cta-button" id="joinEventBtn"><i class="fas fa-plus-circle"></i> Join Event</a>
+        <a href="#" class="cta-button secondary" id="viewParticipantsBtn"><i class="fas fa-users"></i> View Participants</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  :root {
+    --primary: #00f0ff;
+    --secondary: #8A2BE2;
+    --accent: #ff4696;
+    --text: #ffffff;
+    --bg: #0a0d14;
+    --card-bg: rgba(30, 35, 45, 0.8);
+  }
+
+  .dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  /* Sidebar Styles */
+  .sidebar {
+    width: 250px;
+    background: linear-gradient(180deg, rgba(30, 35, 45, 0.95), rgba(15, 20, 30, 0.95));
+    padding: 2rem 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 5px 0 20px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-header {
+    padding: 0 1.5rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 1.5rem;
+  }
+
+  .sidebar-header h3 {
+    color: var(--primary);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    letter-spacing: 1px;
+  }
+
+  .sidebar-header h3 i {
+    margin-right: 10px;
+    font-size: 1.4rem;
+  }
+
+  .tablink {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 1rem 1.5rem;
+    margin-bottom: 0.5rem;
+    border: none;
+    background-color: transparent;
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    font-size: 1rem;
+    transition: all 0.3s;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .tablink i {
+    margin-right: 10px;
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+  }
+
+  .tablink:hover {
+    background: rgba(0, 240, 255, 0.1);
+    color: var(--primary);
+  }
+
+  .tablink.active {
+    background: linear-gradient(90deg, rgba(0, 240, 255, 0.2), transparent);
+    color: var(--primary);
+    border-left: 3px solid var(--primary);
+  }
+  
+  .logout-btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 1rem 1.5rem;
+    margin-top: auto;
+    border: none;
+    background-color: transparent;
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    font-size: 1rem;
+    transition: all 0.3s;
+    font-family: 'Space Grotesk', sans-serif;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .logout-btn i {
+    margin-right: 10px;
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+    color: var(--accent);
+  }
+  
+  .logout-btn:hover {
+    background: rgba(255, 70, 150, 0.1);
+    color: var(--accent);
+  }
+
+  /* Content Styles */
+  .content {
+    flex-grow: 1;
+    padding: 2rem;
+    overflow-y: auto;
+  }
+
+  .tabcontent {
+    display: none;
+  }
+
+  /* Profile Styles */
+  .profile-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(30, 35, 45, 0.9), rgba(15, 20, 30, 0.9));
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  }
+  
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 10px 20px rgba(0, 240, 255, 0.3);
+  }
+  
+  .profile-avatar i {
+    font-size: 3rem;
+    color: var(--bg);
+  }
+  
+  .profile-header h3 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+  }
+  
+  .profile-header p {
+    color: var(--text);
+    opacity: 0.7;
+  }
+  
+  .profile-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .stat-card {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(30, 35, 45, 0.9), rgba(15, 20, 30, 0.9));
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  }
+  
+  .stat-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--primary);
+  }
+  
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .stat-label {
+    color: var(--text);
+    opacity: 0.7;
+    font-size: 0.9rem;
+  }
+  
+  .profile-details {
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(30, 35, 45, 0.9), rgba(15, 20, 30, 0.9));
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  }
+  
+  .profile-details h3 {
+    margin-bottom: 1.5rem;
+    color: var(--primary);
+    font-size: 1.3rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.5rem;
+  }
+  
+  .profile-field {
+    display: flex;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  
+  .profile-field:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+  
+  .field-label {
+    flex: 1;
+    font-weight: 600;
+    color: var(--text);
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+  }
+  
+  .field-label i {
+    margin-right: 10px;
+    color: var(--primary);
+    width: 20px;
+    text-align: center;
+  }
+  
+  .field-value {
+    flex: 2;
+    color: var(--text);
+  }
+
+  /* Events Grid */
+  .events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+
+  .event-card {
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .event-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(255, 45, 117, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .event-card:hover::before {
+    opacity: 1;
+  }
+
+  .event-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 240, 255, 0.2);
+  }
+
+  .event-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    transition: transform 0.5s;
+  }
+
+  .event-card:hover img {
+    transform: scale(1.05);
+  }
+
+  .event-tag {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 2;
+  }
+
+  .event-content {
+    padding: 1.5rem;
+  }
+
+  .event-content h3 {
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+    color: var(--primary);
+  }
+
+  .event-content p {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+    line-height: 1.6;
+  }
+
+  .event-date {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+
+  .event-date i {
+    margin-right: 8px;
+    color: var(--primary);
+  }
+
+  /* Modal Styles */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    overflow-y: auto;
+    backdrop-filter: blur(5px);
+  }
+
+  .modal-content {
+    position: relative;
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    margin: 5% auto;
+    padding: 2.5rem;
+    width: 90%;
+    max-width: 800px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 2rem;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  .close-modal:hover {
+    color: var(--primary);
+  }
+
+  .modal-title {
+    color: var(--primary);
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    font-family: 'Orbitron', sans-serif;
+  }
+
+  .modal-date {
+    display: block;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    opacity: 0.8;
+  }
+
+  .modal-image {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+  }
+
+  .modal-body {
+    margin-bottom: 2rem;
+  }
+
+  .modal-body p {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .modal-body h3 {
+    color: var(--primary);
+    margin: 1.5rem 0 1rem;
+    font-size: 1.3rem;
+  }
+
+  .modal-body ul {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  .modal-body li {
+    margin-bottom: 0.5rem;
+  }
+
+  .event-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 1.8rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: var(--bg);
+    border-radius: 30px;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 10px 20px rgba(0, 240, 255, 0.3);
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+  }
+
+  .cta-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 25px rgba(0, 240, 255, 0.4);
+  }
+
+  .cta-button i {
+    margin-right: 8px;
+  }
+
+  .cta-button.secondary {
+    background: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    box-shadow: none;
+  }
+
+  .cta-button.secondary:hover {
+    background: rgba(0, 240, 255, 0.1);
+    transform: translateY(-3px);
+  }
+
+  /* Responsive styles */
+  @media (max-width: 992px) {
+    .events-grid {
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+  }
+
+  @media (max-width: 768px) {
+    .dashboard-container {
+      flex-direction: column;
+    }
+    
+    .sidebar {
+      width: 100%;
+      padding: 1rem 0;
+    }
+    
+    .sidebar-header {
+      padding: 0 1rem 1rem;
+    }
+    
+    .content {
+      padding: 1.5rem;
+    }
+    
+    .section-title h2 {
+      font-size: 2rem;
+    }
+    
+    .modal-content {
+      width: 95%;
+      padding: 1.5rem;
+      margin: 10% auto;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .events-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .event-actions {
+      flex-direction: column;
+    }
+    
+    .cta-button {
+      width: 100%;
+    }
+    
+    .section-title h2 {
+      font-size: 1.8rem;
+    }
+  }
+
+  /* Add these styles for the notifications tab */
+  .notifications-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 0;
+  }
+  
+  .notification-card {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 1.2rem;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border-left: 4px solid var(--primary);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .notification-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  .notification-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--primary);
+  }
+  
+  .notification-date {
+    font-size: 0.8rem;
+    color: var(--text);
+    opacity: 0.7;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.7rem;
+  }
+  
+  .notification-date i {
+    margin-right: 0.4rem;
+  }
+  
+  .notification-message {
+    color: var(--text);
+    line-height: 1.6;
+  }
+  
+  .notification-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 40px 40px 0;
+    border-color: transparent var(--secondary) transparent transparent;
+    opacity: 0.3;
+  }
+  
+  .loading-spinner {
+    text-align: center;
+    padding: 2rem;
+    color: var(--primary);
+    font-size: 1.2rem;
+  }
+  
+  .no-notifications {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    color: var(--text);
+    opacity: 0.8;
+  }
+</style>
+
+<script>
+  // Add this global error handler function at the top of your script
+  function handleApiError(error, endpoint) {
+    console.error(`Error calling ${endpoint}:`, error);
+    
+    if (error.status === 401) {
+      // Show alert for unauthorized access
+      alert('Your session has expired. Please login again.');
+      
+      // Log out user
+      localStorage.removeItem('jwtToken');
+      
+      // Redirect to home page
+      window.location.href = '/';
+      return;
+    }
+    
+    // For other errors, show an alert with the error message
+    alert(error.message || `Failed to complete operation. Please try again.`);
+  }
+
+  function openTab(tabName) {
+    // Hide all tab content
+    var tabcontent = document.getElementsByClassName("tabcontent");
+    for (var i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+    
+    // Remove active class from all tablinks
+    var tablinks = document.getElementsByClassName("tablink");
+    for (var i = 0; i < tablinks.length; i++) {
+      tablinks[i].classList.remove("active");
+    }
+
+    // Show the specific tab content
+    document.getElementById(tabName).style.display = "block";
+    
+    // Add active class to the button that opened the tab
+    const activeTab = Array.from(tablinks).find(tab => tab.getAttribute('onclick').includes(tabName));
+    if (activeTab) {
+      activeTab.classList.add("active");
+    }
+  }
+
+  // Show the default tab on page load
+  document.addEventListener("DOMContentLoaded", function() {
+    openTab('joined-events');
+    
+    // Fetch and display events
+    fetchEvents();
+    
+    // Fetch profile data
+    fetchUserProfile();
+    
+    // Event Modal functionality
+    const modal = document.getElementById('eventModal');
+    
+    // Close modal when clicking the close button
+    document.querySelector('.close-modal').addEventListener('click', function() {
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    });
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    });
+    
+    // Event listeners for buttons
+    document.getElementById('joinEventBtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      joinEvent(this.dataset.eventId);
+    });
+    
+    document.getElementById('viewParticipantsBtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      viewParticipants(this.dataset.eventId);
+    });
+
+    fetchNotifications(); // Add this line to fetch notifications
+  });
+  
+  // Update fetchEvents function
+  async function fetchEvents() {
+    try {
+      const token = localStorage.getItem('jwtToken');
+      
+      // Fetch all events from API
+      const allEventsResponse = await fetch('http://localhost:3000/allevents', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (allEventsResponse.status === 401) {
+        handleApiError({status: 401, message: 'Unauthorized'}, 'allevents');
+        return;
+      }
+      
+      if (!allEventsResponse.ok) {
+        throw {status: allEventsResponse.status, message: 'Failed to fetch events'};
+      }
+      
+      const allEvents = await allEventsResponse.json();
+      
+      // Fetch user's joined events
+      const userEventsResponse = await fetch('http://localhost:3000/api/user/events', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      let joinedEvents = [];
+      let joinedEventIds = [];
+      
+      if (userEventsResponse.ok) {
+        joinedEvents = await userEventsResponse.json();
+        // Extract just the IDs for comparison
+        joinedEventIds = joinedEvents.map(event => event.eventId || event._id);
+      }
+      
+      // Mark events that user has already joined
+      allEvents.forEach(event => {
+        event.isJoined = joinedEventIds.includes(event._id);
+      });
+      
+      // Display events
+      displayEvents(allEvents, 'all-events-grid');
+      displayJoinedEvents(joinedEvents, 'joined-events-grid');
+      
+      // Update profile counters
+      document.getElementById('eventsJoined').textContent = joinedEvents.length;
+    } catch (error) {
+      handleApiError(error, 'fetchEvents');
+    }
+  }
+  
+  function displayEvents(events, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    
+    if (!events || events.length === 0) {
+      container.innerHTML = '<div class="no-events">No events found</div>';
+      return;
+    }
+    
+    events.forEach(event => {
+      const card = document.createElement('div');
+      card.className = 'event-card';
+      card.onclick = () => showEventDetails(event._id);
+      
+      // Format date from API
+      const eventDate = new Date(event.date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      
+      card.innerHTML = `
+        <div class="event-img-container">
+          <img src="${event.imagelink || 'https://via.placeholder.com/300x180?text=Event+Image'}" alt="${event.name}">
+          <span class="event-tag">${event.type || 'Event'}</span>
+        </div>
+        <div class="event-info">
+          <h3 class="event-title">${event.name}</h3>
+          <p class="event-date"><i class="far fa-calendar-alt"></i> ${eventDate}</p>
+          <p class="event-location"><i class="fas fa-map-marker-alt"></i> ${event.location || 'To be announced'}</p>
+          <p class="event-description">${event.description || ''}</p>
+          <div class="event-status-bar">
+            <span class="status ${event.isOpen ? 'open' : 'closed'}">
+              <i class="fas ${event.isOpen ? 'fa-unlock' : 'fa-lock'}"></i>
+              ${event.isOpen ? 'Open for Registration' : 'Registration Closed'}
+            </span>
+            <span class="participants-count">
+              <i class="fas fa-users"></i>
+              ${event.participantsCount || 0} Participants
+            </span>
+          </div>
+          <div class="event-card-actions">
+            ${containerId === 'all-events-grid' && !event.isJoined ? 
+              `<button class="card-action-btn join" onclick="joinEvent('${event._id}'); event.stopPropagation();">
+                <i class="fas fa-plus-circle"></i> Join
+              </button>` : 
+              `<button class="card-action-btn view" onclick="showEventDetails('${event._id}'); event.stopPropagation();">
+                <i class="fas fa-eye"></i> View Details
+              </button>`
+            }
+          </div>
+        </div>
+      `;
+      
+      container.appendChild(card);
+    });
+  }
+  
+  function displayJoinedEvents(events, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    
+    if (!events || events.length === 0) {
+      container.innerHTML = '<div class="no-events">No joined events found</div>';
+      return;
+    }
+    
+    events.forEach(event => {
+      // Extract the event ID properly from the joined events structure
+      const eventId = event.eventId || event._id;
+      
+      const card = document.createElement('div');
+      card.className = 'event-card';
+      // Make the entire card clickable to show event details
+      card.onclick = () => showEventDetails(eventId);
+      
+      // Get event name from the right property
+      const eventName = event.eventName || event.name || 'Event';
+      
+      // Format date from API
+      let eventDate = 'Date not available';
+      if (event.date) {
+        eventDate = new Date(event.date).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+      }
+      
+      // Get image URL from the right property
+      const imageUrl = event.eventImage || event.imagelink || 'https://via.placeholder.com/300x180?text=Event+Image';
+      
+      // Get event type or use a default
+      const eventType = event.type || 'Event';
+      
+      // Get event location or use a default
+      const eventLocation = event.location || 'To be announced';
+      
+      // Get event description or use a default
+      const eventDescription = event.description || 'No description available';
+      
+      // Is the event open for registration?
+      const isOpen = event.isOpen !== undefined ? event.isOpen : true;
+      
+      // Get participant count or use a default
+      const participantsCount = event.participantsCount || 0;
+      
+      card.innerHTML = `
+        <div class="event-img-container">
+          <img src="${imageUrl}" alt="${eventName}">
+          <span class="event-tag">${eventType}</span>
+        </div>
+        <div class="event-info">
+          <h3 class="event-title">${eventName}</h3>
+          <p class="event-date"><i class="far fa-calendar-alt"></i> ${eventDate}</p>
+          <p class="event-location"><i class="fas fa-map-marker-alt"></i> ${eventLocation}</p>
+          <p class="event-description">${eventDescription}</p>
+          <div class="event-status-bar">
+            <span class="status ${isOpen ? 'open' : 'closed'}">
+              <i class="fas ${isOpen ? 'fa-unlock' : 'fa-lock'}"></i>
+              ${isOpen ? 'Open for Registration' : 'Registration Closed'}
+            </span>
+            <span class="participants-count">
+              <i class="fas fa-users"></i>
+              ${participantsCount} Participants
+            </span>
+          </div>
+          <div class="event-card-actions">
+            <button class="card-action-btn view" onclick="showEventDetails('${eventId}'); event.stopPropagation();">
+              <i class="fas fa-eye"></i> View Details
+            </button>
+          </div>
+        </div>
+      `;
+      
+      container.appendChild(card);
+    });
+  }
+  
+  // Update showEventDetails function
+  async function showEventDetails(eventId) {
+    try {
+      const token = localStorage.getItem('jwtToken');
+      
+      const response = await fetch(`http://localhost:3000/api/events/${eventId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.status === 401) {
+        handleApiError({status: 401, message: 'Unauthorized'}, `event/${eventId}`);
+        return;
+      }
+      
+      let event;
+      let isFromJoinedTab = false;
+      
+      if (response.ok) {
+        event = await response.json();
+        
+        // Check if this event is in the joined events tab
+        const joinedEventsContainer = document.getElementById('joined-events-grid');
+        const joinedEventCards = joinedEventsContainer.querySelectorAll('.event-card');
+        joinedEventCards.forEach(card => {
+          const cardBtn = card.querySelector('.card-action-btn');
+          if (cardBtn && cardBtn.onclick.toString().includes(eventId)) {
+            isFromJoinedTab = true;
+          }
+        });
+      } else {
+        // If API call fails, try to find the event in the already loaded events
+        const allEvents = document.querySelectorAll('.event-card');
+        let foundEvent = null;
+        
+        allEvents.forEach(card => {
+          const cardBtn = card.querySelector('.card-action-btn');
+          if (cardBtn && cardBtn.onclick.toString().includes(eventId)) {
+            // Check if this card is in the joined events tab
+            if (card.closest('#joined-events-grid')) {
+              isFromJoinedTab = true;
+            }
+            
+            // Get event data from the card
+            const title = card.querySelector('.event-title').textContent;
+            const date = card.querySelector('.event-date').textContent.replace(/[^\w\s,-]/g, '').trim();
+            const location = card.querySelector('.event-location').textContent.replace(/[^\w\s,-]/g, '').trim();
+            const description = card.querySelector('.event-description').textContent;
+            const img = card.querySelector('img').src;
+            
+            foundEvent = {
+              _id: eventId,
+              name: title,
+              date: date,
+              location: location,
+              description: description,
+              imagelink: img,
+              isJoined: isFromJoinedTab
+            };
+          }
+        });
+        
+        if (foundEvent) {
+          event = foundEvent;
+        } else {
+          throw new Error('Event not found');
+        }
+      }
+      
+      // Populate modal with event details
+      document.getElementById('modalEventTitle').textContent = event.name || event.eventName || 'Event';
+      
+      // Format the date
+      let displayDate = 'Date not available';
+      if (event.date) {
+        try {
+          displayDate = new Date(event.date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+        } catch (e) {
+          displayDate = event.date; // Use as is if it can't be parsed
+        }
+      }
+      document.getElementById('modalEventDate').textContent = displayDate;
+      
+      // Set image source
+      document.getElementById('modalEventImage').src = event.imagelink || event.eventImage || 'https://via.placeholder.com/800x400?text=Event+Image';
+      
+      // Create event details HTML
+      const detailsHTML = `
+        <p>${event.description || 'No description available'}</p>
+        <h3>Details:</h3>
+        <ul>
+          <li>Date: ${displayDate}</li>
+          <li>Location: ${event.location || 'To be announced'}</li>
+          ${event.time ? `<li>Time: ${event.time}</li>` : ''}
+          ${event.theme ? `<li>Theme: "${event.theme}"</li>` : ''}
+        </ul>
+        ${event.prizes ? `
+          <h3>Prizes:</h3>
+          <ul>
+            ${typeof event.prizes === 'string' ? event.prizes : Array.isArray(event.prizes) ? event.prizes.map(prize => `<li>${prize}</li>`).join('') : ''}
+          </ul>
+        ` : ''}
+        ${event.isResultAnnounced ? `
+          <h3>Results:</h3>
+          <p>The results for this event have been announced.</p>
+          ${event.winners && event.winners.length > 0 ? `
+            <h4>Winners:</h4>
+            <ul>
+              ${event.winners.map((winner, index) => `<li>${index + 1}. ${winner.name || winner}</li>`).join('')}
+            </ul>
+          ` : '<p>No winners have been announced yet.</p>'}
+        ` : ''}
+      `;
+      
+      document.getElementById('modalEventBody').innerHTML = detailsHTML;
+      
+      
+      const joinBtn = document.getElementById('joinEventBtn');
+      const viewParticipantsBtn = document.getElementById('viewParticipantsBtn');
+      
+      joinBtn.dataset.eventId = eventId;
+      viewParticipantsBtn.dataset.eventId = eventId;
+      
+      // For joined events or events from joined tab, always show "Already Joined"
+      if (event.isJoined || isFromJoinedTab) {
+        joinBtn.innerHTML = '<i class="fas fa-check-circle"></i> Already Joined';
+        joinBtn.classList.add('secondary');
+        joinBtn.style.pointerEvents = 'none';
+      } else {
+        joinBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Join Event';
+        joinBtn.classList.remove('secondary');
+        joinBtn.style.pointerEvents = 'auto';
+      }
+      
+      // Show modal
+      document.getElementById('eventModal').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    } catch (error) {
+      handleApiError(error, `showEventDetails/${eventId}`);
+    }
+  }
+  
+  // Update joinEvent function
+  async function joinEvent(eventId) {
+    try {
+      const token = localStorage.getItem('jwtToken');
+      
+      const response = await fetch(`http://localhost:3000/api/events/${eventId}/join`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.status === 401) {
+        handleApiError({status: 401, message: 'Unauthorized'}, `join event/${eventId}`);
+        return;
+      }
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        // Update UI
+        if (document.getElementById('eventModal').style.display === 'block') {
+          const joinBtn = document.getElementById('joinEventBtn');
+          joinBtn.innerHTML = '<i class="fas fa-check-circle"></i> Already Joined';
+          joinBtn.classList.add('secondary');
+          joinBtn.style.pointerEvents = 'none';
+        }
+        
+        // Refresh events lists
+        fetchEvents();
+        
+        showNotification('Successfully joined the event!', 'success');
+      } else {
+        showNotification(result.message || 'Failed to join event', 'error');
+      }
+    } catch (error) {
+      handleApiError(error, `joinEvent/${eventId}`);
+    }
+  }
+  
+  function viewParticipants(eventId) {
+    // In a real implementation, this would fetch participants from an API
+    console.log(`Viewing participants for event with ID: ${eventId}`);
+    
+    // For demonstration, showing a simple alert
+    alert('Feature coming soon: View event participants');
+  }
+  
+  // Add this function to fetch user profile data
+  async function fetchUserProfile() {
+    // In a real app, this would fetch from your API
+    // For demonstration, using sample data
+    const profileData = {
+      name: "John Smith",
+      email: "john.smith@example.com",
+      branch: "Computer Science",
+      batch: "2021-2025",
+      contact: "+1 (555) 123-4567",
+      joinDate: "January 15, 2022",
+      eventsJoined: 3,
+      eventsWon: 1
+    };
+    
+    // Populate profile data
+    document.getElementById('profileName').textContent = profileData.name;
+    document.getElementById('profileEmail').textContent = profileData.email;
+    document.getElementById('userBranch').textContent = profileData.branch;
+    document.getElementById('userBatch').textContent = profileData.batch;
+    document.getElementById('userContact').textContent = profileData.contact;
+    document.getElementById('joinDate').textContent = profileData.joinDate;
+    document.getElementById('eventsJoined').textContent = profileData.eventsJoined;
+    document.getElementById('eventsWon').textContent = profileData.eventsWon;
+  }
+  
+  // Add logout function
+  function logout() {
+    // Clear JWT token
+    localStorage.removeItem('jwtToken');
+    
+    // Redirect to login page
+    window.location.href = '/';
+  }
+
+  // Update fetchNotifications function
+  async function fetchNotifications() {
+    try {
+      const token = localStorage.getItem('jwtToken');
+      
+      const response = await fetch('http://localhost:3000/api/notifications', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.status === 401) {
+        handleApiError({status: 401, message: 'Unauthorized'}, 'notifications');
+        return;
+      }
+      
+      if (!response.ok) {
+        throw {status: response.status, message: 'Failed to fetch notifications'};
+      }
+      
+      const notifications = await response.json();
+      displayNotifications(notifications);
+    } catch (error) {
+      handleApiError(error, 'fetchNotifications');
+      document.getElementById('notifications-list').innerHTML = `
+        <div class="no-notifications">
+          <i class="fas fa-exclamation-circle"></i>
+          <p>Unable to load notifications. Please try again later.</p>
+        </div>
+      `;
+    }
+  }
+  
+  // Add this function to display notifications
+  function displayNotifications(notifications) {
+    const container = document.getElementById('notifications-list');
+    container.innerHTML = '';
+    
+    if (!notifications || notifications.length === 0) {
+      container.innerHTML = `
+        <div class="no-notifications">
+          <i class="fas fa-bell-slash"></i>
+          <p>You don't have any notifications yet.</p>
+        </div>
+      `;
+      return;
+    }
+    
+    notifications.forEach(notification => {
+      const card = document.createElement('div');
+      card.className = 'notification-card';
+      
+      // Format date
+      let notificationDate = 'Date not available';
+      if (notification.date) {
+        notificationDate = new Date(notification.date).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      }
+      
+      card.innerHTML = `
+        <h3 class="notification-title">${notification.title || 'Notification'}</h3>
+        <p class="notification-date">
+          <i class="far fa-clock"></i> ${notificationDate}
+        </p>
+        <div class="notification-message">
+          ${notification.message || 'No message content'}
+        </div>
+      `;
+      
+      container.appendChild(card);
+    });
+  }
+</script>

@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Coding Community</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <!-- Matrix Background -->
+    <canvas id="matrixCanvas" class="matrix-bg"></canvas>
+
+    <!-- Code Background -->
+    <div class="code-background">
+        <pre id="codeAnimation"></pre>
+    </div>
+
+    <!-- Loading Animation -->
+    <div class="loading-screen">
+        <div class="loading-container">
+            <div class="loading-logo">
+                <img src="assets/img/logowithoutname.png" alt="logo" height="90px" width="90px">
+
+               &nbsp; &nbsp; <h1>Creative Coding Community</h1>
+            </div>
+            <p class="loading-subtitle">Where creativity meets code</p>
+            <div class="loading-bar-container">
+                <div class="loading-bar"></div>
+            </div>
+            <div class="loading-code">
+                <span>// Initializing creative coding environment...</span><br>
+                <span>const community = new CreativeCoding();</span><br>
+                <span>community.loadPassion();</span><br>
+                <span>community.loadInnovation();</span><br>
+                <span>community.loadCollaboration();</span><br>
+                <span>community.start();</span><br><br>
+                <span>if (success) {</span><br>
+                <span>  launchAwesomeWebsite();</span><br>
+                <span>}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <header>
+        <nav class="navbar">
+            <a href="#home" class="logo">
+                                  <img src="assets/img/logowithoutname.png" alt="logo" height="60px" width="60px">
+
+               <h1>Creative Coding Community</h1>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#home" class="active"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#events"><i class="fas fa-calendar-alt"></i> Events</a></li>
+                <li><a href="#members"><i class="fas fa-users"></i> Team</a></li>
+                <li><a href="#gallery" id="galleryLink"><i class="fas fa-images"></i> Gallery</a></li>
+                <li><a href="#notices"><i class="fas fa-bullhorn"></i> Notices</a></li>
+                <li><a href="#auth" id="authLink"><i class="fas fa-sign-in-alt"></i>Login</a></li>
+                <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                <button class="theme-switcher" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </ul>
+            <button class="hamburger">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+        <div class="hero-content">
+            <h2>Unlock Your Creative Potential</h2>
+            <p>Join our vibrant community of coders, creators, and innovators. Collaborate, learn, and build amazing projects with like-minded individuals.</p>
+            <div class="cta-buttons">
+                <a href="#events" class="cta-button"><i class="fas fa-rocket"></i> Explore Events</a>
+                <a href="#members" class="cta-button outline"><i class="fas fa-users"></i> Meet the Team</a>
+            </div>
+        </div>
+        <div class="hero-code">
+            <span>while (!succeed) { tryAgain(); if (deadlineApproaching) { panic(); } }</span>
+        </div>
+    </section>
+
+    <!-- Events Section -->
+    <section class="section" id="events">
+        <div class="section-title">
+            <h2>Upcoming Events</h2>
+        </div>
+        <p class="section-description">Join our exciting events designed to challenge your skills and expand your knowledge in creative coding.</p>
+        <div class="events-grid" id="eventsGrid">
+            <!-- Events will be dynamically populated here -->
+            <div class="loading-events">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading events...</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        async function fetchEvents() {
+            try {
+                const response = await fetch('http://localhost:3000/allevents');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch events');
+                }
+                const events = await response.json();
+                displayEvents(events);
+            } catch (error) {
+                
+                console.error('Error fetching events:', error);
+                document.getElementById('eventsGrid').innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Unable to load events. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayEvents(events) {
+            const eventsGrid = document.getElementById('eventsGrid');
+            eventsGrid.innerHTML = '';
+
+            if (!events || events.length === 0) {
+                eventsGrid.innerHTML = `
+                    <div class="no-events">
+                        <i class="fas fa-calendar-times"></i>
+                        <p>No upcoming events at the moment. Check back soon!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            events.forEach(event => {
+                const eventCard = document.createElement('div');
+                eventCard.className = 'event-card';
+                
+                // Determine event type from the name or use a default
+                const eventType = event.name.includes('TEAMUP') ? 'Team Event' : 'Workshop';
+                eventCard.dataset.event = eventType.toLowerCase();
+                
+                // Format date
+                const eventDate = new Date(event.date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                eventCard.innerHTML = `
+                    <div class="event-tag">${eventType}</div>
+                    <img src="${event.imagelink || 'assets/img/default-event.jpg'}" alt="${event.name}">
+                    <div class="event-content">
+                        <h3>${event.name}</h3>
+                        <p>${event.description || 'No description available'}</p>
+                        <div class="event-date">
+                            <i class="far fa-calendar-alt"></i>
+                            <span>${eventDate}</span>
+                        </div>
+                        <div class="event-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${event.location || 'Location TBA'}</span>
+                        </div>
+                        <div class="event-prize">
+                            <i class="fas fa-trophy"></i>
+                            <span>Prize: ${event.prize || 'To be announced'}</span>
+                        </div>
+                    </div>
+                `;
+                
+                eventsGrid.appendChild(eventCard);
+            });
+        }
+
+        // Fetch events when the page loads
+        document.addEventListener('DOMContentLoaded', fetchEvents);
+    </script>
+
+    <!-- Members Section -->
+    <section class="section" id="members">
+        <div class="section-title">
+            <h2>Our Core Team</h2>
+        </div>
+        <p class="section-description">Meet the passionate individuals who make our community thrive with their dedication and expertise.</p>
+        <div class="members-grid">
+            <div class="member-card">
+                <div class="member-img-container">
+                    <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Team Member" class="member-img">
+                </div>
+                <h3>Sumit Sharma</h3>
+                <p class="member-position">President</p>
+                <p class="member-bio">Full-stack developer with 5 years of experience in web technologies and community building.</p>
+                <div class="member-social">
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="member-card">
+                <div class="member-img-container">
+                    <img src="assets/img/harinand.jpg" alt="Team Member" class="member-img">
+                </div>
+                <h3>Harinand Kumar</h3>
+                <p class="member-position">Vice President</p>
+                <p class="member-bio">AI/ML specialist and competitive programmer with a passion for teaching.</p>
+                <div class="member-social">
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="member-card">
+                <div class="member-img-container">
+                    <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Team Member" class="member-img">
+                </div>
+                <h3>Utkarsh Jha </h3>
+                <p class="member-position">Events Coordinator</p>
+                <p class="member-bio">Frontend developer specializing in React and UX design with event management experience.</p>
+                <div class="member-social">
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="member-card">
+                <div class="member-img-container">
+                    <img src="assets/img/basant.jpg" alt="Team Member" class="member-img">
+                </div>
+                <h3>Basant Kumar</h3>
+                <p class="member-position">Treasurer</p>
+                <p class="member-bio">Backend developer with expertise in cloud technologies and financial management.</p>
+                <div class="member-social">
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="member-card">
+                <div class="member-img-container">
+                    <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Team Member" class="member-img">
+                </div>
+                <h3>Raushan Kumar</h3>
+                <p class="member-position">Outreach Coordinator</p>
+                <p class="member-bio">Mobile app developer and community builder with strong networking skills.</p>
+                <div class="member-social">
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Auth Popup -->
+    <div class="auth-popup" id="authPopup">
+        <div class="auth-popup-content">
+            <button class="close-popup">&times;</button>
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="loginTab">Login</div>
+                <div class="auth-tab" id="registerTab">Register</div>
+            </div>
+            
+            <div class="auth-form-container">
+                <!-- Login Form -->
+                <div class="auth-form active" id="loginForm">
+                    <h2>Member Login</h2>
+                    <form id="loginFormElement">
+                        <div class="form-group">
+                            <label for="loginEmail">Email Address</label>
+                            <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">Password</label>
+                            <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                        </div>
+                        <div class="auth-actions">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <input type="checkbox" id="rememberMe">
+                                <label for="rememberMe" style="display: inline; margin-left: 0.5rem;">Remember me</label>
+                            </div>
+                            <a href="#" class="auth-toggle">Forgot password?</a>
+                        </div>
+                        <button type="submit" class="cta-button">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                    </form>
+                    
+                    <div class="social-auth">
+                        <p>Or login with</p>
+                        <div class="social-buttons">
+                            <a href="#" class="social-btn google">
+                                <i class="fab fa-google"></i>
+                            </a>
+                            <a href="#" class="social-btn github">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="social-btn twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Registration Form -->
+                <div class="auth-form" id="registerForm">
+                    <h2>Create Account</h2>
+                    <form id="registerFormElement">
+                        <div class="form-group">
+                            <label for="registerName">Full Name</label>
+                            <input type="text" id="registerName" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerEmail">Email Address</label>
+                            <input type="email" id="registerEmail" placeholder="Enter your email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPassword">Password</label>
+                            <input type="password" id="registerPassword" placeholder="Create a password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerConfirmPassword">Confirm Password</label>
+                            <input type="password" id="registerConfirmPassword" placeholder="Confirm your password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="branch">Branch</label>
+                            <input type="text" id="branch" placeholder="Enter your branch" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="batch">Batch</label>
+                            <select id="batch" required>
+                                <option value="">Select your batch</option>
+                                <option value="22-26">2022-2026</option>
+                                <option value="23-27">2023-2027</option>
+                                <option value="24-28">2024-2028</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="regno">Registration Number</label>
+                            <input type="text" id="regno" placeholder="Enter your registration number" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="mobileno">Mobile Number</label>
+                            <input type="text" id="mobileno" placeholder="Enter your mobile number" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="checkbox" id="acceptTerms" required>
+                            <label for="acceptTerms" style="display: inline; margin-left: 0.5rem;">
+                                I agree to the <a href="#" style="color: var(--primary);">Terms of Service</a> and <a href="#" style="color: var(--primary);">Privacy Policy</a>
+                            </label>
+                        </div>
+                        <button type="submit" class="cta-button">
+                            <i class="fas fa-user-plus"></i> Register
+                        </button>
+                    </form>
+                    
+                    <div class="auth-actions" style="justify-content: center; margin-top: 1rem;">
+                        <span>Already have an account? </span>
+                        <a href="#" class="auth-toggle" id="showLogin">Login here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gallery Section (Hidden by default) -->
+    <div class="gallery-container" id="gallery">
+        <div class="section-title">
+            <h2>Community Gallery</h2>
+        </div>
+        <p class="section-description">Explore moments from our events, workshops, and community gatherings.</p>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Event Photo">
+                <div class="gallery-overlay">
+                    <h3>Annual Meetup 2023</h3>
+                    <p>Community members networking and sharing ideas</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1472&q=80" alt="Event Photo">
+                <div class="gallery-overlay">
+                    <h3>Workshop Session</h3>
+                    <p>Hands-on coding workshop for beginners</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1469&q=80" alt="Event Photo">
+                <div class="gallery-overlay">
+                    <h3>Code Review Session</h3>
+                    <p>Collaborative code review and feedback</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Event Photo">
+                <div class="gallery-overlay">
+                    <h3>Hackathon Winners</h3>
+                    <p>Celebrating the winning team of our annual hackathon</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80" alt="Event Photo">
+                <div class="gallery-overlay">
+                    <h3>Team Building</h3>
+                    <p>Community members working together on projects</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Event Photo">
+                <div class="gallery-overlay">
+                    <h3>Guest Speaker</h3>
+                    <p>Industry expert sharing knowledge with the community</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notices Section -->
+    <section class="section" id="notices">
+        <div class="section-title">
+            <h2>Latest Notices</h2>
+        </div>
+        <p class="section-description">Stay updated with the latest announcements and opportunities from our community.</p>
+        <div class="notices-container" id="noticesContainer">
+            <div class="loading-notices">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading notices...</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        async function fetchNotices() {
+            try {
+                const response = await fetch('http://localhost:3000/api/notifications');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch notices');
+                }
+                const notices = await response.json();
+                displayNotices(notices);
+            } catch (error) {
+                console.error('Error fetching notices:', error);
+                document.getElementById('noticesContainer').innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Unable to load notices. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayNotices(notices) {
+            const noticesContainer = document.getElementById('noticesContainer');
+            noticesContainer.innerHTML = '';
+
+            if (!notices || notices.length === 0) {
+                noticesContainer.innerHTML = `
+                    <div class="no-notices">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>No notices available at the moment.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            notices.forEach((notice, index) => {
+                const noticeItem = document.createElement('div');
+                noticeItem.className = 'notice-item';
+                noticeItem.dataset.notice = index + 1;
+                
+                const noticeDate = new Date(notice.date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                noticeItem.innerHTML = `
+                    <div class="notice-date">
+                        <i class="far fa-calendar-alt"></i>
+                        <span>${noticeDate}</span>
+                    </div>
+                    <div class="notice-title">${notice.title}</div>
+                    <div class="notice-excerpt">${notice.message}</div>
+                `;
+                
+                noticesContainer.appendChild(noticeItem);
+            });
+        }
+
+        // Fetch notices when the page loads
+        document.addEventListener('DOMContentLoaded', fetchNotices);
+    </script>
+
+    <!-- Event Modal -->
+    <div class="modal" id="eventModal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2 class="modal-title" id="modalEventTitle">Annual Hackathon</h2>
+            <span class="modal-date" id="modalEventDate">June 15-16, 2023</span>
+            <img src="" alt="Event Image" class="modal-image" id="modalEventImage">
+            <div class="modal-body" id="modalEventBody">
+                <p>Join us for our annual 24-hour hackathon where developers, designers, and innovators come together to build amazing projects.</p>
+                <h3>Details:</h3>
+                <ul>
+                    <li>Date: June 15-16, 2023</li>
+                    <li>Location: Tech Innovation Center</li>
+                    <li>Time: 9:00 AM Saturday to 9:00 AM Sunday</li>
+                    <li>Theme: "Solutions for Sustainable Future"</li>
+                </ul>
+                <h3>Prizes:</h3>
+                <ul>
+                    <li>1st Place: $5,000 + Mentorship Opportunity</li>
+                    <li>2nd Place: $3,000</li>
+                    <li>3rd Place: $1,500</li>
+                    <li>Best Design: $1,000</li>
+                </ul>
+                <h3>Registration:</h3>
+                <p>Teams of 2-4 members can register at our website. Early bird registration ends June 1st.</p>
+                <a href="#" class="cta-button">Register Now</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notice Modal -->
+    <div class="modal" id="noticeModal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2 class="modal-title" id="modalNoticeTitle">Registration Open for Summer Coding Bootcamp</h2>
+            <span class="modal-date" id="modalNoticeDate">June 1, 2023</span>
+            <div class="modal-body" id="modalNoticeBody">
+                <p>We're thrilled to announce our 4-week intensive Summer Coding Bootcamp designed for beginners and intermediate coders looking to level up their skills.</p>
+                
+                <h3>Program Details:</h3>
+                <p><strong>Dates:</strong> July 10 - August 4, 2023</p>
+                <p><strong>Schedule:</strong> Monday to Thursday, 6:00 PM - 9:00 PM</p>
+                <p><strong>Location:</strong> Creative Coding Community Center (Virtual participation also available)</p>
+                
+                <h3>Curriculum:</h3>
+                <ul>
+                    <li>Week 1: Web Fundamentals (HTML, CSS, JavaScript)</li>
+                    <li>Week 2: Frontend Development (React.js)</li>
+                    <li>Week 3: Backend Development (Node.js, Express)</li>
+                    <li>Week 4: Final Project & Demo Day</li>
+                </ul>
+                
+                <h3>What You'll Get:</h3>
+                <ul>
+                    <li>40+ hours of hands-on instruction</li>
+                    <li>Personalized mentorship</li>
+                    <li>Project portfolio development</li>
+                    <li>Career guidance session</li>
+                    <li>Certificate of completion</li>
+                </ul>
+                
+                <h3>Tuition:</h3>
+                <p>$299 for members ($399 for non-members)</p>
+                <p><em>Scholarships available for students and underrepresented groups</em></p>
+                
+                <p>Space is limited to 30 participants to ensure quality instruction. Registration closes July 5th or when all seats are filled.</p>
+                
+                <a href="#" class="cta-button">Apply Now</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="image-modal" id="imageModal">
+        <div class="image-modal-content">
+            <button class="close-image-modal">&times;</button>
+            <img src="" alt="Full Size Image" id="fullImage">
+        </div>
+    </div>
+
+    <!-- Verify Email Popup -->
+    <div id="verifyEmailPopup" class="popup-overlay" style="display: none;">
+        <div class="popup-content">
+            <h3>Verify Your Email</h3>
+            <p>Please check your email inbox and verify your account to access all features.</p>
+            <button id="resendVerificationEmail">Resend Verification Email</button>
+            <button id="closeVerifyPopup">Close</button>
+        </div>
+    </div>
+
+    <!-- Signup Success Popup -->
+    <div id="signupSuccessPopup" class="popup-overlay" style="display: none;">
+        <div class="popup-content">
+            <h3>Signup Successful!</h3>
+            <p>We've sent a verification email to your account. Please check your inbox and verify your email to complete the registration.</p>
+            <button id="closeSignupPopup">Close</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-container">
+            <div class="footer-about">
+                <div class="footer-logo">
+                <i class="fas fa-code"></i>
+
+                   <!-- <img src="assets/img/logowithoutname.png" alt="logo" height="200px" width="200px"> -->
+                    <h2>Creative Coding Community</h2>
+                </div>
+                <p>Empowering coders through collaboration, education, and innovation since 2018.</p>
+                <div class="footer-social">
+                    
+                    
+                    <a href="https://www.instagram.com/creativecoding_community/profilecard/?igsh=MTN1emk3c2ExeHkwdg=="><i class="fab fa-instagram"></i></a>
+                    <a href="https://whatsapp.com/channel/0029Vb2vAkxHVvThOOPZC40z"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://t.me/c3gecs"><i class="fab fa-telegram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+
+
+
+                    <!-- <a href="#"><i class="fab fa-discord"></i></a> -->
+                </div>
+            </div>
+            <div class="footer-links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#home"><i class="fas fa-chevron-right"></i> Home</a></li>
+                    <li><a href="#events"><i class="fas fa-chevron-right"></i> Events</a></li>
+                    <li><a href="#members"><i class="fas fa-chevron-right"></i> Team</a></li>
+                    <li><a href="#gallery"><i class="fas fa-chevron-right"></i> Gallery</a></li>
+                    <li><a href="#notices"><i class="fas fa-chevron-right"></i> Notices</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Become a Member</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Contact Us</h3>
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>848127 Gec Samastipur</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span style="font-size:12px;font-weight: 700;">creativecodingcodingcommunity@gmail.com</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone-alt"></i>
+                    <span>+91 9709801718</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-clock"></i>
+                    <span>Mon-Fri: 10AM - 5PM</span>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 Creative Coding Community. All rights reserved.</p>   <p>Developed with ❤️ C3 Team</p> 
+        </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>

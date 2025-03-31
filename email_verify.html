@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Email Verification</title>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            font-family: 'Arial', sans-serif;
+            color: white;
+        }
+        .verification-container {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        lottie-player {
+            margin: 0 auto;
+            width: 200px;
+            height: 200px;
+        }
+        #verification-message {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+    </style>
+</head>
+<body>
+    <div class="verification-container">
+        <lottie-player id="animation" autoplay loop mode="normal"></lottie-player>
+        <div id="verification-message" class="fade-in"></div>
+    </div>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const animation = document.getElementById('animation');
+        const message = document.getElementById('verification-message');
+
+        const setAnimation = (animationUrl) => {
+            animation.load(animationUrl);
+        };
+
+        const setMessage = (text, isError = false) => {
+            message.textContent = text;
+            message.style.color = isError ? '#ff6b6b' : '#4cd137';
+        };
+
+        if (token) {
+            setAnimation('https://assets1.lottiefiles.com/packages/lf20_oktqjqvy.json');
+            
+            fetch('http://localhost:3000/verify-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ token })
+            })
+            .then(response => response.json())
+            .then(data => {
+                setAnimation('https://assets1.lottiefiles.com/packages/lf20_ukg0vjqe.json');
+                setMessage(data.message);
+            })
+            .catch(error => {
+                setAnimation('https://assets1.lottiefiles.com/packages/lf20_gn0to3lr.json');
+                setMessage('Verification failed. Please try again.', true);
+            });
+        } else {
+            setAnimation('https://assets1.lottiefiles.com/packages/lf20_gn0to3lr.json');
+            setMessage('Invalid verification link.', true);
+        }
+    </script>
+</body>
+</html>
