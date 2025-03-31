@@ -602,7 +602,7 @@ loginFormElement.addEventListener('submit', async function(e) {
     const password = document.getElementById('loginPassword').value;
 
     try {
-        const response = await fetch('http://127.0.0.1:3000/login', {
+        const response = await fetch('https://backend-glo6.onrender.com/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -682,7 +682,7 @@ registerFormElement.addEventListener('submit', async function(e) {
     }
 
     try {
-        const response = await fetch('http://127.0.0.1:3000/signup', {
+        const response = await fetch('https://backend-glo6.onrender.com/signup', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
