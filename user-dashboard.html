@@ -840,7 +840,7 @@
       const token = localStorage.getItem('jwtToken');
       
       // Fetch all events from API
-      const allEventsResponse = await fetch('https://backend-glo6.onrender.com//allevents', {
+      const allEventsResponse = await fetch('https://backend-glo6.onrender.com/allevents', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -858,7 +858,7 @@
       const allEvents = await allEventsResponse.json();
       
       // Fetch user's joined events
-      const userEventsResponse = await fetch('https://backend-glo6.onrender.com//api/user/events', {
+      const userEventsResponse = await fetch('https://backend-glo6.onrender.com/api/user/events', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -1033,7 +1033,7 @@
     try {
       const token = localStorage.getItem('jwtToken');
       
-      const response = await fetch(`https://backend-glo6.onrender.com//api/events/${eventId}`, {
+      const response = await fetch(`https://backend-glo6.onrender.com/api/events/${eventId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -1180,7 +1180,7 @@
     try {
       const token = localStorage.getItem('jwtToken');
       
-      const response = await fetch(`https://backend-glo6.onrender.com//api/events/${eventId}/join`, {
+      const response = await fetch(`https://backend-glo6.onrender.com/api/events/${eventId}/join`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -1264,7 +1264,7 @@
     try {
       const token = localStorage.getItem('jwtToken');
       
-      const response = await fetch('https://backend-glo6.onrender.com//api/notifications', {
+      const response = await fetch('https://backend-glo6.onrender.com/api/notifications', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
