@@ -49,7 +49,7 @@
             <a href="#home" class="logo">
                                   <img src="assets/img/logowithoutname.png" alt="logo" height="60px" width="60px">
 
-               <h1>Creative Coding Community</h1>
+               <h1  id="hidenav">Creative Coding Community</h1>
             </a>
             <ul class="nav-links">
                 <li><a href="#home" class="active"><i class="fas fa-home"></i> Home</a></li>
@@ -93,7 +93,7 @@
     <!-- Events Section -->
     <section class="section" id="events">
         <div class="section-title">
-            <h2>Upcoming Events</h2>
+            <h2>Events</h2>
         </div>
         <p class="section-description">Join our exciting events designed to challenge your skills and expand your knowledge in creative coding.</p>
         <div class="events-grid" id="eventsGrid">
@@ -145,7 +145,7 @@
                 eventCard.className = 'event-card';
                 
                 // Determine event type from the name or use a default
-                const eventType = event.name.includes('TEAMUP') ? 'Team Event' : 'Workshop';
+                const eventType = event.name.includes('TEAMUP') ? 'Team Event' : 'Completed';
                 eventCard.dataset.event = eventType.toLowerCase();
                 
                 // Format date
