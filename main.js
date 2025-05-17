@@ -844,3 +844,5 @@ function renderEventCards(events, container) {
     container.appendChild(card);
   });
 }
+
+

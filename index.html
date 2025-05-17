@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Creative Coding Community</title>
+    <link rel="shortcut icon" href="assets/img/logowithoutname.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
    <link rel="stylesheet" href="main.css">
@@ -624,6 +625,521 @@
         </div>
     </div>
 
+
+
+<!-- chatboat code end here 
+ 
+chatboat code start here 
+-->
+
+
+
+
+<!-- Chatbot Button -->
+<!-- Add this before </body> -->
+<div class="chatbot-btn" id="chatbotBtn">
+  <i class="fas fa-comments"></i>
+</div>
+
+<div class="chatbot-container" id="chatbotContainer">
+  <div class="chatbot-header">
+    <div class="chatbot-title">
+      <i class="fas fa-robot"></i>
+      <h3>C3 Community Assistant</h3>
+      <span class="chatbot-status">Online</span>
+    </div>
+    <button class="chatbot-close" id="chatbotClose">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="chatbot-messages" id="chatbotMessages">
+    <div class="message bot">
+      <div class="avatar">C3</div>
+      <div class="bubble">
+        👋 Hello! I'm the C3 Community Assistant. How can I help you today?
+        <div class="quick-replies">
+          <div class="quick-reply" onclick="sendQuickReply('What is C3?')">What is C3?</div>
+          <div class="quick-reply" onclick="sendQuickReply('How to join?')">How to join?</div>
+          <div class="quick-reply" onclick="sendQuickReply('Upcoming events')">Upcoming events</div>
+          <div class="quick-reply" onclick="sendQuickReply('Technologies we use')">Technologies we use</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="chatbot-input">
+    <input type="text" id="chatbotInput" placeholder="Type your message..." autocomplete="off">
+    <button id="chatbotSend"><i class="fas fa-paper-plane"></i></button>
+  </div>
+</div>
+
+<style>
+/* Chatbot Styles */
+.chatbot-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  background: var(--primary);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  transition: all 0.3s ease;
+  border: none;
+  outline: none;
+  opacity: 0;
+}
+
+.chatbot-btn.active {
+  opacity: 1;
+}
+
+.chatbot-container {
+  position: fixed;
+  bottom: 100px;
+  right: 30px;
+  width: 350px;
+  max-width: calc(100% - 60px);
+  height: 500px;
+  max-height: calc(100vh - 180px);
+  background: rgba(30, 30, 30, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  z-index: 999;
+  overflow: hidden;
+  transform: translateY(20px);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chatbot-container.active {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+.chatbot-header {
+  padding: 15px 20px;
+  background: rgba(40, 116, 240, 0.9);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chatbot-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chatbot-title i {
+  font-size: 20px;
+}
+
+.chatbot-title h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.chatbot-status {
+  font-size: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 8px;
+}
+
+.chatbot-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.chatbot-close:hover {
+  opacity: 1;
+}
+
+.chatbot-messages {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  background: transparent;
+}
+
+.chatbot-input {
+  display: flex;
+  padding: 15px;
+  background: rgba(30, 30, 30, 0.7);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chatbot-input input {
+  flex: 1;
+  padding: 12px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  background: rgba(20, 20, 20, 0.6);
+  color: white;
+  outline: none;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.chatbot-input input:focus {
+  border-color: var(--primary);
+}
+
+.chatbot-input button {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  border: none;
+  margin-left: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chatbot-input button:hover {
+  transform: scale(1.05);
+}
+
+/* Message Styles */
+.message {
+  margin: 12px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.user {
+  justify-content: flex-end;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.user .avatar {
+  background-color: #4CAF50;
+}
+
+.bubble {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.bot .bubble {
+  background: rgba(50, 50, 50, 0.7);
+  border-bottom-left-radius: 4px;
+}
+
+.user .bubble {
+  background: rgba(40, 116, 240, 0.8);
+  border-bottom-right-radius: 4px;
+}
+
+.quick-replies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.quick-reply {
+  background: rgba(40, 116, 240, 0.2);
+  border: 1px solid rgba(40, 116, 240, 0.4);
+  border-radius: 16px;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: white;
+}
+
+.quick-reply:hover {
+  background: rgba(40, 116, 240, 0.4);
+}
+
+/* Typing indicator */
+.typing-indicator {
+  display: flex;
+  padding: 12px 16px;
+  background: rgba(50, 50, 50, 0.7);
+  border-radius: 18px;
+  border-bottom-left-radius: 4px;
+  width: fit-content;
+}
+
+.typing-dot {
+  width: 8px;
+  height: 8px;
+  margin: 0 3px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  opacity: 0.4;
+  animation: blink 1.4s infinite both;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0%, 80%, 100% {
+    opacity: 0.4;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .chatbot-container {
+    width: 90%;
+    right: 5%;
+    bottom: 80px;
+    height: 60vh;
+  }
+  
+  .chatbot-btn {
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+  
+  .bubble {
+    max-width: 75%;
+  }
+  
+  .quick-reply {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+}
+</style>
+
+<script>
+// Robust Chatbot Implementation
+document.addEventListener('DOMContentLoaded', function() {
+  // Elements
+  const chatbotBtn = document.getElementById('chatbotBtn');
+  const chatbotContainer = document.getElementById('chatbotContainer');
+  const chatbotClose = document.getElementById('chatbotClose');
+  const chatbotMessages = document.getElementById('chatbotMessages');
+  const chatbotInput = document.getElementById('chatbotInput');
+  const chatbotSend = document.getElementById('chatbotSend');
+
+  // Show chatbot button after slight delay
+  setTimeout(() => {
+    if (chatbotBtn) {
+      chatbotBtn.style.opacity = '1';
+    }
+  }, 1000);
+
+  // Toggle chatbot visibility
+  function toggleChatbot() {
+    if (!chatbotContainer) return;
+    
+    chatbotContainer.classList.toggle('active');
+    if (chatbotContainer.classList.contains('active')) {
+      if (chatbotInput) chatbotInput.focus();
+      scrollChat();
+    }
+  }
+
+  // Event listeners
+  if (chatbotBtn) {
+    chatbotBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleChatbot();
+    });
+  }
+
+  if (chatbotClose) {
+    chatbotClose.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleChatbot();
+    });
+  }
+
+  document.addEventListener('click', function(e) {
+    if (chatbotContainer && chatbotContainer.classList.contains('active') && 
+        !chatbotContainer.contains(e.target) && 
+        e.target !== chatbotBtn) {
+      toggleChatbot();
+    }
+  });
+
+  // Chatbot responses
+  const responses = {
+    "what is c3": "C3 stands for Creative Coding Community. We're a student-led coding club passionate about building and learning together through workshops, hackathons, and collaborative projects.",
+    "how to join": "To join C3, visit our website <a href='https://c3community.netlify.app' target='_blank'>c3community.netlify.app</a> and click on 'Join Us'. You can also attend our next event and meet the team in person!",
+    "upcoming events": "We organize various events:<br><br>• Weekly coding workshops<br>• Monthly hackathons<br>• Tech talks with industry experts<br>• Annual coding competition<br><br>Check our website for the latest schedule!",
+    "technologies we use": "Our members work with diverse technologies:<br><br>• Web: HTML/CSS, JavaScript, React<br>• Mobile: Flutter, React Native<br>• Backend: Node.js, Python, MongoDB<br>• Competitive Programming: C++, Java",
+    "who can join": "Anyone with an interest in coding and technology can join! We welcome all skill levels from beginners to advanced developers.",
+    "hi": "Hello there! 😊 How can I help you with C3 Community today?",
+    "hello": "Hi! Welcome to C3 Community support. What would you like to know?",
+    "thanks": "You're welcome! Let me know if you need anything else.",
+    "bye": "Goodbye! Hope to see you at our next C3 event. 🚀",
+    "contact": "You can reach us at:<br><br>• Email: creativecodingcodingcommunity@gmail.com<br>• Instagram: @creativecoding_community<br>• Website: c3community.netlify.app",
+    "team": "Our core team consists of:<br><br>• Faculty Advisor: Dr. Rajesh Kumar<br>• Faculty Advisor: Dr. Shafaque Aziz<br>• Core Members: Sumit, Harinand, Utkarsh, Basant, Raushan",
+    "benefits": "As a C3 member, you'll get:<br><br>• Access to exclusive workshops<br>• Networking with tech professionals<br>• Hands-on project experience<br>• Resume-building opportunities",
+    "default": "I'm not sure I understand. Here are some things I can help with:<br><br><div class='quick-replies'><div class='quick-reply' onclick='sendQuickReply(\"What is C3?\")'>What is C3?</div><div class='quick-reply' onclick='sendQuickReply(\"How to join?\")'>How to join?</div><div class='quick-reply' onclick='sendQuickReply(\"Upcoming events\")'>Upcoming events</div><div class='quick-reply' onclick='sendQuickReply(\"Technologies we use\")'>Technologies we use</div></div>"
+  };
+
+  // Send message function
+  function sendMessage() {
+    if (!chatbotInput || !chatbotMessages) return;
+    
+    const message = chatbotInput.value.trim();
+    if (!message) return;
+
+    chatbotInput.value = "";
+    addMessage(message, 'user');
+    showTypingIndicator();
+    
+    setTimeout(() => {
+      const reply = getBotReply(message.toLowerCase());
+      removeTypingIndicator();
+      addMessage(reply, 'bot');
+    }, 700);
+  }
+
+  // Quick reply function
+  window.sendQuickReply = function(text) {
+    if (chatbotInput) {
+      if (!chatbotContainer.classList.contains('active')) {
+        toggleChatbot();
+      }
+      chatbotInput.value = text;
+      sendMessage();
+    }
+  };
+
+  // Helper functions
+  function showTypingIndicator() {
+    if (!chatbotMessages) return;
+    
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'message bot typing-indicator-container';
+    typingDiv.innerHTML = `
+      <div class="avatar">C3</div>
+      <div class="typing-indicator">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    `;
+    chatbotMessages.appendChild(typingDiv);
+    scrollChat();
+  }
+
+  function removeTypingIndicator() {
+    const typingIndicator = document.querySelector('.typing-indicator-container');
+    if (typingIndicator) typingIndicator.remove();
+  }
+
+  function addMessage(text, sender) {
+    if (!chatbotMessages) return;
+    
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `message ${sender}`;
+    msgDiv.innerHTML = `
+      <div class="avatar">${sender === 'bot' ? 'C3' : 'You'}</div>
+      <div class="bubble">${text}</div>
+    `;
+    chatbotMessages.appendChild(msgDiv);
+    scrollChat();
+  }
+
+  function getBotReply(msg) {
+    for (const key in responses) {
+      if (msg.includes(key)) return responses[key];
+    }
+    return responses["default"];
+  }
+
+  function scrollChat() {
+    if (!chatbotMessages) return;
+    setTimeout(() => {
+      chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    }, 10);
+  }
+
+  // Input handling
+  if (chatbotSend) {
+    chatbotSend.addEventListener('click', function(e) {
+      e.preventDefault();
+      sendMessage();
+    });
+  }
+
+  if (chatbotInput) {
+    chatbotInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+  }
+});
+</script>
+
+
+<!-- chatboat code end here 
+ 
+chatboat code end here 
+-->
+
+
+
     <!-- Footer -->
     <footer id="contact">
         <div class="footer-container">
@@ -683,6 +1199,14 @@
             <p>&copy; 2025 Creative Coding Community. All rights reserved.</p>   <p>Developed with ❤️ C3 Team</p> 
         </div>
         </div>
+
+
+
+        <!-- Chatbot Button -->
+<!-- <div class="chatbot-btn" id="chatbotBtn">
+  <i class="fas fa-robot"></i>
+</div> -->
+
     </footer>
 
     <script src="main.js"></script>
