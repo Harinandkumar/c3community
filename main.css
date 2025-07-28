@@ -2322,3 +2322,28 @@ footer::before {
     text-align: center;
     margin-top: 1rem;
 }
+
+.rulebook-link {
+    display: inline-block;
+    background-color: #f0f8ff;
+    color: #0056b3;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin: 10px 0;
+    border: 1px solid #d0e3ff;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.rulebook-link:hover {
+    background-color: #e0f0ff;
+    color: #003d82;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0, 86, 179, 0.1);
+    transform: translateY(-2px);
+}
+
+.rulebook-link i {
+    margin-right: 8px;
+}
