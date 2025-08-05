@@ -836,7 +836,7 @@ header {
 
 /* Gallery Section */
 .gallery-container {
-    display: none;
+    /* display: none; */
     padding: 8rem 2rem;
     max-width: 1400px;
     margin: 0 auto;
