@@ -115,6 +115,20 @@ navLinksItems.forEach(item => {
     });
 });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Theme Switcher
 const themeToggle = document.getElementById('themeToggle');
 const themeIcon = themeToggle.querySelector('i');
@@ -846,3 +860,15 @@ function renderEventCards(events, container) {
 }
 
 
+
+
+
+
+
+
+
+
+
+document.querySelector('a[href="recruitment.html"]').addEventListener('click', (e) => {
+    window.location.href = 'recruitment.html';
+});
