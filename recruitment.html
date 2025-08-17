@@ -1,441 +1,333 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>C3 - Club Recruitment</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    :root {
-      --primary: #0056b3;
-      --secondary: #6c757d;
-      --accent: #ff6b6b;
-      --light: #f8f9fa;
-      --dark: #343a40;
-      --success: #28a745;
-    }
-    
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    
-    body {
-      font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f0f2f5;
-      color: var(--dark);
-      line-height: 1.6;
-    }
-    
-    .container {
-      max-width: 900px;
-      margin: 40px auto;
-      background-color: white;
-      padding: 0;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      overflow: hidden;
-      transition: transform 0.3s ease;
-    }
-    
-    .container:hover {
-      transform: translateY(-5px);
-    }
-    
-    header {
-      background: linear-gradient(135deg, var(--primary), #003366);
-      color: white;
-      padding: 30px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    header::before {
-      content: "";
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-      transform: rotate(30deg);
-    }
-    
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-      position: relative;
-      z-index: 1;
-    }
-    
-    h2 {
-      font-size: 1.5rem;
-      font-weight: 400;
-      opacity: 0.9;
-      position: relative;
-      z-index: 1;
-    }
-    
-    .content {
-      padding: 30px;
-    }
-    
-    h3 {
-      color: var(--primary);
-      margin: 25px 0 15px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid var(--light);
-      display: flex;
-      align-items: center;
-    }
-    
-    h3 i {
-      margin-right: 10px;
-      color: var(--accent);
-    }
-    
-    .section {
-      margin-bottom: 30px;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-    }
-    
-    .section.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    
-    ul {
-      padding-left: 25px;
-      list-style-type: none;
-    }
-    
-    ul li {
-      margin-bottom: 10px;
-      position: relative;
-      padding-left: 30px;
-    }
-    
-    ul li::before {
-      content: "→";
-      position: absolute;
-      left: 0;
-      color: var(--accent);
-      font-weight: bold;
-    }
-    
-    .date-badge {
-      display: inline-block;
-      background-color: var(--accent);
-      color: white;
-      padding: 8px 15px;
-      border-radius: 50px;
-      font-weight: bold;
-      margin: 10px 0;
-      box-shadow: 0 4px 8px rgba(255,107,107,0.3);
-    }
-    
-    .btn {
-      display: inline-block;
-      background-color: var(--primary);
-      color: white;
-      padding: 12px 25px;
-      border-radius: 50px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      margin: 15px 0;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,86,179,0.2);
-    }
-    
-    .btn:hover {
-      background-color: #004494;
-      transform: translateY(-3px);
-      box-shadow: 0 6px 15px rgba(0,86,179,0.3);
-      text-decoration: none;
-    }
-    
-    .btn i {
-      margin-left: 5px;
-    }
-    
-    .contact {
-      background: linear-gradient(135deg, #f1f1f1, #e9ecef);
-      padding: 25px;
-      border-radius: 10px;
-      margin-top: 30px;
-    }
-    
-    .contact-item {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    
-    .contact-item i {
-      width: 30px;
-      color: var(--primary);
-      font-size: 1.2rem;
-    }
-    
-    .floating-icons {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      display: flex;
-      flex-direction: column;
-      z-index: 100;
-    }
-    
-    .floating-btn {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background-color: var(--primary);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 5px;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      transition: all 0.3s ease;
-    }
-    
-    .floating-btn:hover {
-      transform: scale(1.1);
-    }
-    
-    .progress-container {
-      width: 100%;
-      height: 5px;
-      background: #e9ecef;
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 1000;
-    }
-    
-    .progress-bar {
-      height: 5px;
-      background: var(--primary);
-      width: 0%;
-      transition: width 0.1s ease;
-    }
-    
-    @media (max-width: 768px) {
-      .container {
-        margin: 20px;
-        border-radius: 10px;
-      }
-      
-      header {
-        padding: 20px;
-      }
-      
-      h1 {
-        font-size: 2rem;
-      }
-      
-      h2 {
-        font-size: 1.2rem;
-      }
-      
-      .content {
-        padding: 20px;
-      }
-    }
-    
-    /* Animation classes */
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    
-    .animate-fade {
-      animation: fadeIn 1s ease forwards;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruitment Results - Creative Coding Community</title>
+    <link rel="shortcut icon" href="assets/img/logowithoutname.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="main.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        .results-section {
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        
+        .results-logo {
+            margin-bottom: 2rem;
+        }
+        
+        .results-logo img {
+            height: 120px;
+            width: 120px;
+        }
+        
+        .results-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--primary), #00d4ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .results-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            color: var(--text-secondary);
+        }
+        
+        .candidates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .candidate-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .candidate-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .candidate-card.top-3 {
+            border: 2px solid var(--primary);
+        }
+        
+        .candidate-rank {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .candidate-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary);
+            margin: 0 auto 1rem;
+        }
+        
+        .candidate-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .candidate-position {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .candidate-batch {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .confetti-btn {
+            margin-top: 3rem;
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .confetti-btn:hover {
+            background: #0066cc;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0, 102, 204, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .candidates-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .results-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="progress-container">
-    <div class="progress-bar" id="progressBar"></div>
-  </div>
-  
-  <div class="container">
-    <header class="animate-fade">
-      <h1>Creative Coding Community (C3)</h1>
-      <h2>Recruitment Rule Book</h2>
+    <!-- Matrix Background -->
+    <canvas id="matrixCanvas" class="matrix-bg"></canvas>
+
+    <!-- Navigation -->
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo">
+                <img src="assets/img/logowithoutname.png" alt="logo" height="60px" width="60px">
+                <h1 id="hidenav">Creative Coding Community</h1>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html#home"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="index.html#events"><i class="fas fa-calendar-alt"></i> Events</a></li>
+                <li><a href="index.html#members"><i class="fas fa-users"></i> Team</a></li>
+                <li><a href="index.html#gallery" id="galleryLink"><i class="fas fa-images"></i> Gallery</a></li>
+                <li><a href="index.html#notices"><i class="fas fa-bullhorn"></i> Notices</a></li>
+                <li><a href="#recruitment" class="active"><i class="fas fa-user-plus"></i> Recruitment Result</a></li>
+                <li><a href="index.html#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                <li><a href="index.html#auth" id="authLink"><i class="fas fa-sign-in-alt"></i>Login</a></li>
+
+                <button class="theme-switcher" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </ul>
+            <button class="hamburger">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
     </header>
-    
-    <div class="content">
-      <div class="section" id="interview-date">
-        <h3><i class="fas fa-calendar-alt"></i> Interview Date</h3>
-        <div class="date-badge">14<sup>th</sup>  August 2025</div>
-      </div>
 
-      <div class="section" id="objective">
-        <h3><i class="fas fa-bullseye"></i> Objective</h3>
-        <p>To ensure a transparent, fair, and merit-based recruitment process for selecting Coordinators and Sub-Coordinators who can lead and contribute effectively to the club's mission.</p>
-      </div>
-
-      <div class="section" id="positions">
-        <h3><i class="fas fa-users"></i> Positions Open</h3>
-        <ul>
-          <li>Sub-Coordinator for 2K23 batch</li>
-        </ul>
-      </div>
-
-      <div class="section" id="eligibility">
-        <h3><i class="fas fa-check-circle"></i> Eligibility Criteria</h3>
-        <ul>
-          <li>Should not be a member of another technical club</li>
-        </ul>
-      </div>
-
-      <div class="section" id="selection">
-        <h3><i class="fas fa-search"></i> Selection Process</h3>
-        <ul>
-          <li>Interview-based recruitment</li>
-        </ul>
-      </div>
-
-      <div class="section" id="evaluation">
-        <h3><i class="fas fa-clipboard-list"></i> Evaluation Criteria</h3>
-        <ul>
-          <li>Leadership and initiative</li>
-          <li>Communication skills</li>
-          <li>Technical knowledge relevant to the club's focus</li>
-          <li>Team collaboration</li>
-          <li>Past contributions and future vision</li>
-        </ul>
-      </div>
-
-      <div class="section" id="conduct">
-        <h3><i class="fas fa-gavel"></i> Code of Conduct</h3>
-        <ul>
-          <li>Must sign code of conduct and confidentiality agreement</li>
-          <li>Regular participation in meetings and events</li>
-          <li>Fulfill responsibilities as per the assigned role</li>
-        </ul>
-      </div>
-
-      <div class="section" id="tenure">
-        <h3><i class="fas fa-clock"></i> Tenure</h3>
-        <p>Sub-Coordinator: One academic year (renewable based on performance)</p>
-      </div>
-
-      <div class="section" id="removal">
-        <h3><i class="fas fa-exclamation-triangle"></i> Removal/Resignation</h3>
-        <ul>
-          <li>Misconduct or violation of club policies</li>
-          <li>Non-performance</li>
-          <li>Voluntary resignation must be approved by the faculty mentor</li>
-        </ul>
-      </div>
-
-      <div class="section" id="amendments">
-        <h3><i class="fas fa-edit"></i> Amendments</h3>
-        <h4>This rule book can be revised with :-  </h4>
-        <ul>
-
-          <li>Majority approval by the core committee</li>
-          <li>Consent from the faculty mentor</li>
-        </ul>
-      </div>
-
-      <div class="section" id="registration">
-        <h3><i class="fas fa-edit"></i> Registration</h3>
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSffpjTYacWMCuxFiLSaz0EQvBpYwC2ZljVIITNXcMU_85q8bg/viewform?usp=dialog" target="_blank" class="btn">
-          Register Now <i class="fas fa-external-link-alt"></i>
-        </a>
-      </div>
-
-      <div class="contact section" id="contact">
-        <h3><i class="fas fa-address-book"></i> Contact</h3>
-        <div class="contact-item">
-          <i class="fas fa-user"></i>
-          <span>Utkarsh (2K22): 7462971811</span>
+    <!-- Results Section -->
+    <section class="results-section" id="recruitment">
+        <div class="results-logo">
+            <img src="assets/img/logowithoutname.png" alt="C3 Logo">
         </div>
-        <div class="contact-item">
-          <i class="fas fa-user"></i>
-          <span>Harinand (2K22): 9709801718</span>
-        </div>
-      </div>
-    </div>
-    <div class="section" id="selection">
-      <a  class="cta-button" target="_blank" href="index.html">   <h3 class="cta-button" target="_blank" class="cta-button" target="_blank"> Goto Home</h3></a>
+        <h1 class="results-title">Sub-Coordinator Recruitment 2024</h1>
+        <p class="results-subtitle">Congratulations to our new sub-coordinators!</p>
         
-      </div>
-  </div>
-  
+        <div class="candidates-grid">
+            <!-- Candidate 1 -->
+            <div class="candidate-card top-3">
+                <div class="candidate-rank">1</div>
+                <img src="https://via.placeholder.com/150" alt="Candidate" class="candidate-img">
+                <h3 class="candidate-name">John Doe</h3>
+                <p class="candidate-position">Sub-Coordinator</p>
+                <p class="candidate-batch">CSE - 2023 Batch</p>
+            </div>
+            
+            <!-- Candidate 2 -->
+            <div class="candidate-card top-3">
+                <div class="candidate-rank">2</div>
+                <img src="https://via.placeholder.com/150" alt="Candidate" class="candidate-img">
+                <h3 class="candidate-name">Jane Smith</h3>
+                <p class="candidate-position">Sub-Coordinator</p>
+                <p class="candidate-batch">IT - 2023 Batch</p>
+            </div>
+            
+            <!-- Candidate 3 -->
+            <div class="candidate-card top-3">
+                <div class="candidate-rank">3</div>
+                <img src="https://via.placeholder.com/150" alt="Candidate" class="candidate-img">
+                <h3 class="candidate-name">Alex Johnson</h3>
+                <p class="candidate-position">Sub-Coordinator</p>
+                <p class="candidate-batch">CSE - 2023 Batch</p>
+            </div>
+            
+            <!-- Candidate 4 -->
+            <div class="candidate-card">
+                <div class="candidate-rank">4</div>
+                <img src="https://via.placeholder.com/150" alt="Candidate" class="candidate-img">
+                <h3 class="candidate-name">Sarah Williams</h3>
+                <p class="candidate-position">Sub-Coordinator</p>
+                <p class="candidate-batch">ECE - 2023 Batch</p>
+            </div>
+            
+            <!-- Candidate 5 -->
+            <div class="candidate-card">
+                <div class="candidate-rank">5</div>
+                <img src="https://via.placeholder.com/150" alt="Candidate" class="candidate-img">
+                <h3 class="candidate-name">Michael Brown</h3>
+                <p class="candidate-position">Sub-Coordinator</p>
+                <p class="candidate-batch">CSE - 2023 Batch</p>
+            </div>
+            
+            <!-- Candidate 6 -->
+            <div class="candidate-card">
+                <div class="candidate-rank">6</div>
+                <img src="https://via.placeholder.com/150" alt="Candidate" class="candidate-img">
+                <h3 class="candidate-name">Emily Davis</h3>
+                <p class="candidate-position">Sub-Coordinator</p>
+                <p class="candidate-batch">IT - 2023 Batch</p>
+            </div>
+            
+            <!-- Candidate 7 -->
+            <div class="candidate-card">
+                <div class="candidate-rank">7</div>
+                <img src="https://via.placeholder.com/150" alt="Candidate" class="candidate-img">
+                <h3 class="candidate-name">Robert Wilson</h3>
+                <p class="candidate-position">Sub-Coordinator</p>
+                <p class="candidate-batch">ECE - 2023 Batch</p>
+            </div>
+        </div>
+        
+        <button class="confetti-btn" id="confettiBtn">
+            <i class="fas fa-party-horn"></i> Celebrate with Confetti
+        </button>
+    </section>
 
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-container">
+            <div class="footer-about">
+                <div class="footer-logo">
+                    <i class="fas fa-code"></i>
+                    <h2>Creative Coding Community</h2>
+                </div>
+                <p>Empowering coders through collaboration, education, and innovation.</p>
+                <div class="footer-social">
+                    <a href="https://www.instagram.com/creativecoding_community/profilecard/?igsh=MTN1emk3c2ExeHkwdg=="><i class="fab fa-instagram"></i></a>
+                    <a href="https://whatsapp.com/channel/0029Vb2vAkxHVvThOOPZC40z"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://t.me/c3gecs"><i class="fab fa-telegram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html#home"><i class="fas fa-chevron-right"></i> Home</a></li>
+                    <li><a href="index.html#events"><i class="fas fa-chevron-right"></i> Events</a></li>
+                    <li><a href="index.html#members"><i class="fas fa-chevron-right"></i> Team</a></li>
+                    <li><a href="index.html#gallery"><i class="fas fa-chevron-right"></i> Gallery</a></li>
+                    <li><a href="index.html#notices"><i class="fas fa-chevron-right"></i> Notices</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Become a Member</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Contact Us</h3>
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>848127 Gec Samastipur</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span style="font-size:12px;font-weight: 700;">creativecodingcodingcommunity@gmail.com</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone-alt"></i>
+                    <span>+91 9709801718</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-clock"></i>
+                    <span>Mon-Fri: 10AM - 5PM</span>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 Creative Coding Community. All rights reserved.</p>
+            <p>Developed with ❤️ C3 Team</p>
+        </div>
+    </footer>
 
-  <div class="floating-icons">
-    <div class="floating-btn" id="scrollToTop" title="Scroll to top">
-      <i class="fas fa-arrow-up"></i>
-    </div>
-    <div class="floating-btn" id="contactBtn" title="Contact us">
-      <i class="fas fa-envelope"></i>
-    </div>
-  </div>
-  
-  <script>
-    // Scroll progress indicator
-    window.onscroll = function() {
-      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scrolled = (winScroll / height) * 100;
-      document.getElementById("progressBar").style.width = scrolled + "%";
-    };
-    
-    // Scroll to top button
-    document.getElementById('scrollToTop').addEventListener('click', () => {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    });
-    
-    // Contact button
-    document.getElementById('contactBtn').addEventListener('click', () => {
-      document.getElementById('contact').scrollIntoView({
-        behavior: 'smooth'
-      });
-    });
-    
-    // Animate sections on scroll
-    const sections = document.querySelectorAll('.section');
-    
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, {
-      threshold: 0.1
-    });
-    
-    sections.forEach(section => {
-      observer.observe(section);
-    });
-    
-    // Add hover effect to registration button
-    const registerBtn = document.querySelector('.btn');
-    registerBtn.addEventListener('mouseenter', () => {
-      registerBtn.innerHTML = 'Register Now <i class="fas fa-rocket"></i>';
-    });
-    registerBtn.addEventListener('mouseleave', () => {
-      registerBtn.innerHTML = 'Register Now <i class="fas fa-external-link-alt"></i>';
-    });
-  </script>
+    <script src="main.js"></script>
+    <script>
+        // Confetti effect
+        document.getElementById('confettiBtn').addEventListener('click', function() {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+            
+            // Play celebration sound (optional)
+            // const audio = new Audio('assets/sounds/celebration.mp3');
+            // audio.play();
+        });
+        
+        // Auto-trigger confetti on page load (optional)
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                confetti({
+                    particleCount: 100,
+                    spread: 60,
+                    origin: { y: 0.6 }
+                });
+            }, 1000);
+        });
+        
+        
+    </script>
 </body>
 </html>
