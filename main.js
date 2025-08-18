@@ -176,6 +176,9 @@ galleryLink.addEventListener('click', function(e) {
         link.classList.remove('active');
     });
     this.classList.add('active');
+
+
+    
 });
 
 // Show other sections when clicking other nav links
