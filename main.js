@@ -2,8 +2,9 @@
 window.addEventListener('load', function() {
     setTimeout(function() {
         document.querySelector('.loading-screen').classList.add('fade-out');
-    }, 3000);
+    }, 500); // 0.5 second delay for faster fade
 });
+
 
 // Matrix Background
 const canvas = document.getElementById('matrixCanvas');

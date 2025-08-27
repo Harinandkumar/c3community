@@ -75,7 +75,9 @@ h1, h2, h3, h4 {
 .loading-screen.fade-out {
     opacity: 0;
     pointer-events: none;
+    transition: opacity 0.5s ease-out; /* Faster fade */
 }
+
 
 .loading-container {
     position: relative;
@@ -132,7 +134,7 @@ h1, h2, h3, h4 {
     width: 0%;
     background: linear-gradient(90deg, var(--primary), var(--secondary));
     border-radius: 4px;
-    animation: loading 2s ease-in-out forwards;
+    animation: loading 1s ease-in-out forwards;
     box-shadow: 0 0 10px var(--primary);
 }
 
@@ -146,7 +148,7 @@ h1, h2, h3, h4 {
     color: var(--primary);
     opacity: 0.7;
     text-align: center;
-    animation: scrollCode 10s linear infinite;
+    animation: scrollCode 5s linear infinite;
 }
 
 @keyframes loading {
