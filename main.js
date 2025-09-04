@@ -2,7 +2,7 @@
 window.addEventListener('load', function() {
     setTimeout(function() {
         document.querySelector('.loading-screen').classList.add('fade-out');
-    }, 500); // 0.5 second delay for faster fade
+    }, 50); // 0.5 second delay for faster fade
 });
 
 
