@@ -2381,3 +2381,41 @@ footer::before {
                 font-size: 2rem;
             }
         }
+
+
+       
+  /* Floating Upload Icon */
+.upload-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 90px;  /* Chat icon से टकराए नहीं */
+  width: 60px;
+  height: 60px;
+  background: #cd77ba; /* white circle background */
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  animation: floatUpDown 3s ease-in-out infinite, zoom 1.5s ease-in-out infinite alternate;
+  z-index: 9999;
+}
+
+.upload-icon i {
+  font-size: 28px;
+  color: #00aaff; /* icon color - अपनी theme के हिसाब से बदल सकते हो */
+}
+
+/* Floating Animation */
+@keyframes floatUpDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Gentle Zoom Effect */
+@keyframes zoom {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1); }
+}
+

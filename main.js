@@ -876,3 +876,8 @@ function renderEventCards(events, container) {
 document.querySelector('a[href="Subcoordinator_results.html"]').addEventListener('click', (e) => {
     window.location.href = 'Subcoordinator_results.html';
 });
+
+
+function openUploadLink() {
+    window.open("https://fileupload-1r1c.onrender.com/", "_blank");
+  }
