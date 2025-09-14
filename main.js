@@ -873,11 +873,25 @@ function renderEventCards(events, container) {
 
 
 
-document.querySelector('a[href="Subcoordinator_results.html"]').addEventListener('click', (e) => {
-    window.location.href = 'Subcoordinator_results.html';
-});
+
 
 
 function openUploadLink() {
     window.open("https://fileupload-1r1c.onrender.com/", "_blank");
   }
+
+
+
+// ✅ Manual Data ()
+const coder = {
+  name: "Aditya Raj",
+  batch: "AIML 2025",
+  achievement: "Winner of September Coding Contest 🏆",
+  photo: "assets/img/aditya.jpg"
+};
+
+// Display Data
+document.getElementById("coder-name").textContent = coder.name;
+document.getElementById("coder-batch").textContent = `Batch: ${coder.batch}`;
+document.getElementById("coder-achievement").textContent = coder.achievement;
+document.getElementById("coder-photo").src = coder.photo;
