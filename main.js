@@ -47,9 +47,11 @@ function initTheme() {
 }
 
 // Mobile Navigation - Fixed
+// Mobile Navigation - Hamburger with scrollable menu
 function initMobileNav() {
     const hamburger = document.getElementById('hamburger');
     const navLinks = document.getElementById('navLinks');
+    
     if (hamburger && navLinks) {
         hamburger.addEventListener('click', (e) => {
             e.preventDefault();
@@ -66,6 +68,7 @@ function initMobileNav() {
             }
         });
         
+        // Close menu when clicking on a link
         document.querySelectorAll('.nav-links a').forEach(link => {
             link.addEventListener('click', () => {
                 navLinks.classList.remove('active');
@@ -75,6 +78,7 @@ function initMobileNav() {
             });
         });
         
+        // Close menu when clicking outside (optional)
         document.addEventListener('click', (e) => {
             if (navLinks.classList.contains('active') && 
                 !navLinks.contains(e.target) && 
@@ -289,20 +293,64 @@ async function fetchNotices() {
 
 function displayNotices(notices) {
     const container = document.getElementById('noticesContainer');
-    if (!notices || notices.length === 0) { container.innerHTML = '<div style="text-align:center;padding:40px;">No notices available.</div>'; return; }
-    container.innerHTML = notices.map((notice, index) => {
-        const shortMessage = notice.message.length > 120 ? notice.message.substring(0, 120) + '...' : notice.message;
-        const needReadMore = notice.message.length > 120;
-        return `
-            <div class="notice-item" data-idx="${index}">
-                <div class="notice-date"><i class="far fa-calendar-alt"></i> ${new Date(notice.date).toLocaleDateString()}</div>
-                <div class="notice-title">${escapeHtml(notice.title)}</div>
-                <div class="notice-excerpt" id="noticeExcerpt-${index}">${escapeHtml(shortMessage)}</div>
-                ${needReadMore ? `<button class="read-more-btn" data-title="${escapeHtml(notice.title)}" data-date="${new Date(notice.date).toLocaleDateString()}" data-message="${escapeHtml(notice.message)}">Read More</button>` : ''}
-            </div>
-        `;
-    }).join('');
+    if (!container) return;
     
+    if (!notices || notices.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:40px;">No notices available.</div>';
+        return;
+    }
+    
+    // Separate priority notices from normal notices
+    const priorityNotices = notices.filter(n => n.isPriority === true);
+    const normalNotices = notices.filter(n => n.isPriority !== true);
+    
+    let allNoticesHTML = '';
+    
+    // Display priority notices first (with special styling)
+    if (priorityNotices.length > 0) {
+        allNoticesHTML += priorityNotices.map(notice => {
+            let badgeHtml = '';
+            if (notice.badge === 'live') badgeHtml = '<span class="recruitment-badge">🔴 LIVE</span>';
+            else if (notice.badge === 'new') badgeHtml = '<span class="badge-new">🟢 NEW</span>';
+            else if (notice.badge === 'upcoming') badgeHtml = '<span class="badge-upcoming">🟡 UPCOMING</span>';
+            else badgeHtml = '<span class="recruitment-badge">⭐ PRIORITY</span>';
+            
+            return `
+                <div class="recruitment-notice">
+                    <div class="recruitment-notice-header">
+                        ${badgeHtml}
+                        <span class="recruitment-date">📅 ${new Date(notice.date).toLocaleDateString()}</span>
+                    </div>
+                    <h3 class="recruitment-title">${escapeHtml(notice.title)}</h3>
+                    <p class="recruitment-desc">${escapeHtml(notice.message)}</p>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    // Display normal notices
+    if (normalNotices.length > 0) {
+        allNoticesHTML += normalNotices.map((notice, index) => {
+            const noticeDate = new Date(notice.date).toLocaleDateString('en-US', {
+                year: 'numeric', month: 'long', day: 'numeric'
+            });
+            const shortMessage = notice.message.length > 120 ? notice.message.substring(0, 120) + '...' : notice.message;
+            const needReadMore = notice.message.length > 120;
+            
+            return `
+                <div class="notice-item" data-idx="${index}">
+                    <div class="notice-date"><i class="far fa-calendar-alt"></i> ${noticeDate}</div>
+                    <div class="notice-title">${escapeHtml(notice.title)}</div>
+                    <div class="notice-excerpt">${escapeHtml(shortMessage)}</div>
+                    ${needReadMore ? `<button class="read-more-btn" data-title="${escapeHtml(notice.title)}" data-date="${noticeDate}" data-message="${escapeHtml(notice.message)}">Read More</button>` : ''}
+                </div>
+            `;
+        }).join('');
+    }
+    
+    container.innerHTML = allNoticesHTML;
+    
+    // Re-attach read more event listeners
     document.querySelectorAll('.read-more-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
