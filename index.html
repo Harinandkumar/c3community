@@ -71,7 +71,6 @@
     <li><a href="#results" class="nav-link"><i class="fas fa-trophy"></i> Results</a></li>
     <li><a href="#contact" class="nav-link"><i class="fas fa-envelope"></i> Contact</a></li>
     <li><a href="#auth" class="nav-link" id="authBtn"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-    <li><a href="" class="nav-link" id="authBtn"><i class="fas fa-sign-in-alt"></i>recruitment</a></li>
 
     
     <!-- Dynamic Nav Items will be inserted here -->
@@ -113,7 +112,26 @@
             <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading events...</div>
         </div>
     </section>
+<!-- Notices Section -->
+    <section class="section" id="notices">
+        <div class="section-title">
+            <h2>Latest Notices</h2>
+        </div>
+        <p class="section-description">Stay updated with the latest announcements from our community.</p>
+        <div class="notices-container" id="noticesContainer">
+            <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading notices...</div>
+        </div>
+    </section>
 
+    <!-- Notice Modal for Full Content -->
+    <div class="notice-modal" id="noticeModal">
+        <div class="notice-modal-content">
+            <button class="notice-modal-close" id="noticeModalClose">&times;</button>
+            <h3 id="noticeModalTitle"></h3>
+            <div class="notice-modal-date" id="noticeModalDate"></div>
+            <div class="notice-modal-message" id="noticeModalMessage"></div>
+        </div>
+    </div>
     <!-- Faculty Mentors Section -->
     <section class="section" id="faculty-mentors">
         <div class="section-title">
@@ -203,26 +221,7 @@
         </div>
     </section>
 
-    <!-- Notices Section -->
-    <section class="section" id="notices">
-        <div class="section-title">
-            <h2>Latest Notices</h2>
-        </div>
-        <p class="section-description">Stay updated with the latest announcements from our community.</p>
-        <div class="notices-container" id="noticesContainer">
-            <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading notices...</div>
-        </div>
-    </section>
-
-    <!-- Notice Modal for Full Content -->
-    <div class="notice-modal" id="noticeModal">
-        <div class="notice-modal-content">
-            <button class="notice-modal-close" id="noticeModalClose">&times;</button>
-            <h3 id="noticeModalTitle"></h3>
-            <div class="notice-modal-date" id="noticeModalDate"></div>
-            <div class="notice-modal-message" id="noticeModalMessage"></div>
-        </div>
-    </div>
+    
 
     <!-- Winners Section -->
     <section class="section" id="results">

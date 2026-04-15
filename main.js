@@ -11,10 +11,32 @@ document.addEventListener('DOMContentLoaded', function() {
     initSmoothScroll();
     fetchEvents();
     fetchNotices();
-    loadDynamicNavItems();  // ✅ NEW: Load dynamic nav items
+    loadDynamicNavItems();
     initLoadingScreen();
     initMatrixBackground();
     initCodeBackground();
+    
+    // Read More button event listener for priority notices
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('read-more-notice-btn')) {
+            const noticeId = e.target.dataset.id;
+            const fullMessage = e.target.dataset.fullmsg;
+            const descDiv = document.getElementById(`${noticeId}-desc`);
+            
+            if (!descDiv) return;
+            
+            const isExpanded = e.target.textContent.includes('Less');
+            
+            if (isExpanded) {
+                const shortMessage = fullMessage.length > 220 ? fullMessage.substring(0, 220) + '...' : fullMessage;
+                descDiv.innerHTML = shortMessage.replace(/\n/g, '<br>');
+                e.target.innerHTML = 'Read More ↓';
+            } else {
+                descDiv.innerHTML = fullMessage.replace(/\n/g, '<br>');
+                e.target.innerHTML = 'Read Less ↑';
+            }
+        }
+    });
 });
 
 // Loading Screen
@@ -46,8 +68,7 @@ function initTheme() {
     }
 }
 
-// Mobile Navigation - Fixed
-// Mobile Navigation - Hamburger with scrollable menu
+// Mobile Navigation
 function initMobileNav() {
     const hamburger = document.getElementById('hamburger');
     const navLinks = document.getElementById('navLinks');
@@ -68,7 +89,6 @@ function initMobileNav() {
             }
         });
         
-        // Close menu when clicking on a link
         document.querySelectorAll('.nav-links a').forEach(link => {
             link.addEventListener('click', () => {
                 navLinks.classList.remove('active');
@@ -78,7 +98,6 @@ function initMobileNav() {
             });
         });
         
-        // Close menu when clicking outside (optional)
         document.addEventListener('click', (e) => {
             if (navLinks.classList.contains('active') && 
                 !navLinks.contains(e.target) && 
@@ -92,7 +111,7 @@ function initMobileNav() {
     }
 }
 
-// ========== DYNAMIC NAV ITEMS (NEW FEATURE) ==========
+// Dynamic Nav Items
 async function loadDynamicNavItems() {
     try {
         const response = await fetch(`${API_BASE_URL}/api/public/nav-items`);
@@ -131,7 +150,7 @@ function displayDynamicNavItems(items) {
     }).join('');
 }
 
-// Auth Modal with Scrollable Form
+// Auth Modal
 function initAuthModal() {
     const authBtn = document.getElementById('authBtn');
     const authModal = document.getElementById('authModal');
@@ -276,7 +295,7 @@ function displayEvents(events) {
     `).join('');
 }
 
-// Fetch Notices with Read More
+// Fetch Notices
 async function fetchNotices() {
     const container = document.getElementById('noticesContainer');
     if (!container) return;
@@ -291,6 +310,7 @@ async function fetchNotices() {
     }
 }
 
+// Display Notices with Read More for Priority Notices
 function displayNotices(notices) {
     const container = document.getElementById('noticesContainer');
     if (!container) return;
@@ -300,7 +320,6 @@ function displayNotices(notices) {
         return;
     }
     
-    // Separate priority notices
     const priorityNotices = notices.filter(n => n.isPriority === true);
     const normalNotices = notices.filter(n => n.isPriority !== true);
     
@@ -308,13 +327,17 @@ function displayNotices(notices) {
     
     // Priority notices
     if (priorityNotices.length > 0) {
-        allNoticesHTML += priorityNotices.map(notice => {
+        allNoticesHTML += priorityNotices.map((notice, idx) => {
             let badgeHtml = '';
             if (notice.badge === 'live') badgeHtml = '<span class="recruitment-badge">🔴 LIVE</span>';
             else if (notice.badge === 'new') badgeHtml = '<span class="badge-new">🟢 NEW</span>';
             else if (notice.badge === 'upcoming') badgeHtml = '<span class="badge-upcoming">🟡 UPCOMING</span>';
             
-            // Generate buttons only if text and link both exist
+            const isLongMessage = notice.message.length > 220;
+            const shortMessage = isLongMessage ? notice.message.substring(0, 220) + '...' : notice.message;
+            const uniqueId = `notice-${Date.now()}-${idx}`;
+            const fullMessageClean = notice.message.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            
             let buttonsHtml = '';
             if (notice.button1Text && notice.button1Link) {
                 buttonsHtml += `<a href="${notice.button1Link}" target="_blank" class="recruitment-btn primary" style="margin-right:10px;"><i class="fas fa-paper-plane"></i> ${escapeHtml(notice.button1Text)}</a>`;
@@ -324,13 +347,16 @@ function displayNotices(notices) {
             }
             
             return `
-                <div class="recruitment-notice">
+                <div class="recruitment-notice" id="${uniqueId}">
                     <div class="recruitment-notice-header">
                         ${badgeHtml}
                         <span class="recruitment-date">📅 ${new Date(notice.date).toLocaleDateString()}</span>
                     </div>
                     <h3 class="recruitment-title">${escapeHtml(notice.title)}</h3>
-                    <p class="recruitment-desc">${escapeHtml(notice.message)}</p>
+                    <div class="recruitment-desc" id="${uniqueId}-desc">
+                        ${escapeHtml(shortMessage).replace(/\n/g, '<br>')}
+                    </div>
+                    ${isLongMessage ? `<button class="read-more-notice-btn" data-id="${uniqueId}" data-fullmsg="${escapeHtml(fullMessageClean)}">Read More ↓</button>` : ''}
                     ${buttonsHtml ? `<div class="recruitment-buttons" style="margin-top:15px;">${buttonsHtml}</div>` : ''}
                 </div>
             `;
@@ -359,7 +385,7 @@ function displayNotices(notices) {
     
     container.innerHTML = allNoticesHTML;
     
-    // Re-attach read more event listeners
+    // Normal notices read more
     document.querySelectorAll('.read-more-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -370,7 +396,8 @@ function displayNotices(notices) {
         });
     });
 }
-// Show Notice Modal with full content
+
+// Show Notice Modal
 function showNoticeModal(title, date, message) {
     const modal = document.getElementById('noticeModal');
     const modalTitle = document.getElementById('noticeModalTitle');

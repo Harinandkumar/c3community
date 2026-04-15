@@ -1889,3 +1889,22 @@ footer {
         align-items: flex-start;
     }
 }
+
+/* Read More Button for Priority Notice */
+.read-more-notice-btn {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 12px;
+    display: inline-block;
+}
+
+.read-more-notice-btn:hover {
+    background: var(--primary);
+    color: white;
+}
