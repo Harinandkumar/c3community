@@ -683,7 +683,29 @@
                 <option value="upcoming">🟡 UPCOMING</option>
             </select>
         </div>
-        
+        <!-- Button 1 (Optional) -->
+<div class="form-row">
+    <div class="form-group">
+        <label>🔘 Button 1 Text <span style="color:#888;">(Optional)</span></label>
+        <input type="text" id="notifBtn1Text" placeholder="e.g., Apply Now, Register">
+    </div>
+    <div class="form-group">
+        <label>🔗 Button 1 Link <span style="color:#888;">(Optional)</span></label>
+        <input type="text" id="notifBtn1Link" placeholder="https://...">
+    </div>
+</div>
+
+<!-- Button 2 (Optional) -->
+<div class="form-row">
+    <div class="form-group">
+        <label>🔘 Button 2 Text <span style="color:#888;">(Optional)</span></label>
+        <input type="text" id="notifBtn2Text" placeholder="e.g., Rule Book, Learn More">
+    </div>
+    <div class="form-group">
+        <label>🔗 Button 2 Link <span style="color:#888;">(Optional)</span></label>
+        <input type="text" id="notifBtn2Link" placeholder="https://...">
+    </div>
+</div>
         <button class="btn btn-primary" onclick="sendNotification()">Send Notification</button>
     </div>
     
@@ -1072,6 +1094,10 @@ window.sendNotification = async () => {
     const message = document.getElementById('notifMessage')?.value;
     const isPriority = document.getElementById('notifPriority')?.value === 'true';
     const badge = document.getElementById('notifBadge')?.value;
+    const button1Text = document.getElementById('notifBtn1Text')?.value;
+    const button1Link = document.getElementById('notifBtn1Link')?.value;
+    const button2Text = document.getElementById('notifBtn2Text')?.value;
+    const button2Link = document.getElementById('notifBtn2Link')?.value;
     
     if (!title || !message) { 
         alert('Please fill title and message'); 
@@ -1085,7 +1111,10 @@ window.sendNotification = async () => {
                 'Authorization': `Bearer ${adminToken}`, 
                 'Content-Type': 'application/json' 
             },
-            body: JSON.stringify({ title, message, isPriority, badge })
+            body: JSON.stringify({ 
+                title, message, isPriority, badge,
+                button1Text, button1Link, button2Text, button2Link
+            })
         });
         
         if (response.ok) {
@@ -1094,6 +1123,10 @@ window.sendNotification = async () => {
             document.getElementById('notifMessage').value = '';
             document.getElementById('notifPriority').value = 'false';
             document.getElementById('notifBadge').value = 'none';
+            document.getElementById('notifBtn1Text').value = '';
+            document.getElementById('notifBtn1Link').value = '';
+            document.getElementById('notifBtn2Text').value = '';
+            document.getElementById('notifBtn2Link').value = '';
             loadNotifications();
         } else {
             alert('❌ Failed to send notification');
@@ -1102,7 +1135,6 @@ window.sendNotification = async () => {
         alert('Error sending notification');
     }
 };
-
 // Updated loadNotifications function (to show priority and badge)
 async function loadNotifications() {
     const tbody = document.getElementById('notificationsTableBody');

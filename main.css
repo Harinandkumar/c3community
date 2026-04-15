@@ -1581,7 +1581,15 @@ footer {
         padding-top: 30px;
         margin-top: 30px;
     }
-
+    /* Recruitment Buttons Mobile */
+    .recruitment-buttons {
+        flex-direction: column;
+    }
+    
+    .recruitment-btn {
+        justify-content: center;
+        width: 100%;
+    }
     /* Floating Upload */
     .float-upload {
         bottom: 20px;
@@ -1742,8 +1750,9 @@ footer {
     position: relative;
     overflow: hidden;
     animation: glowPulse 2s infinite;
+    word-wrap: break-word;      /* ✅ ADD THIS */
+    overflow-x: auto;           /* ✅ ADD THIS */
 }
-
 .recruitment-notice::before {
     content: '';
     position: absolute;
@@ -1806,8 +1815,51 @@ footer {
     margin-bottom: 0;
     line-height: 1.6;
     color: var(--text);
+    white-space: normal;
+    word-wrap: break-word;
+    word-break: break-word;
+     white-space: pre-wrap;
+    overflow-wrap: break-word;
+
+}
+.recruitment-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 15px;
 }
 
+.recruitment-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    border-radius: 40px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.recruitment-btn.primary {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+}
+
+.recruitment-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 240, 255, 0.3);
+}
+
+.recruitment-btn.secondary {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+}
+
+.recruitment-btn.secondary:hover {
+    background: rgba(0, 240, 255, 0.1);
+    transform: translateY(-2px);
+}
 /* Badge styles for normal notices */
 .badge-live, .badge-new, .badge-upcoming {
     display: inline-block;

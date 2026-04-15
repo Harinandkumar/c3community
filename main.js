@@ -300,20 +300,28 @@ function displayNotices(notices) {
         return;
     }
     
-    // Separate priority notices from normal notices
+    // Separate priority notices
     const priorityNotices = notices.filter(n => n.isPriority === true);
     const normalNotices = notices.filter(n => n.isPriority !== true);
     
     let allNoticesHTML = '';
     
-    // Display priority notices first (with special styling)
+    // Priority notices
     if (priorityNotices.length > 0) {
         allNoticesHTML += priorityNotices.map(notice => {
             let badgeHtml = '';
             if (notice.badge === 'live') badgeHtml = '<span class="recruitment-badge">🔴 LIVE</span>';
             else if (notice.badge === 'new') badgeHtml = '<span class="badge-new">🟢 NEW</span>';
             else if (notice.badge === 'upcoming') badgeHtml = '<span class="badge-upcoming">🟡 UPCOMING</span>';
-            else badgeHtml = '<span class="recruitment-badge">⭐ PRIORITY</span>';
+            
+            // Generate buttons only if text and link both exist
+            let buttonsHtml = '';
+            if (notice.button1Text && notice.button1Link) {
+                buttonsHtml += `<a href="${notice.button1Link}" target="_blank" class="recruitment-btn primary" style="margin-right:10px;"><i class="fas fa-paper-plane"></i> ${escapeHtml(notice.button1Text)}</a>`;
+            }
+            if (notice.button2Text && notice.button2Link) {
+                buttonsHtml += `<a href="${notice.button2Link}" target="_blank" class="recruitment-btn secondary">${escapeHtml(notice.button2Text)}</a>`;
+            }
             
             return `
                 <div class="recruitment-notice">
@@ -323,12 +331,13 @@ function displayNotices(notices) {
                     </div>
                     <h3 class="recruitment-title">${escapeHtml(notice.title)}</h3>
                     <p class="recruitment-desc">${escapeHtml(notice.message)}</p>
+                    ${buttonsHtml ? `<div class="recruitment-buttons" style="margin-top:15px;">${buttonsHtml}</div>` : ''}
                 </div>
             `;
         }).join('');
     }
     
-    // Display normal notices
+    // Normal notices
     if (normalNotices.length > 0) {
         allNoticesHTML += normalNotices.map((notice, index) => {
             const noticeDate = new Date(notice.date).toLocaleDateString('en-US', {
@@ -361,7 +370,6 @@ function displayNotices(notices) {
         });
     });
 }
-
 // Show Notice Modal with full content
 function showNoticeModal(title, date, message) {
     const modal = document.getElementById('noticeModal');
