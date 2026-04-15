@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Gallery - Creative Coding Community | GEC Samastipur</title>
+    <link rel="shortcut icon" href="assets/img/logowithoutname.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f0ff;
+            --secondary: #ff2d75;
+            --bg: #0a0e17;
+            --card-bg: #1a1f2d;
+            --text: #ffffff;
+            --text-secondary: #a0a0b0;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+        [data-theme="light"] {
+            --primary: #0066ff;
+            --secondary: #ff3366;
+            --bg: #f0f5ff;
+            --card-bg: #ffffff;
+            --text: #1a1a2e;
+            --text-secondary: #4a4a5a;
+            --border: rgba(0, 0, 0, 0.08);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        .gallery-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        .gallery-header .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .gallery-header .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+        .gallery-header .logo img { width: 45px; height: 45px; }
+        .gallery-header .logo h1 { font-size: 1.3rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .back-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,240,255,0.3); }
+        .gallery-main { padding: 100px 24px 60px; max-width: 1400px; margin: 0 auto; }
+        .gallery-title { text-align: center; margin-bottom: 50px; }
+        .gallery-title h2 { font-size: 2.5rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .gallery-title p { color: var(--text-secondary); margin-top: 10px; }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        .gallery-item {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            aspect-ratio: 1;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            transition: transform 0.3s;
+        }
+        .gallery-item:hover { transform: scale(1.02); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .gallery-item:hover img { transform: scale(1.05); }
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+        .gallery-item:hover .gallery-overlay { transform: translateY(0); }
+        .gallery-overlay h3 { color: white; font-size: 1rem; }
+        .image-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .image-modal.active { display: flex; }
+        .image-modal-content { position: relative; max-width: 90%; max-height: 90%; }
+        .image-modal-content img { max-width: 100%; max-height: 90vh; border-radius: 10px; }
+        .close-modal {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            font-size: 2rem;
+            color: white;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+            .gallery-header .logo h1 { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <header class="gallery-header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="assets/img/logowithoutname.png" alt="logo">
+                <h1>Creative Coding Community</h1>
+            </a>
+            <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        </div>
+    </header>
+
+    <main class="gallery-main">
+        <div class="gallery-title">
+            <h2><i class="fas fa-images"></i> Community Gallery</h2>
+            <p>Explore moments from our events, workshops, and community gatherings.</p>
+        </div>
+        <div class="gallery-grid" id="galleryGrid">
+            <div class="gallery-item"><img src="assets/img/event.jpg" alt="Event"><div class="gallery-overlay"><h3>Intra College Coding Competition</h3></div></div>
+            <div class="gallery-item"><img src="assets/img/4th.jpg" alt="Event"><div class="gallery-overlay"><h3>Recruitment 2k23 Batch</h3></div></div>
+            <div class="gallery-item"><img src="assets/img/355.jpg" alt="Event"><div class="gallery-overlay"><h3>Recruitment 2k23 Batch</h3></div></div>
+            <div class="gallery-item"><img src="assets/recyuitment1.jpg" alt="Event"><div class="gallery-overlay"><h3>Recruitment 2k23 Batch</h3></div></div>
+            <div class="gallery-item"><img src="assets/img/3.png" alt="Event"><div class="gallery-overlay"><h3>Recruitment 2k23 Batch</h3></div></div>
+            <div class="gallery-item"><img src="assets/img/ui ux gallery.jpg" alt="Event"><div class="gallery-overlay"><h3>UI/UX Arena</h3></div></div>
+            <div class="gallery-item"><img src="assets/img/quiz clash photo.jpg" alt="Event"><div class="gallery-overlay"><h3>QUIZ CLASH</h3></div></div>
+        </div>
+    </main>
+
+    <div class="image-modal" id="imageModal">
+        <div class="image-modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <img src="" alt="Full Image" id="modalImage">
+        </div>
+    </div>
+
+    <script>
+        // Theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        
+        // Image Modal
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        const imageModal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const closeModal = document.getElementById('closeModal');
+        
+        galleryItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const imgSrc = item.querySelector('img').src;
+                modalImage.src = imgSrc;
+                imageModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+        
+        closeModal.addEventListener('click', () => {
+            imageModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+        
+        imageModal.addEventListener('click', (e) => {
+            if (e.target === imageModal) {
+                imageModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+    </script>
+</body>
+</html>
