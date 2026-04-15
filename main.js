@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initSmoothScroll();
     fetchEvents();
     fetchNotices();
+    loadDynamicNavItems();  // ✅ NEW: Load dynamic nav items
     initLoadingScreen();
     initMatrixBackground();
     initCodeBackground();
@@ -58,7 +59,6 @@ function initMobileNav() {
             if (icon) {
                 icon.className = navLinks.classList.contains('active') ? 'fas fa-times' : 'fas fa-bars';
             }
-            // Prevent body scroll when menu is open
             if (navLinks.classList.contains('active')) {
                 document.body.style.overflow = 'hidden';
             } else {
@@ -66,7 +66,6 @@ function initMobileNav() {
             }
         });
         
-        // Close menu when clicking on a link
         document.querySelectorAll('.nav-links a').forEach(link => {
             link.addEventListener('click', () => {
                 navLinks.classList.remove('active');
@@ -76,7 +75,6 @@ function initMobileNav() {
             });
         });
         
-        // Close menu when clicking outside
         document.addEventListener('click', (e) => {
             if (navLinks.classList.contains('active') && 
                 !navLinks.contains(e.target) && 
@@ -88,6 +86,45 @@ function initMobileNav() {
             }
         });
     }
+}
+
+// ========== DYNAMIC NAV ITEMS (NEW FEATURE) ==========
+async function loadDynamicNavItems() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/public/nav-items`);
+        if (!response.ok) throw new Error('Failed to fetch nav items');
+        const items = await response.json();
+        displayDynamicNavItems(items);
+    } catch (error) {
+        console.error('Error loading nav items:', error);
+    }
+}
+
+function displayDynamicNavItems(items) {
+    const container = document.getElementById('dynamicNavItems');
+    if (!container) return;
+    
+    if (!items || items.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+    
+    container.innerHTML = items.map(item => {
+        let badgeHtml = '';
+        if (item.badge === 'live') badgeHtml = '<span class="badge-live">🔴 LIVE</span>';
+        else if (item.badge === 'new') badgeHtml = '<span class="badge-new">🟢 NEW</span>';
+        else if (item.badge === 'upcoming') badgeHtml = '<span class="badge-upcoming">🟡 UPCOMING</span>';
+        
+        const target = item.target === '_blank' ? 'target="_blank" rel="noopener noreferrer"' : '';
+        
+        return `
+            <li>
+                <a href="${escapeHtml(item.link)}" ${target} class="nav-link">
+                    <i class="fas ${item.icon}"></i> ${escapeHtml(item.name)} ${badgeHtml}
+                </a>
+            </li>
+        `;
+    }).join('');
 }
 
 // Auth Modal with Scrollable Form
@@ -266,7 +303,6 @@ function displayNotices(notices) {
         `;
     }).join('');
     
-    // Add event listeners to Read More buttons
     document.querySelectorAll('.read-more-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -476,3 +512,4 @@ function initCodeBackground() {
 // Make functions global for retry buttons
 window.fetchEvents = fetchEvents;
 window.fetchNotices = fetchNotices;
+window.loadDynamicNavItems = loadDynamicNavItems;
