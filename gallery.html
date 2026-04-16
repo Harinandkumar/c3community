@@ -168,6 +168,8 @@
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 25px;
         }
+        
+        /* Entire card is clickable */
         .gallery-item {
             position: relative;
             border-radius: 16px;
@@ -192,12 +194,23 @@
             height: 250px;
             object-fit: cover;
             transition: transform 0.5s;
+            background: var(--bg);
+            pointer-events: none; /* Allows click to pass to parent */
         }
         .gallery-item:hover img {
             transform: scale(1.05);
         }
         
-        /* Category Badge on Image */
+        /* Lazy Loading Image Style */
+        .gallery-item img.lazy {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .gallery-item img.lazy.loaded {
+            opacity: 1;
+        }
+        
+        /* Category Badge on Image - remains visible */
         .category-badge {
             position: absolute;
             top: 15px;
@@ -208,65 +221,52 @@
             border-radius: 20px;
             font-size: 11px;
             z-index: 2;
+            pointer-events: none; /* Allows click to pass through */
         }
         
-        /* Overlay */
+        /* Overlay - Minimal, shows on hover */
         .gallery-overlay {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-            padding: 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 15px 20px;
             transform: translateY(100%);
             transition: transform 0.3s;
+            pointer-events: none;
         }
         .gallery-item:hover .gallery-overlay {
             transform: translateY(0);
         }
         .gallery-overlay h3 {
             color: white;
-            font-size: 1rem;
-            margin-bottom: 5px;
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .gallery-overlay p {
-            font-size: 11px;
+            font-size: 10px;
             color: #aaa;
         }
-        .overlay-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 12px;
-        }
-        .overlay-actions button {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 11px;
-            transition: all 0.3s;
-        }
-        .overlay-actions button:hover {
-            background: var(--primary);
-            color: var(--bg);
-        }
         
-        /* Lightbox */
+        /* ========== LIGHTBOX MODAL (Full Screen) ========== */
         .lightbox {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.95);
+            background: rgba(0, 0, 0, 0.96);
             z-index: 2000;
             display: none;
             justify-content: center;
             align-items: center;
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.3s ease;
+            cursor: pointer;
         }
         .lightbox.active {
             display: flex;
@@ -276,41 +276,54 @@
             position: relative;
             max-width: 90%;
             max-height: 90%;
+            cursor: default;
         }
         .lightbox-content img {
             max-width: 100%;
             max-height: 85vh;
-            border-radius: 12px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            border-radius: 8px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s ease;
         }
+        
+        /* Lightbox Navigation Buttons */
         .lightbox-close {
             position: absolute;
-            top: -40px;
+            top: -50px;
             right: 0;
             font-size: 2rem;
             color: white;
             cursor: pointer;
             background: none;
             border: none;
+            transition: transform 0.2s;
+            z-index: 10;
+        }
+        .lightbox-close:hover {
+            transform: scale(1.1);
+            color: var(--primary);
         }
         .lightbox-prev, .lightbox-next {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
             border: none;
             color: white;
             font-size: 2rem;
             cursor: pointer;
-            padding: 15px;
+            padding: 15px 20px;
             border-radius: 50%;
             transition: all 0.3s;
+            z-index: 10;
         }
-        .lightbox-prev { left: -60px; }
-        .lightbox-next { right: -60px; }
+        .lightbox-prev { left: -70px; }
+        .lightbox-next { right: -70px; }
         .lightbox-prev:hover, .lightbox-next:hover {
             background: var(--primary);
             color: var(--bg);
+            transform: translateY(-50%) scale(1.05);
         }
         .lightbox-caption {
             text-align: center;
@@ -323,20 +336,60 @@
         .loading-spinner { text-align: center; padding: 60px; color: var(--primary); }
         .empty-state { text-align: center; padding: 60px; color: var(--text-secondary); }
         
-        /* Responsive */
-        @media (max-width: 768px) {
-            .gallery-header .logo h1 { display: none; }
-            .gallery-main { padding: 80px 16px 40px; }
-            .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
-            .stats-bar { flex-direction: column; align-items: flex-start; }
-            .search-box input { width: 150px; }
+        /* ========== RESPONSIVE STYLES ========== */
+        @media (max-width: 1200px) {
+            .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        }
+        
+        @media (max-width: 992px) {
+            .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
+            .gallery-title h2 { font-size: 2rem; }
             .lightbox-prev { left: 10px; }
             .lightbox-next { right: 10px; }
-            .lightbox-prev, .lightbox-next { font-size: 1.5rem; padding: 10px; }
+            .lightbox-prev, .lightbox-next { font-size: 1.5rem; padding: 10px 15px; }
         }
-        @media (max-width: 480px) {
-            .gallery-grid { grid-template-columns: 1fr; }
+        
+        @media (max-width: 768px) {
+            .gallery-header .logo h1 { display: none; }
+            .gallery-header { padding: 12px 16px; }
+            .gallery-main { padding: 80px 16px 40px; }
+            .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
+            .stats-bar { flex-direction: column; align-items: flex-start; }
+            .search-box { width: 100%; }
+            .search-box input { width: 100%; }
             .category-filters { justify-content: center; }
+            .filter-btn { padding: 6px 14px; font-size: 12px; }
+            .lightbox-close { top: -40px; font-size: 1.5rem; }
+            .lightbox-prev, .lightbox-next { padding: 8px 12px; font-size: 1.2rem; }
+            .gallery-overlay h3 { font-size: 0.8rem; white-space: normal; }
+        }
+        
+        @media (max-width: 576px) {
+            .gallery-grid { grid-template-columns: 1fr; gap: 15px; }
+            .gallery-item img { height: 220px; }
+            .stats-bar { padding: 12px 15px; }
+            .image-count { font-size: 12px; }
+            .image-count span { font-size: 16px; }
+            .category-filters { gap: 8px; }
+            .filter-btn { padding: 5px 12px; font-size: 11px; }
+            .lightbox-caption { font-size: 11px; }
+        }
+        
+        @media (max-width: 480px) {
+            .gallery-main { padding: 70px 12px 30px; }
+            .gallery-title h2 { font-size: 1.5rem; }
+            .gallery-title p { font-size: 0.8rem; }
+            .category-badge { font-size: 9px; padding: 3px 8px; top: 10px; left: 10px; }
+            .gallery-overlay { padding: 10px 12px; }
+            .gallery-overlay h3 { font-size: 0.7rem; }
+        }
+        
+        /* Landscape mode */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .gallery-main { padding: 70px 16px 30px; }
+            .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+            .gallery-item img { height: 200px; }
+            .lightbox-content img { max-height: 70vh; }
         }
     </style>
 </head>
@@ -357,7 +410,6 @@
             <p>Explore moments from our events, workshops, and community gatherings</p>
         </div>
         
-        <!-- Stats & Search Bar -->
         <div class="stats-bar">
             <div class="image-count">
                 <i class="fas fa-images"></i> <span id="imageCount">0</span> images in gallery
@@ -368,13 +420,11 @@
             </div>
         </div>
         
-        <!-- Category Filters (Dynamic) -->
         <div class="category-filters" id="categoryFilters">
             <button class="filter-btn active" data-category="all">All</button>
             <div class="loading-spinner" style="padding: 10px;"><i class="fas fa-spinner fa-spin"></i> Loading categories...</div>
         </div>
         
-        <!-- Gallery Grid -->
         <div class="gallery-grid" id="galleryGrid">
             <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading images...</div>
         </div>
@@ -392,7 +442,7 @@
     </div>
 
     <script>
-        const API_BASE_URL = 'https://backend-glo6.onrender.com'; // Change to 'http://localhost:3000' for local testing
+        const API_BASE_URL = 'https://backend-glo6.onrender.com';
         
         // Theme
         const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -409,8 +459,7 @@
             { src: "assets/img/quiz clash photo.jpg", title: "QUIZ CLASH", date: "2024", category: "competitions" }
         ];
         
-        // Category colors mapping
-        const categoryColors = {
+        let categoryColors = {
             'events': '#00f0ff',
             'workshops': '#f0ff00',
             'competitions': '#ff2d75',
@@ -425,15 +474,45 @@
         let currentFilteredImages = [];
         let dynamicCategories = [];
         
+        // Touch swipe variables
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        // Lazy loading observer
+        let lazyImageObserver;
+        
+        function initLazyLoading() {
+            if ('IntersectionObserver' in window) {
+                lazyImageObserver = new IntersectionObserver(function(entries) {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            const src = img.dataset.src;
+                            if (src) {
+                                img.src = src;
+                                img.classList.add('loaded');
+                                img.removeAttribute('data-src');
+                            }
+                            lazyImageObserver.unobserve(img);
+                        }
+                    });
+                });
+            }
+        }
+        
+        function observeLazyImages() {
+            if (!lazyImageObserver) return;
+            const lazyImages = document.querySelectorAll('img.lazy');
+            lazyImages.forEach(img => lazyImageObserver.observe(img));
+        }
+        
         // Load categories from backend
         async function loadCategories() {
-            const filterContainer = document.getElementById('categoryFilters');
             try {
                 const response = await fetch(`${API_BASE_URL}/api/public/categories`);
                 if (response.ok) {
                     dynamicCategories = await response.json();
                 }
-                // Always add "All" button plus static categories if no dynamic
                 renderCategoryFilters();
             } catch (error) {
                 console.error('Error loading categories:', error);
@@ -447,27 +526,18 @@
             
             let html = '<button class="filter-btn active" data-category="all">All</button>';
             
-            // Add dynamic categories from backend
             for (let i = 0; i < dynamicCategories.length; i++) {
                 const cat = dynamicCategories[i];
                 if (cat.isActive !== false) {
                     html += `<button class="filter-btn" data-category="${escapeHtml(cat.name)}">${cat.icon} ${escapeHtml(cat.name)}</button>`;
-                    // Store color for this category
                     categoryColors[cat.name] = cat.color;
                 }
             }
             
-            // Add static categories (if not already added)
             const staticCatList = ['events', 'workshops', 'competitions', 'recruitment', 'other'];
             for (let i = 0; i < staticCatList.length; i++) {
                 const catName = staticCatList[i];
-                let alreadyExists = false;
-                for (let j = 0; j < dynamicCategories.length; j++) {
-                    if (dynamicCategories[j].name === catName) {
-                        alreadyExists = true;
-                        break;
-                    }
-                }
+                let alreadyExists = dynamicCategories.some(c => c.name === catName);
                 if (!alreadyExists) {
                     let icon = '📸';
                     if (catName === 'events') icon = '🎯';
@@ -480,7 +550,6 @@
             
             filterContainer.innerHTML = html;
             
-            // Re-attach event listeners
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -492,7 +561,6 @@
             });
         }
         
-        // Load all images
         async function loadGallery() {
             const container = document.getElementById('galleryGrid');
             container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading images...</div>';
@@ -523,18 +591,17 @@
         }
         
         function updateImageCount() {
-            document.getElementById('imageCount').textContent = allImages.length;
+            const countElem = document.getElementById('imageCount');
+            if (countElem) countElem.textContent = allImages.length;
         }
         
         function filterAndDisplayImages() {
             let filtered = [...allImages];
             
-            // Apply category filter
             if (currentFilter !== 'all') {
                 filtered = filtered.filter(img => img.category === currentFilter);
             }
             
-            // Apply search filter
             if (currentSearch) {
                 filtered = filtered.filter(img => 
                     img.title.toLowerCase().includes(currentSearch.toLowerCase())
@@ -546,13 +613,11 @@
         }
         
         function getCategoryIcon(category) {
-            // Check dynamic categories first
             for (let i = 0; i < dynamicCategories.length; i++) {
                 if (dynamicCategories[i].name === category) {
                     return dynamicCategories[i].icon;
                 }
             }
-            // Fallback to static
             switch(category) {
                 case 'events': return '🎯';
                 case 'workshops': return '💻';
@@ -563,17 +628,15 @@
         }
         
         function getCategoryColor(category) {
-            // Check dynamic categories first
             for (let i = 0; i < dynamicCategories.length; i++) {
                 if (dynamicCategories[i].name === category) {
                     return dynamicCategories[i].color;
                 }
             }
-            // Fallback to static
-            if (categoryColors[category]) return categoryColors[category];
-            return '#888888';
+            return categoryColors[category] || '#888888';
         }
         
+        // ========== UPDATED: Entire card clickable ==========
         function displayGallery(images) {
             const container = document.getElementById('galleryGrid');
             
@@ -589,78 +652,94 @@
                 const categoryIcon = getCategoryIcon(img.category);
                 const badgeColor = getCategoryColor(img.category);
                 
+                // Each gallery item has onclick to open lightbox with that image index
                 html += `
-                    <div class="gallery-item" data-index="${i}" style="animation-delay: ${i * 0.05}s">
+                    <div class="gallery-item" data-index="${i}" onclick="openLightbox(${i})">
                         <div class="category-badge" style="color: ${badgeColor}; border: 1px solid ${badgeColor};">${categoryIcon} ${img.category}</div>
-                        <img src="${imageSrc}" alt="${escapeHtml(img.title)}" loading="lazy" onerror="this.src='assets/img/default-event.jpg'">
+                        <img class="lazy" data-src="${imageSrc}" alt="${escapeHtml(img.title)}" onerror="this.src='assets/img/default-event.jpg'">
                         <div class="gallery-overlay">
                             <h3>${escapeHtml(img.title)}</h3>
                             <p><i class="far fa-calendar-alt"></i> ${img.date}</p>
-                            <div class="overlay-actions">
-                                <button onclick="openLightbox(${i})"><i class="fas fa-expand"></i> View</button>
-                                <button onclick="downloadImage('${imageSrc}', '${escapeHtml(img.title)}')"><i class="fas fa-download"></i> Download</button>
-                            </div>
                         </div>
                     </div>
                 `;
             }
             container.innerHTML = html;
+            
+            initLazyLoading();
+            observeLazyImages();
+            
+            // Add animation delays
+            const items = document.querySelectorAll('.gallery-item');
+            items.forEach((item, idx) => {
+                item.style.animationDelay = (idx * 0.05) + 's';
+            });
         }
         
-        // Open Lightbox
+        // ========== LIGHTBOX FUNCTIONS ==========
         function openLightbox(index) {
             currentImageIndex = index;
-            updateLightbox();
-            document.getElementById('lightbox').classList.add('active');
-            document.body.style.overflow = 'hidden';
+            updateLightboxImage();
+            const lightbox = document.getElementById('lightbox');
+            if (lightbox) {
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
         }
         
-        function updateLightbox() {
+        function updateLightboxImage() {
             const currentImg = currentFilteredImages[currentImageIndex];
             if (currentImg) {
                 const imgSrc = currentImg.src || currentImg.cloudinaryUrl;
                 const categoryIcon = getCategoryIcon(currentImg.category);
-                document.getElementById('lightboxImg').src = imgSrc;
-                document.getElementById('lightboxCaption').innerHTML = 
-                    `<strong>${escapeHtml(currentImg.title)}</strong> | 📅 ${currentImg.date} | 🏷️ ${categoryIcon} ${currentImg.category}`;
+                const lightboxImg = document.getElementById('lightboxImg');
+                const lightboxCaption = document.getElementById('lightboxCaption');
+                if (lightboxImg) lightboxImg.src = imgSrc;
+                if (lightboxCaption) {
+                    lightboxCaption.innerHTML = `<strong>${escapeHtml(currentImg.title)}</strong> | 📅 ${currentImg.date} | 🏷️ ${categoryIcon} ${currentImg.category}`;
+                }
             }
         }
         
+        // Circular navigation: after last image, go to first; before first, go to last
         function nextImage() {
-            if (currentImageIndex < currentFilteredImages.length - 1) {
-                currentImageIndex++;
-                updateLightbox();
-            }
+            if (currentFilteredImages.length === 0) return;
+            currentImageIndex = (currentImageIndex + 1) % currentFilteredImages.length;
+            updateLightboxImage();
         }
         
         function prevImage() {
-            if (currentImageIndex > 0) {
-                currentImageIndex--;
-                updateLightbox();
-            }
+            if (currentFilteredImages.length === 0) return;
+            currentImageIndex = (currentImageIndex - 1 + currentFilteredImages.length) % currentFilteredImages.length;
+            updateLightboxImage();
         }
         
         function closeLightbox() {
-            document.getElementById('lightbox').classList.remove('active');
-            document.body.style.overflow = 'auto';
+            const lightbox = document.getElementById('lightbox');
+            if (lightbox) {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
         }
         
-        // Download Image
-        function downloadImage(url, filename) {
-            fetch(url)
-                .then(response => response.blob())
-                .then(blob => {
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.download = filename.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.jpg';
-                    link.click();
-                    URL.revokeObjectURL(link.href);
-                })
-                .catch(() => {
-                    window.open(url, '_blank');
-                });
+        // ========== TOUCH SWIPE SUPPORT ==========
+        function handleTouchStart(e) {
+            touchStartX = e.changedTouches[0].screenX;
         }
         
+        function handleTouchEnd(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            const swipeThreshold = 50;
+            if (touchEndX < touchStartX - swipeThreshold) {
+                // Swipe left -> next image
+                nextImage();
+            } else if (touchEndX > touchStartX + swipeThreshold) {
+                // Swipe right -> previous image
+                prevImage();
+            }
+        }
+        
+        // Helper function
         function escapeHtml(text) {
             if (!text) return '';
             const div = document.createElement('div');
@@ -668,25 +747,52 @@
             return div.innerHTML;
         }
         
-        // Event Listeners
-        document.getElementById('searchInput')?.addEventListener('input', (e) => {
-            currentSearch = e.target.value;
-            filterAndDisplayImages();
-        });
+        // ========== EVENT LISTENERS ==========
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                currentSearch = e.target.value;
+                filterAndDisplayImages();
+            });
+        }
         
-        document.getElementById('lightboxClose')?.addEventListener('click', closeLightbox);
-        document.getElementById('lightboxPrev')?.addEventListener('click', prevImage);
-        document.getElementById('lightboxNext')?.addEventListener('click', nextImage);
-        document.getElementById('lightbox')?.addEventListener('click', (e) => {
-            if (e.target === document.getElementById('lightbox')) closeLightbox();
-        });
+        const lightboxClose = document.getElementById('lightboxClose');
+        if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+        
+        const lightboxPrev = document.getElementById('lightboxPrev');
+        if (lightboxPrev) lightboxPrev.addEventListener('click', prevImage);
+        
+        const lightboxNext = document.getElementById('lightboxNext');
+        if (lightboxNext) lightboxNext.addEventListener('click', nextImage);
+        
+        const lightbox = document.getElementById('lightbox');
+        if (lightbox) {
+            lightbox.addEventListener('click', function(e) {
+                if (e.target === lightbox) closeLightbox();
+            });
+            
+            // Add touch swipe listeners to lightbox content
+            const lightboxContent = document.querySelector('.lightbox-content');
+            if (lightboxContent) {
+                lightboxContent.addEventListener('touchstart', handleTouchStart, false);
+                lightboxContent.addEventListener('touchend', handleTouchEnd, false);
+            }
+        }
         
         // Keyboard navigation
-        document.addEventListener('keydown', (e) => {
-            if (document.getElementById('lightbox').classList.contains('active')) {
-                if (e.key === 'ArrowLeft') prevImage();
-                if (e.key === 'ArrowRight') nextImage();
-                if (e.key === 'Escape') closeLightbox();
+        document.addEventListener('keydown', function(e) {
+            const lightboxElem = document.getElementById('lightbox');
+            if (lightboxElem && lightboxElem.classList.contains('active')) {
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    prevImage();
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    nextImage();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    closeLightbox();
+                }
             }
         });
         
