@@ -207,7 +207,6 @@
             backdrop-filter: blur(4px);
             border-radius: 20px;
             font-size: 11px;
-            color: var(--primary);
             z-index: 2;
         }
         
@@ -369,14 +368,10 @@
             </div>
         </div>
         
-        <!-- Category Filters -->
+        <!-- Category Filters (Dynamic) -->
         <div class="category-filters" id="categoryFilters">
             <button class="filter-btn active" data-category="all">All</button>
-            <button class="filter-btn" data-category="events">🎯 Events</button>
-            <button class="filter-btn" data-category="workshops">💻 Workshops</button>
-            <button class="filter-btn" data-category="competitions">🏆 Competitions</button>
-            <button class="filter-btn" data-category="recruitment">📢 Recruitment</button>
-            <button class="filter-btn" data-category="other">📸 Other</button>
+            <div class="loading-spinner" style="padding: 10px;"><i class="fas fa-spinner fa-spin"></i> Loading categories...</div>
         </div>
         
         <!-- Gallery Grid -->
@@ -397,7 +392,7 @@
     </div>
 
     <script>
-        const API_BASE_URL = 'http://localhost:3000'; // Change to 'https://backend-glo6.onrender.com' for production
+        const API_BASE_URL = 'https://backend-glo6.onrender.com'; // Change to 'http://localhost:3000' for local testing
         
         // Theme
         const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -414,11 +409,88 @@
             { src: "assets/img/quiz clash photo.jpg", title: "QUIZ CLASH", date: "2024", category: "competitions" }
         ];
         
+        // Category colors mapping
+        const categoryColors = {
+            'events': '#00f0ff',
+            'workshops': '#f0ff00',
+            'competitions': '#ff2d75',
+            'recruitment': '#10b981',
+            'other': '#888888'
+        };
+        
         let allImages = [];
         let currentImageIndex = 0;
         let currentFilter = 'all';
         let currentSearch = '';
         let currentFilteredImages = [];
+        let dynamicCategories = [];
+        
+        // Load categories from backend
+        async function loadCategories() {
+            const filterContainer = document.getElementById('categoryFilters');
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/public/categories`);
+                if (response.ok) {
+                    dynamicCategories = await response.json();
+                }
+                // Always add "All" button plus static categories if no dynamic
+                renderCategoryFilters();
+            } catch (error) {
+                console.error('Error loading categories:', error);
+                renderCategoryFilters();
+            }
+        }
+        
+        function renderCategoryFilters() {
+            const filterContainer = document.getElementById('categoryFilters');
+            if (!filterContainer) return;
+            
+            let html = '<button class="filter-btn active" data-category="all">All</button>';
+            
+            // Add dynamic categories from backend
+            for (let i = 0; i < dynamicCategories.length; i++) {
+                const cat = dynamicCategories[i];
+                if (cat.isActive !== false) {
+                    html += `<button class="filter-btn" data-category="${escapeHtml(cat.name)}">${cat.icon} ${escapeHtml(cat.name)}</button>`;
+                    // Store color for this category
+                    categoryColors[cat.name] = cat.color;
+                }
+            }
+            
+            // Add static categories (if not already added)
+            const staticCatList = ['events', 'workshops', 'competitions', 'recruitment', 'other'];
+            for (let i = 0; i < staticCatList.length; i++) {
+                const catName = staticCatList[i];
+                let alreadyExists = false;
+                for (let j = 0; j < dynamicCategories.length; j++) {
+                    if (dynamicCategories[j].name === catName) {
+                        alreadyExists = true;
+                        break;
+                    }
+                }
+                if (!alreadyExists) {
+                    let icon = '📸';
+                    if (catName === 'events') icon = '🎯';
+                    else if (catName === 'workshops') icon = '💻';
+                    else if (catName === 'competitions') icon = '🏆';
+                    else if (catName === 'recruitment') icon = '📢';
+                    html += `<button class="filter-btn" data-category="${catName}">${icon} ${catName}</button>`;
+                }
+            }
+            
+            filterContainer.innerHTML = html;
+            
+            // Re-attach event listeners
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.category;
+                    currentImageIndex = 0;
+                    filterAndDisplayImages();
+                });
+            });
+        }
         
         // Load all images
         async function loadGallery() {
@@ -474,6 +546,13 @@
         }
         
         function getCategoryIcon(category) {
+            // Check dynamic categories first
+            for (let i = 0; i < dynamicCategories.length; i++) {
+                if (dynamicCategories[i].name === category) {
+                    return dynamicCategories[i].icon;
+                }
+            }
+            // Fallback to static
             switch(category) {
                 case 'events': return '🎯';
                 case 'workshops': return '💻';
@@ -483,14 +562,16 @@
             }
         }
         
-        function getCategoryBadgeColor(category) {
-            switch(category) {
-                case 'events': return 'var(--primary)';
-                case 'workshops': return '#f0ff00';
-                case 'competitions': return 'var(--secondary)';
-                case 'recruitment': return '#10b981';
-                default: return '#888';
+        function getCategoryColor(category) {
+            // Check dynamic categories first
+            for (let i = 0; i < dynamicCategories.length; i++) {
+                if (dynamicCategories[i].name === category) {
+                    return dynamicCategories[i].color;
+                }
             }
+            // Fallback to static
+            if (categoryColors[category]) return categoryColors[category];
+            return '#888888';
         }
         
         function displayGallery(images) {
@@ -501,26 +582,29 @@
                 return;
             }
             
-            container.innerHTML = images.map((img, index) => {
+            let html = '';
+            for (let i = 0; i < images.length; i++) {
+                const img = images[i];
                 const imageSrc = img.src || img.cloudinaryUrl;
                 const categoryIcon = getCategoryIcon(img.category);
-                const badgeColor = getCategoryBadgeColor(img.category);
+                const badgeColor = getCategoryColor(img.category);
                 
-                return `
-                    <div class="gallery-item" data-index="${index}" style="animation-delay: ${index * 0.05}s">
-                        <div class="category-badge" style="color: ${badgeColor}">${categoryIcon} ${img.category}</div>
+                html += `
+                    <div class="gallery-item" data-index="${i}" style="animation-delay: ${i * 0.05}s">
+                        <div class="category-badge" style="color: ${badgeColor}; border: 1px solid ${badgeColor};">${categoryIcon} ${img.category}</div>
                         <img src="${imageSrc}" alt="${escapeHtml(img.title)}" loading="lazy" onerror="this.src='assets/img/default-event.jpg'">
                         <div class="gallery-overlay">
                             <h3>${escapeHtml(img.title)}</h3>
                             <p><i class="far fa-calendar-alt"></i> ${img.date}</p>
                             <div class="overlay-actions">
-                                <button onclick="openLightbox(${index})"><i class="fas fa-expand"></i> View</button>
+                                <button onclick="openLightbox(${i})"><i class="fas fa-expand"></i> View</button>
                                 <button onclick="downloadImage('${imageSrc}', '${escapeHtml(img.title)}')"><i class="fas fa-download"></i> Download</button>
                             </div>
                         </div>
                     </div>
                 `;
-            }).join('');
+            }
+            container.innerHTML = html;
         }
         
         // Open Lightbox
@@ -535,9 +619,10 @@
             const currentImg = currentFilteredImages[currentImageIndex];
             if (currentImg) {
                 const imgSrc = currentImg.src || currentImg.cloudinaryUrl;
+                const categoryIcon = getCategoryIcon(currentImg.category);
                 document.getElementById('lightboxImg').src = imgSrc;
                 document.getElementById('lightboxCaption').innerHTML = 
-                    `<strong>${escapeHtml(currentImg.title)}</strong> | 📅 ${currentImg.date} | 🏷️ ${currentImg.category}`;
+                    `<strong>${escapeHtml(currentImg.title)}</strong> | 📅 ${currentImg.date} | 🏷️ ${categoryIcon} ${currentImg.category}`;
             }
         }
         
@@ -589,16 +674,6 @@
             filterAndDisplayImages();
         });
         
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentFilter = btn.dataset.category;
-                currentImageIndex = 0;
-                filterAndDisplayImages();
-            });
-        });
-        
         document.getElementById('lightboxClose')?.addEventListener('click', closeLightbox);
         document.getElementById('lightboxPrev')?.addEventListener('click', prevImage);
         document.getElementById('lightboxNext')?.addEventListener('click', nextImage);
@@ -615,8 +690,13 @@
             }
         });
         
-        // Load gallery
-        loadGallery();
+        // Initialize
+        async function init() {
+            await loadCategories();
+            await loadGallery();
+        }
+        
+        init();
     </script>
 </body>
 </html>
