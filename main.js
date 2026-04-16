@@ -1,5 +1,9 @@
 // API Configuration
+// const API_BASE_URL = 'https://backend-glo6.onrender.com';
 const API_BASE_URL = 'https://backend-glo6.onrender.com';
+
+
+// https://backend-glo6.onrender.com
 
 // Wait for DOM to load
 document.addEventListener('DOMContentLoaded', function() {

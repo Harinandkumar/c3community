@@ -3,28 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Gallery - Creative Coding Community | GEC Samastipur</title>
-    <link rel="shortcut icon" href="assets/img/logowithoutname.png" type="image/x-icon">
+    <title>Gallery - Creative Coding Community</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #00f0ff;
             --secondary: #ff2d75;
-            --bg: #0a0e17;
-            --card-bg: #1a1f2d;
             --text: #ffffff;
             --text-secondary: #a0a0b0;
-            --border: rgba(255, 255, 255, 0.08);
+            --bg: #0a0e17;
+            --card-bg: #1a1f2d;
+            --border: rgba(255, 255, 255, 0.1);
         }
         [data-theme="light"] {
             --primary: #0066ff;
             --secondary: #ff3366;
+            --text: #333333;
+            --text-secondary: #666666;
             --bg: #f0f5ff;
             --card-bg: #ffffff;
-            --text: #1a1a2e;
-            --text-secondary: #4a4a5a;
-            --border: rgba(0, 0, 0, 0.08);
+            --border: rgba(0, 0, 0, 0.1);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -33,6 +32,8 @@
             color: var(--text);
             min-height: 100vh;
         }
+        
+        /* Header */
         .gallery-header {
             position: fixed;
             top: 0;
@@ -50,6 +51,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
         .gallery-header .logo {
             display: flex;
@@ -58,7 +61,13 @@
             text-decoration: none;
         }
         .gallery-header .logo img { width: 45px; height: 45px; }
-        .gallery-header .logo h1 { font-size: 1.3rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .gallery-header .logo h1 { 
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
         .back-btn {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
@@ -69,13 +78,94 @@
             transition: all 0.3s;
         }
         .back-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,240,255,0.3); }
+        
+        /* Main Content */
         .gallery-main { padding: 100px 24px 60px; max-width: 1400px; margin: 0 auto; }
-        .gallery-title { text-align: center; margin-bottom: 50px; }
-        .gallery-title h2 { font-size: 2.5rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .gallery-title { text-align: center; margin-bottom: 30px; }
+        .gallery-title h2 { 
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
         .gallery-title p { color: var(--text-secondary); margin-top: 10px; }
+        
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px 20px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .image-count {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .image-count span {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        /* Search Box */
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 8px 18px;
+        }
+        .search-box i {
+            color: var(--text-secondary);
+        }
+        .search-box input {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+            width: 200px;
+        }
+        .search-box input::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        /* Category Filters */
+        .category-filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        .filter-btn {
+            padding: 8px 20px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: transparent;
+            color: white;
+        }
+        
+        /* Gallery Grid */
         .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 25px;
         }
         .gallery-item {
@@ -83,51 +173,171 @@
             border-radius: 16px;
             overflow: hidden;
             cursor: pointer;
-            aspect-ratio: 1;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            transition: transform 0.3s;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: fadeInUp 0.5s ease forwards;
+            opacity: 0;
         }
-        .gallery-item:hover { transform: scale(1.02); }
-        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
-        .gallery-item:hover img { transform: scale(1.05); }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .gallery-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 240, 255, 0.15);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+        
+        /* Category Badge on Image */
+        .category-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 4px 12px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            border-radius: 20px;
+            font-size: 11px;
+            color: var(--primary);
+            z-index: 2;
+        }
+        
+        /* Overlay */
         .gallery-overlay {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
             padding: 20px;
             transform: translateY(100%);
             transition: transform 0.3s;
         }
-        .gallery-item:hover .gallery-overlay { transform: translateY(0); }
-        .gallery-overlay h3 { color: white; font-size: 1rem; }
-        .image-modal {
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+        .gallery-overlay h3 {
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+        .gallery-overlay p {
+            font-size: 11px;
+            color: #aaa;
+        }
+        .overlay-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .overlay-actions button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.3s;
+        }
+        .overlay-actions button:hover {
+            background: var(--primary);
+            color: var(--bg);
+        }
+        
+        /* Lightbox */
+        .lightbox {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.95);
+            z-index: 2000;
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
-        .image-modal.active { display: flex; }
-        .image-modal-content { position: relative; max-width: 90%; max-height: 90%; }
-        .image-modal-content img { max-width: 100%; max-height: 90vh; border-radius: 10px; }
-        .close-modal {
+        .lightbox.active {
+            display: flex;
+            opacity: 1;
+        }
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+        }
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 85vh;
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+        .lightbox-close {
             position: absolute;
             top: -40px;
             right: 0;
             font-size: 2rem;
             color: white;
             cursor: pointer;
+            background: none;
+            border: none;
         }
+        .lightbox-prev, .lightbox-next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.5);
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        .lightbox-prev { left: -60px; }
+        .lightbox-next { right: -60px; }
+        .lightbox-prev:hover, .lightbox-next:hover {
+            background: var(--primary);
+            color: var(--bg);
+        }
+        .lightbox-caption {
+            text-align: center;
+            margin-top: 15px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        /* Loading & Empty State */
+        .loading-spinner { text-align: center; padding: 60px; color: var(--primary); }
+        .empty-state { text-align: center; padding: 60px; color: var(--text-secondary); }
+        
+        /* Responsive */
         @media (max-width: 768px) {
-            .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
             .gallery-header .logo h1 { display: none; }
+            .gallery-main { padding: 80px 16px 40px; }
+            .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
+            .stats-bar { flex-direction: column; align-items: flex-start; }
+            .search-box input { width: 150px; }
+            .lightbox-prev { left: 10px; }
+            .lightbox-next { right: 10px; }
+            .lightbox-prev, .lightbox-next { font-size: 1.5rem; padding: 10px; }
+        }
+        @media (max-width: 480px) {
+            .gallery-grid { grid-template-columns: 1fr; }
+            .category-filters { justify-content: center; }
         }
     </style>
 </head>
@@ -145,57 +355,268 @@
     <main class="gallery-main">
         <div class="gallery-title">
             <h2><i class="fas fa-images"></i> Community Gallery</h2>
-            <p>Explore moments from our events, workshops, and community gatherings.</p>
+            <p>Explore moments from our events, workshops, and community gatherings</p>
         </div>
+        
+        <!-- Stats & Search Bar -->
+        <div class="stats-bar">
+            <div class="image-count">
+                <i class="fas fa-images"></i> <span id="imageCount">0</span> images in gallery
+            </div>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search images...">
+            </div>
+        </div>
+        
+        <!-- Category Filters -->
+        <div class="category-filters" id="categoryFilters">
+            <button class="filter-btn active" data-category="all">All</button>
+            <button class="filter-btn" data-category="events">🎯 Events</button>
+            <button class="filter-btn" data-category="workshops">💻 Workshops</button>
+            <button class="filter-btn" data-category="competitions">🏆 Competitions</button>
+            <button class="filter-btn" data-category="recruitment">📢 Recruitment</button>
+            <button class="filter-btn" data-category="other">📸 Other</button>
+        </div>
+        
+        <!-- Gallery Grid -->
         <div class="gallery-grid" id="galleryGrid">
-            <div class="gallery-item"><img src="assets/img/event.jpg" alt="Event"><div class="gallery-overlay"><h3>Intra College Coding Competition</h3></div></div>
-            <div class="gallery-item"><img src="assets/img/4th.jpg" alt="Event"><div class="gallery-overlay"><h3>Recruitment 2k23 Batch</h3></div></div>
-            <div class="gallery-item"><img src="assets/img/355.jpg" alt="Event"><div class="gallery-overlay"><h3>Recruitment 2k23 Batch</h3></div></div>
-            <div class="gallery-item"><img src="assets/recyuitment1.jpg" alt="Event"><div class="gallery-overlay"><h3>Recruitment 2k23 Batch</h3></div></div>
-            <div class="gallery-item"><img src="assets/img/3.png" alt="Event"><div class="gallery-overlay"><h3>Recruitment 2k23 Batch</h3></div></div>
-            <div class="gallery-item"><img src="assets/img/ui ux gallery.jpg" alt="Event"><div class="gallery-overlay"><h3>UI/UX Arena</h3></div></div>
-            <div class="gallery-item"><img src="assets/img/quiz clash photo.jpg" alt="Event"><div class="gallery-overlay"><h3>QUIZ CLASH</h3></div></div>
+            <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading images...</div>
         </div>
     </main>
 
-    <div class="image-modal" id="imageModal">
-        <div class="image-modal-content">
-            <span class="close-modal" id="closeModal">&times;</span>
-            <img src="" alt="Full Image" id="modalImage">
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-content">
+            <button class="lightbox-close" id="lightboxClose">&times;</button>
+            <button class="lightbox-prev" id="lightboxPrev"><i class="fas fa-chevron-left"></i></button>
+            <img src="" alt="" id="lightboxImg">
+            <button class="lightbox-next" id="lightboxNext"><i class="fas fa-chevron-right"></i></button>
+            <div class="lightbox-caption" id="lightboxCaption"></div>
         </div>
     </div>
 
     <script>
+        const API_BASE_URL = 'http://localhost:3000'; // Change to 'https://backend-glo6.onrender.com' for production
+        
         // Theme
         const savedTheme = localStorage.getItem('theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
         
-        // Image Modal
-        const galleryItems = document.querySelectorAll('.gallery-item');
-        const imageModal = document.getElementById('imageModal');
-        const modalImage = document.getElementById('modalImage');
-        const closeModal = document.getElementById('closeModal');
+        // Static Images with Categories
+        const staticImages = [
+            { src: "assets/img/event.jpg", title: "Intra College Coding Competition", date: "2024", category: "events" },
+            { src: "assets/img/4th.jpg", title: "Recruitment 2k23 Batch", date: "2023", category: "recruitment" },
+            { src: "assets/img/355.jpg", title: "Recruitment 2k23 Batch", date: "2023", category: "recruitment" },
+            { src: "assets/recyuitment1.jpg", title: "Recruitment Interview", date: "2023", category: "recruitment" },
+            { src: "assets/img/3.png", title: "Workshop", date: "2023", category: "workshops" },
+            { src: "assets/img/ui ux gallery.jpg", title: "UI/UX Arena", date: "2024", category: "competitions" },
+            { src: "assets/img/quiz clash photo.jpg", title: "QUIZ CLASH", date: "2024", category: "competitions" }
+        ];
         
-        galleryItems.forEach(item => {
-            item.addEventListener('click', () => {
-                const imgSrc = item.querySelector('img').src;
-                modalImage.src = imgSrc;
-                imageModal.classList.add('active');
-                document.body.style.overflow = 'hidden';
+        let allImages = [];
+        let currentImageIndex = 0;
+        let currentFilter = 'all';
+        let currentSearch = '';
+        let currentFilteredImages = [];
+        
+        // Load all images
+        async function loadGallery() {
+            const container = document.getElementById('galleryGrid');
+            container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading images...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/public/gallery`);
+                let cloudinaryImages = [];
+                if (response.ok) {
+                    cloudinaryImages = await response.json();
+                    cloudinaryImages = cloudinaryImages.map(img => ({
+                        ...img,
+                        src: img.cloudinaryUrl,
+                        title: img.title,
+                        date: new Date(img.uploadDate).toLocaleDateString(),
+                        category: img.category || 'events',
+                        isCloudinary: true
+                    }));
+                }
+                allImages = [...staticImages, ...cloudinaryImages];
+                updateImageCount();
+                filterAndDisplayImages();
+            } catch (error) {
+                console.error('Error loading cloudinary images:', error);
+                allImages = [...staticImages];
+                updateImageCount();
+                filterAndDisplayImages();
+            }
+        }
+        
+        function updateImageCount() {
+            document.getElementById('imageCount').textContent = allImages.length;
+        }
+        
+        function filterAndDisplayImages() {
+            let filtered = [...allImages];
+            
+            // Apply category filter
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(img => img.category === currentFilter);
+            }
+            
+            // Apply search filter
+            if (currentSearch) {
+                filtered = filtered.filter(img => 
+                    img.title.toLowerCase().includes(currentSearch.toLowerCase())
+                );
+            }
+            
+            currentFilteredImages = filtered;
+            displayGallery(filtered);
+        }
+        
+        function getCategoryIcon(category) {
+            switch(category) {
+                case 'events': return '🎯';
+                case 'workshops': return '💻';
+                case 'competitions': return '🏆';
+                case 'recruitment': return '📢';
+                default: return '📸';
+            }
+        }
+        
+        function getCategoryBadgeColor(category) {
+            switch(category) {
+                case 'events': return 'var(--primary)';
+                case 'workshops': return '#f0ff00';
+                case 'competitions': return 'var(--secondary)';
+                case 'recruitment': return '#10b981';
+                default: return '#888';
+            }
+        }
+        
+        function displayGallery(images) {
+            const container = document.getElementById('galleryGrid');
+            
+            if (!images || images.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-images" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>No images found. Try different search or filter.</div>';
+                return;
+            }
+            
+            container.innerHTML = images.map((img, index) => {
+                const imageSrc = img.src || img.cloudinaryUrl;
+                const categoryIcon = getCategoryIcon(img.category);
+                const badgeColor = getCategoryBadgeColor(img.category);
+                
+                return `
+                    <div class="gallery-item" data-index="${index}" style="animation-delay: ${index * 0.05}s">
+                        <div class="category-badge" style="color: ${badgeColor}">${categoryIcon} ${img.category}</div>
+                        <img src="${imageSrc}" alt="${escapeHtml(img.title)}" loading="lazy" onerror="this.src='assets/img/default-event.jpg'">
+                        <div class="gallery-overlay">
+                            <h3>${escapeHtml(img.title)}</h3>
+                            <p><i class="far fa-calendar-alt"></i> ${img.date}</p>
+                            <div class="overlay-actions">
+                                <button onclick="openLightbox(${index})"><i class="fas fa-expand"></i> View</button>
+                                <button onclick="downloadImage('${imageSrc}', '${escapeHtml(img.title)}')"><i class="fas fa-download"></i> Download</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Open Lightbox
+        function openLightbox(index) {
+            currentImageIndex = index;
+            updateLightbox();
+            document.getElementById('lightbox').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function updateLightbox() {
+            const currentImg = currentFilteredImages[currentImageIndex];
+            if (currentImg) {
+                const imgSrc = currentImg.src || currentImg.cloudinaryUrl;
+                document.getElementById('lightboxImg').src = imgSrc;
+                document.getElementById('lightboxCaption').innerHTML = 
+                    `<strong>${escapeHtml(currentImg.title)}</strong> | 📅 ${currentImg.date} | 🏷️ ${currentImg.category}`;
+            }
+        }
+        
+        function nextImage() {
+            if (currentImageIndex < currentFilteredImages.length - 1) {
+                currentImageIndex++;
+                updateLightbox();
+            }
+        }
+        
+        function prevImage() {
+            if (currentImageIndex > 0) {
+                currentImageIndex--;
+                updateLightbox();
+            }
+        }
+        
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Download Image
+        function downloadImage(url, filename) {
+            fetch(url)
+                .then(response => response.blob())
+                .then(blob => {
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = filename.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.jpg';
+                    link.click();
+                    URL.revokeObjectURL(link.href);
+                })
+                .catch(() => {
+                    window.open(url, '_blank');
+                });
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Event Listeners
+        document.getElementById('searchInput')?.addEventListener('input', (e) => {
+            currentSearch = e.target.value;
+            filterAndDisplayImages();
+        });
+        
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.category;
+                currentImageIndex = 0;
+                filterAndDisplayImages();
             });
         });
         
-        closeModal.addEventListener('click', () => {
-            imageModal.classList.remove('active');
-            document.body.style.overflow = 'auto';
+        document.getElementById('lightboxClose')?.addEventListener('click', closeLightbox);
+        document.getElementById('lightboxPrev')?.addEventListener('click', prevImage);
+        document.getElementById('lightboxNext')?.addEventListener('click', nextImage);
+        document.getElementById('lightbox')?.addEventListener('click', (e) => {
+            if (e.target === document.getElementById('lightbox')) closeLightbox();
         });
         
-        imageModal.addEventListener('click', (e) => {
-            if (e.target === imageModal) {
-                imageModal.classList.remove('active');
-                document.body.style.overflow = 'auto';
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('lightbox').classList.contains('active')) {
+                if (e.key === 'ArrowLeft') prevImage();
+                if (e.key === 'ArrowRight') nextImage();
+                if (e.key === 'Escape') closeLightbox();
             }
         });
+        
+        // Load gallery
+        loadGallery();
     </script>
 </body>
 </html>

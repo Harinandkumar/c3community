@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Admin Dashboard - C3 Community</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -20,6 +21,7 @@
             --sidebar-bg: #111118;
             --border: rgba(255, 255, 255, 0.1);
         }
+
         [data-theme="light"] {
             --primary: #0066ff;
             --secondary: #ff3366;
@@ -30,18 +32,26 @@
             --sidebar-bg: #ffffff;
             --border: rgba(0, 0, 0, 0.1);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg);
             color: var(--text);
             overflow-x: hidden;
         }
-        
-        /* Admin Container */
-        .admin-container { display: flex; min-height: 100vh; position: relative; }
-        
-        /* Sidebar - Desktop */
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+
         .sidebar {
             width: 280px;
             background: var(--sidebar-bg);
@@ -53,50 +63,57 @@
             z-index: 1000;
             transform: translateX(0);
         }
-        
-        /* Sidebar Header */
-        .sidebar-header { 
-            padding: 24px; 
-            border-bottom: 1px solid var(--border); 
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
             text-align: center;
         }
-        .sidebar-header img { 
-            width: 60px; 
-            height: 60px; 
+
+        .sidebar-header img {
+            width: 60px;
+            height: 60px;
             margin-bottom: 12px;
         }
-        .sidebar-header h3 { 
-            font-size: 18px; 
-            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
-            -webkit-background-clip: text; 
-            background-clip: text; 
-            color: transparent; 
+
+        .sidebar-header h3 {
+            font-size: 18px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
-        
-        /* Sidebar Menu */
-        .sidebar-menu { padding: 20px 0; }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
         .menu-item {
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
+            display: flex;
+            align-items: center;
+            gap: 12px;
             padding: 12px 24px;
-            color: var(--text-secondary); 
-            cursor: pointer; 
+            color: var(--text-secondary);
+            cursor: pointer;
             transition: all 0.3s;
             border-left: 3px solid transparent;
         }
-        .menu-item:hover { 
-            background: rgba(0, 240, 255, 0.1); 
-            color: var(--primary); 
+
+        .menu-item:hover {
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--primary);
         }
-        .menu-item.active { 
-            background: rgba(0, 240, 255, 0.15); 
-            color: var(--primary); 
-            border-left-color: var(--primary); 
+
+        .menu-item.active {
+            background: rgba(0, 240, 255, 0.15);
+            color: var(--primary);
+            border-left-color: var(--primary);
         }
-        .menu-item i { width: 20px; }
-        
-        /* Mobile Menu Toggle Button */
+
+        .menu-item i {
+            width: 20px;
+        }
+
         .mobile-menu-toggle {
             display: none;
             position: fixed;
@@ -111,14 +128,9 @@
             border-radius: 12px;
             font-size: 20px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
-        .mobile-menu-toggle:hover {
-            transform: scale(1.05);
-        }
-        
-        /* Sidebar Overlay (Mobile) */
+
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -126,186 +138,234 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 999;
             backdrop-filter: blur(4px);
         }
+
         .sidebar-overlay.active {
             display: block;
         }
-        
-        /* Content Area */
-        .content { 
-            flex: 1; 
-            margin-left: 280px; 
-            padding: 24px; 
+
+        .content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 24px;
             transition: margin-left 0.3s;
         }
-        
-        /* Top Bar */
-        .top-bar { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 24px; 
-            padding-bottom: 16px; 
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
             border-bottom: 1px solid var(--border);
             flex-wrap: wrap;
             gap: 15px;
         }
-        .page-title { 
-            font-size: 24px; 
+
+        .page-title {
+            font-size: 24px;
             font-weight: 600;
         }
-        .logout-btn { 
-            background: rgba(239, 68, 68, 0.1); 
-            border: none; 
-            padding: 8px 20px; 
-            border-radius: 8px; 
-            color: var(--danger); 
-            cursor: pointer; 
-            transition: all 0.3s;
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.1);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            color: var(--danger);
+            cursor: pointer;
             font-size: 14px;
             font-weight: 500;
         }
-        .logout-btn:hover { 
-            background: var(--danger); 
-            color: white; 
+
+        .logout-btn:hover {
+            background: var(--danger);
+            color: white;
         }
-        
-        /* Stats Grid */
-        .stats-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
-            gap: 20px; 
-            margin-bottom: 30px; 
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
-        .stat-card { 
-            background: var(--card-bg); 
-            border-radius: 16px; 
-            padding: 20px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            border: 1px solid var(--border);
-            transition: transform 0.3s;
-        }
-        .stat-card:hover { transform: translateY(-3px); }
-        .stat-info h4 { 
-            font-size: 14px; 
-            color: var(--text-secondary); 
-            margin-bottom: 8px; 
-        }
-        .stat-info .value { 
-            font-size: 32px; 
-            font-weight: 700; 
-            color: var(--primary); 
-        }
-        .stat-icon { 
-            width: 48px; 
-            height: 48px; 
-            background: rgba(0, 240, 255, 0.1); 
-            border-radius: 12px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 24px; 
-            color: var(--primary); 
-        }
-        
-        /* Panels */
-        .panel { display: none; animation: fadeIn 0.3s ease; }
-        .panel.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
-        /* Forms */
-        .form-card { 
-            background: var(--card-bg); 
-            border-radius: 16px; 
-            padding: 24px; 
-            margin-bottom: 24px; 
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             border: 1px solid var(--border);
         }
-        .form-title { 
-            font-size: 20px; 
-            margin-bottom: 20px; 
-            color: var(--primary); 
+
+        .stat-card:hover {
+            transform: translateY(-3px);
         }
-        .form-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-            gap: 20px; 
+
+        .stat-info h4 {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
         }
-        .form-group { margin-bottom: 16px; }
-        .form-group label { 
-            display: block; 
-            margin-bottom: 8px; 
-            font-weight: 500; 
+
+        .stat-info .value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
         }
-        .form-group input, 
-        .form-group select, 
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(0, 240, 255, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .panel {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .form-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .form-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
         .form-group textarea {
-            width: 100%; 
-            padding: 12px 14px; 
+            width: 100%;
+            padding: 12px 14px;
             background: var(--bg);
-            border: 1px solid var(--border); 
+            border: 1px solid var(--border);
             border-radius: 8px;
-            color: var(--text); 
+            color: var(--text);
             font-family: inherit;
             font-size: 14px;
         }
-        .form-group input:focus, 
-        .form-group select:focus { 
-            outline: none; 
-            border-color: var(--primary); 
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
         }
-        
-        /* Buttons */
-        .btn { 
-            padding: 10px 20px; 
-            border: none; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-size: 14px; 
-            font-weight: 500; 
-            transition: all 0.3s; 
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
         }
-        .btn-primary { 
-            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
-            color: white; 
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
         }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-warning { background: var(--warning); color: white; }
-        .btn-sm { padding: 6px 12px; font-size: 12px; }
-        .action-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
-        
-        /* Tables */
-        .table-container { 
-            background: var(--card-bg); 
-            border-radius: 16px; 
-            overflow-x: auto; 
-            border: 1px solid var(--border); 
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow-x: auto;
+            border: 1px solid var(--border);
             margin-top: 20px;
         }
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
             min-width: 600px;
         }
-        th, td { 
-            padding: 12px 16px; 
-            text-align: left; 
+
+        th,
+        td {
+            padding: 12px 16px;
+            text-align: left;
             border-bottom: 1px solid var(--border);
             font-size: 14px;
         }
-        th { 
-            background: rgba(0, 240, 255, 0.05); 
-            color: var(--primary); 
-            font-weight: 600; 
+
+        th {
+            background: rgba(0, 240, 255, 0.05);
+            color: var(--primary);
+            font-weight: 600;
         }
-        
-        /* Badges */
-        .badge-live, .badge-new, .badge-upcoming {
+
+        .badge-live,
+        .badge-new,
+        .badge-upcoming {
             display: inline-block;
             padding: 2px 8px;
             border-radius: 20px;
@@ -313,44 +373,193 @@
             font-weight: 600;
             margin-left: 8px;
         }
-        .badge-live { background: #ff4444; color: white; animation: pulse 1.5s infinite; }
-        .badge-new { background: #00c851; color: white; }
-        .badge-upcoming { background: #ffbb33; color: #333; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
-        
-        .status-badge { 
-            display: inline-block; 
-            padding: 4px 12px; 
-            border-radius: 20px; 
-            font-size: 12px; 
+
+        .badge-live {
+            background: #ff4444;
+            color: white;
+            animation: pulse 1.5s infinite;
         }
-        .status-open { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .status-closed { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
-        
-        .loading { text-align: center; padding: 40px; color: var(--text-secondary); }
-        .empty-state { text-align: center; padding: 40px; color: var(--text-secondary); }
-        .info-card { 
-            background: rgba(0, 240, 255, 0.05); 
-            border-radius: 12px; 
-            padding: 16px; 
-            margin-top: 20px; 
+
+        .badge-new {
+            background: #00c851;
+            color: white;
+        }
+
+        .badge-upcoming {
+            background: #ffbb33;
+            color: #333;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .status-open {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .status-closed {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .info-card {
+            background: rgba(0, 240, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
             border-left: 3px solid var(--primary);
         }
-        .info-card h4 { margin-bottom: 8px; color: var(--primary); }
-        .info-card .small { font-size: 12px; color: var(--text-secondary); margin-top: 8px; }
-        
-        /* ========== RESPONSIVE STYLES (MOBILE) ========== */
-        @media (max-width: 992px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+
+        .info-card h4 {
+            margin-bottom: 8px;
+            color: var(--primary);
         }
-        
+
+        .info-card .small {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        /* Gallery Grid */
+        .gallery-grid-admin {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .gallery-item-admin {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .gallery-item-admin:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .gallery-item-admin img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+
+        .gallery-item-admin .info {
+            padding: 12px;
+        }
+
+        .gallery-item-admin .title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .gallery-item-admin .date {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .gallery-item-admin .category-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            margin-bottom: 8px;
+        }
+
+        .gallery-item-admin .edit-title,
+        .gallery-item-admin .edit-category {
+            width: 100%;
+            padding: 6px 8px;
+            margin-bottom: 8px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 12px;
+        }
+
+        .delete-image-btn,
+        .update-image-btn {
+            width: 100%;
+            padding: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .delete-image-btn {
+            background: var(--danger);
+            color: white;
+            margin-top: 5px;
+        }
+
+        .update-image-btn {
+            background: var(--warning);
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .delete-image-btn:hover,
+        .update-image-btn:hover {
+            opacity: 0.8;
+        }
+
+        .category-color-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
         @media (max-width: 768px) {
             .mobile-menu-toggle {
                 display: flex;
                 align-items: center;
                 justify-content: center;
             }
-            
+
             .sidebar {
                 transform: translateX(-100%);
                 position: fixed;
@@ -359,157 +568,39 @@
                 width: 280px;
                 height: 100vh;
                 z-index: 1002;
-                box-shadow: 2px 0 20px rgba(0,0,0,0.3);
+                box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
             }
+
             .sidebar.open {
                 transform: translateX(0);
             }
-            
+
             .content {
                 margin-left: 0;
                 padding: 80px 16px 24px 16px;
             }
-            
-            .top-bar {
-                flex-direction: column;
-                align-items: flex-start;
-                margin-top: 10px;
-            }
-            
-            .page-title {
-                font-size: 20px;
-            }
-            
-            .logout-btn {
-                align-self: flex-start;
-            }
-            
+
             .stats-grid {
                 grid-template-columns: 1fr;
-                gap: 15px;
             }
-            
-            .stat-card {
-                padding: 15px;
-            }
-            
-            .stat-info .value {
-                font-size: 28px;
-            }
-            
-            .form-card {
-                padding: 16px;
-            }
-            
-            .form-title {
-                font-size: 18px;
-            }
-            
-            .form-grid {
-                grid-template-columns: 1fr;
-                gap: 0;
-            }
-            
-            .table-container {
-                margin-top: 16px;
-            }
-            
-            th, td {
-                padding: 8px 12px;
-                font-size: 12px;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-                gap: 5px;
-            }
-            
-            .btn-sm {
-                width: 100%;
-                text-align: center;
-            }
-            
-            .info-card {
-                padding: 12px;
-            }
-            
-            .info-card p {
-                font-size: 12px;
+
+            .gallery-grid-admin {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             }
         }
-        
+
         @media (max-width: 480px) {
-            .content {
-                padding: 75px 12px 20px 12px;
-            }
-            
-            .stat-card {
-                padding: 12px;
-            }
-            
-            .stat-icon {
-                width: 40px;
-                height: 40px;
-                font-size: 18px;
-            }
-            
-            .stat-info .value {
-                font-size: 24px;
-            }
-            
-            .stat-info h4 {
-                font-size: 12px;
-            }
-            
-            .form-group input, 
-            .form-group select, 
-            .form-group textarea {
-                padding: 10px 12px;
-                font-size: 13px;
-            }
-            
-            .btn {
-                padding: 8px 16px;
-                font-size: 13px;
-                width: 100%;
-            }
-            
-            table {
-                min-width: 500px;
-            }
-            
-            th, td {
-                padding: 6px 10px;
-                font-size: 11px;
-            }
-            
-            .badge-live, .badge-new, .badge-upcoming {
-                font-size: 8px;
-                padding: 1px 6px;
-            }
-        }
-        
-        /* Small devices landscape mode */
-        @media (max-width: 768px) and (orientation: landscape) {
-            .sidebar {
-                height: 100vh;
-                overflow-y: auto;
-            }
-            .content {
-                padding-top: 70px;
+            .gallery-grid-admin {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
+
 <body>
-    <!-- Mobile Menu Toggle Button -->
-    <button class="mobile-menu-toggle" id="mobileMenuToggle">
-        <i class="fas fa-bars"></i>
-    </button>
-    
-    <!-- Sidebar Overlay -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i></button>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    
+
     <div class="admin-container">
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
@@ -517,30 +608,21 @@
                 <h3>C3 Admin Panel</h3>
             </div>
             <div class="sidebar-menu">
-                <div class="menu-item active" data-panel="dashboard">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                <div class="menu-item active" data-panel="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard
                 </div>
-                <div class="menu-item" data-panel="events">
-                    <i class="fas fa-calendar-alt"></i> Events
-                </div>
-                <div class="menu-item" data-panel="members">
-                    <i class="fas fa-users"></i> Members
-                </div>
-                <div class="menu-item" data-panel="notifications">
-                    <i class="fas fa-bell"></i> Notifications
-                </div>
-                <div class="menu-item" data-panel="nav-manager">
-                    <i class="fas fa-bars"></i> Nav Manager
-                </div>
+                <div class="menu-item" data-panel="events"><i class="fas fa-calendar-alt"></i> Events</div>
+                <div class="menu-item" data-panel="members"><i class="fas fa-users"></i> Members</div>
+                <div class="menu-item" data-panel="notifications"><i class="fas fa-bell"></i> Notifications</div>
+                <div class="menu-item" data-panel="nav-manager"><i class="fas fa-bars"></i> Nav Manager</div>
+                <div class="menu-item" data-panel="gallery"><i class="fas fa-images"></i> Gallery</div>
+                <div class="menu-item" data-panel="categories"><i class="fas fa-tags"></i> Categories</div>
             </div>
         </div>
 
         <div class="content">
             <div class="top-bar">
                 <h2 class="page-title" id="pageTitle">Dashboard</h2>
-                <button class="logout-btn" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
+                <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
             </div>
 
             <!-- Dashboard Panel -->
@@ -583,52 +665,44 @@
                     <h3 class="form-title">Create New Event</h3>
                     <form id="createEventForm">
                         <div class="form-grid">
-                            <div class="form-group">
-                                <label>Event Name *</label>
-                                <input type="text" id="eventName" required>
+                            <div class="form-group"><label>Event Name *</label><input type="text" id="eventName"
+                                    required></div>
+                            <div class="form-group"><label>Image URL *</label><input type="text" id="eventImage"
+                                    required></div>
+                            <div class="form-group"><label>Date *</label><input type="date" id="eventDate" required>
                             </div>
-                            <div class="form-group">
-                                <label>Image URL *</label>
-                                <input type="text" id="eventImage" required>
+                            <div class="form-group"><label>Location *</label><input type="text" id="eventLocation"
+                                    required></div>
+                            <div class="form-group"><label>Prize *</label><input type="text" id="eventPrize" required>
                             </div>
-                            <div class="form-group">
-                                <label>Date *</label>
-                                <input type="date" id="eventDate" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Location *</label>
-                                <input type="text" id="eventLocation" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Prize *</label>
-                                <input type="text" id="eventPrize" required>
-                            </div>
-                            <div class="form-group">
-                                <label>PDF Link *</label>
-                                <input type="text" id="eventPdfLink" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Status</label>
-                                <select id="eventIsOpen">
+                            <div class="form-group"><label>PDF Link *</label><input type="text" id="eventPdfLink"
+                                    required></div>
+                            <div class="form-group"><label>Status</label><select id="eventIsOpen">
                                     <option value="true">Open</option>
                                     <option value="false">Closed</option>
-                                </select>
-                            </div>
+                                </select></div>
                         </div>
-                        <div class="form-group">
-                            <label>Description *</label>
-                            <textarea id="eventDescription" rows="4" required></textarea>
-                        </div>
+                        <div class="form-group"><label>Description *</label><textarea id="eventDescription" rows="4"
+                                required></textarea></div>
                         <button type="submit" class="btn btn-primary">Create Event</button>
                     </form>
                 </div>
                 <div class="table-container">
                     <table>
                         <thead>
-                            <tr><th>Name</th><th>Date</th><th>Location</th><th>Status</th><th>Participants</th><th>Actions</th></tr>
+                            <tr>
+                                <th>Name</th>
+                                <th>Date</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Participants</th>
+                                <th>Actions</th>
+                            </tr>
                         </thead>
                         <tbody id="eventsTableBody">
-                            <tr><td colspan="6" class="loading">Loading events...<\/td><\/tr>
+                            <tr>
+                                <td colspan="6" class="loading">Loading events...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -636,107 +710,150 @@
 
             <!-- Members Panel -->
             <div id="membersPanel" class="panel">
-                <div class="form-card">
-                    <input type="text" id="searchMember" placeholder="🔍 Search by name, email or registration number..." style="width:100%;padding:12px;border-radius:8px;background:var(--bg);border:1px solid var(--border);color:var(--text);">
+                <div class="form-card"><input type="text" id="searchMember"
+                        placeholder="🔍 Search by name, email or registration number..."
+                        style="width:100%;padding:12px;border-radius:8px;background:var(--bg);border:1px solid var(--border);color:var(--text);">
                 </div>
                 <div class="table-container">
                     <table>
                         <thead>
-                            <tr><th>Name</th><th>Email</th><th>Branch</th><th>Batch</th><th>Reg No</th><th>Verified</th><th>Actions</th></tr>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Branch</th>
+                                <th>Batch</th>
+                                <th>Reg No</th>
+                                <th>Verified</th>
+                                <th>Actions</th>
+                            </tr>
                         </thead>
                         <tbody id="membersTableBody">
-                            <tr><td colspan="7" class="loading">Loading members...<\/td><\/tr>
+                            <tr>
+                                <td colspan="7" class="loading">Loading members...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-<!-- Notifications Panel -->
-<div id="notificationsPanel" class="panel">
-    <div class="form-card">
-        <h3 class="form-title">Send Notification</h3>
-        <div class="form-group">
-            <label>Title</label>
-            <input type="text" id="notifTitle" placeholder="Notification title">
-        </div>
-        <div class="form-group">
-            <label>Message</label>
-            <textarea id="notifMessage" rows="3" placeholder="Notification message"></textarea>
-        </div>
-        
-        <!-- NEW: Priority Option -->
-        <div class="form-group">
-            <label>⭐ Priority Notice</label>
-            <select id="notifPriority">
-                <option value="false">Normal</option>
-                <option value="true">🔴 Priority (Shows on Top with Special Style)</option>
-            </select>
-        </div>
-        
-        <!-- NEW: Badge Type Option -->
-        <div class="form-group">
-            <label>🏷️ Badge Type</label>
-            <select id="notifBadge">
-                <option value="none">None</option>
-                <option value="live">🔴 LIVE (Pulse Effect)</option>
-                <option value="new">🟢 NEW</option>
-                <option value="upcoming">🟡 UPCOMING</option>
-            </select>
-        </div>
-        <!-- Button 1 (Optional) -->
-<div class="form-row">
-    <div class="form-group">
-        <label>🔘 Button 1 Text <span style="color:#888;">(Optional)</span></label>
-        <input type="text" id="notifBtn1Text" placeholder="e.g., Apply Now, Register">
-    </div>
-    <div class="form-group">
-        <label>🔗 Button 1 Link <span style="color:#888;">(Optional)</span></label>
-        <input type="text" id="notifBtn1Link" placeholder="https://...">
-    </div>
-</div>
+            <!-- Notifications Panel -->
+            <div id="notificationsPanel" class="panel">
+                <div class="form-card">
+                    <h3 class="form-title">Send Notification</h3>
+                    <div class="form-group"><label>Title</label><input type="text" id="notifTitle"
+                            placeholder="Notification title"></div>
+                    <div class="form-group"><label>Message</label><textarea id="notifMessage" rows="3"
+                            placeholder="Notification message"></textarea></div>
+                    <div class="form-group"><label>Priority Notice</label><select id="notifPriority">
+                            <option value="false">Normal</option>
+                            <option value="true">🔴 Priority</option>
+                        </select></div>
+                    <div class="form-group"><label>Badge Type</label><select id="notifBadge">
+                            <option value="none">None</option>
+                            <option value="live">🔴 LIVE</option>
+                            <option value="new">🟢 NEW</option>
+                            <option value="upcoming">🟡 UPCOMING</option>
+                        </select></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Button 1 Text</label><input type="text" id="notifBtn1Text"
+                                placeholder="e.g., Apply Now"></div>
+                        <div class="form-group"><label>Button 1 Link</label><input type="text" id="notifBtn1Link"
+                                placeholder="https://..."></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Button 2 Text</label><input type="text" id="notifBtn2Text"
+                                placeholder="e.g., Rule Book"></div>
+                        <div class="form-group"><label>Button 2 Link</label><input type="text" id="notifBtn2Link"
+                                placeholder="https://..."></div>
+                    </div>
+                    <button class="btn btn-primary" onclick="sendNotification()">Send Notification</button>
+                </div>
+                <div class="table-container">
+                    <h3 style="padding: 16px;">📋 All Notifications</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Message</th>
+                                <th>Priority</th>
+                                <th>Badge</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="notificationsTableBody">
+                            <tr>
+                                <td colspan="6" class="loading">Loading notifications...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-<!-- Button 2 (Optional) -->
-<div class="form-row">
-    <div class="form-group">
-        <label>🔘 Button 2 Text <span style="color:#888;">(Optional)</span></label>
-        <input type="text" id="notifBtn2Text" placeholder="e.g., Rule Book, Learn More">
-    </div>
-    <div class="form-group">
-        <label>🔗 Button 2 Link <span style="color:#888;">(Optional)</span></label>
-        <input type="text" id="notifBtn2Link" placeholder="https://...">
-    </div>
-</div>
-        <button class="btn btn-primary" onclick="sendNotification()">Send Notification</button>
-    </div>
-    
-    <div class="table-container">
-        <h3 style="padding: 16px; margin: 0; border-bottom: 1px solid var(--border);">📋 All Notifications</h3>
-        <table>
-            <thead>
-                <tr><th>Title</th><th>Message</th><th>Priority</th><th>Badge</th><th>Date</th><th>Actions</th></tr>
-            </thead>
-            <tbody id="notificationsTableBody">
-                <tr><td colspan="6" class="loading">Loading notifications...<\/td><\/tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+            <!-- Gallery Panel -->
+            <div id="galleryPanel" class="panel">
+                <div class="form-card">
+                    <h3 class="form-title">📸 Upload New Image</h3>
+                    <form id="uploadImageForm" enctype="multipart/form-data">
+                        <div class="form-group"><label>Image Title</label><input type="text" id="imageTitle"
+                                placeholder="Enter image title" required></div>
+                        <div class="form-group"><label>📁 Category</label>
+                            <select id="imageCategory">
+                                <option value="events">🎯 Events</option>
+                                <option value="workshops">💻 Workshops</option>
+                                <option value="competitions">🏆 Competitions</option>
+                                <option value="recruitment">📢 Recruitment</option>
+                                <option value="other">📸 Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Choose Image (Max 10MB)</label><input type="file" id="imageFile"
+                                accept="image/*" required></div>
+                        <div id="uploadPreview" style="margin: 15px 0; display: none;"><img id="previewImg"
+                                style="max-width: 200px; border-radius: 8px; border: 2px solid var(--primary);"></div>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-cloud-upload-alt"></i> Upload to
+                            Cloudinary</button>
+                    </form>
+                </div>
+                <div class="table-container">
+                    <h3 style="padding: 16px;">📷 Gallery Images</h3>
+                    <div id="galleryGridAdmin" class="gallery-grid-admin">
+                        <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading images...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories Panel -->
+            <div id="categoriesPanel" class="panel">
+                <div class="form-card">
+                    <h3 class="form-title">🏷️ Add New Category</h3>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Category Name</label><input type="text" id="catName"
+                                placeholder="e.g., Hackathon, Seminar" required></div>
+                        <div class="form-group"><label>Icon (Emoji)</label><input type="text" id="catIcon"
+                                placeholder="e.g., 🎯, 💻, 🏆" value="📸"></div>
+                        <div class="form-group"><label>Color</label><input type="color" id="catColor" value="#00f0ff">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="createCategory()">➕ Add Category</button>
+                </div>
+                <div class="table-container">
+                    <h3 style="padding: 16px;">📋 All Categories</h3>
+                    <div id="categoriesList" class="gallery-grid-admin">
+                        <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading categories...</div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Nav Manager Panel -->
             <div id="navManagerPanel" class="panel">
                 <div class="form-card">
                     <h3 class="form-title">➕ Add Custom Navigation Item</h3>
                     <div class="form-grid">
-                        <div class="form-group">
-                            <label>Item Name *</label>
-                            <input type="text" id="navName" placeholder="e.g., Exam, Resources">
-                        </div>
-                        <div class="form-group">
-                            <label>Link URL *</label>
-                            <input type="text" id="navLink" placeholder="https://... or /page.html">
-                        </div>
-                        <div class="form-group">
-                            <label>Icon</label>
-                            <select id="navIcon">
+                        <div class="form-group"><label>Item Name *</label><input type="text" id="navName"
+                                placeholder="e.g., Exam, Resources"></div>
+                        <div class="form-group"><label>Link URL *</label><input type="text" id="navLink"
+                                placeholder="https://... or /page.html"></div>
+                        <div class="form-group"><label>Icon</label><select id="navIcon">
                                 <option value="fa-link">🔗 Link</option>
                                 <option value="fa-book">📖 Book</option>
                                 <option value="fa-file-alt">📄 File</option>
@@ -744,44 +861,43 @@
                                 <option value="fa-question-circle">❓ Help</option>
                                 <option value="fa-download">⬇️ Download</option>
                                 <option value="fa-external-link-alt">🔗 External</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Badge Effect</label>
-                            <select id="navBadge">
+                            </select></div>
+                        <div class="form-group"><label>Badge Effect</label><select id="navBadge">
                                 <option value="none">None</option>
                                 <option value="live">🔴 LIVE</option>
                                 <option value="new">🟢 NEW</option>
                                 <option value="upcoming">🟡 UPCOMING</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Open in</label>
-                            <select id="navTarget">
+                            </select></div>
+                        <div class="form-group"><label>Open in</label><select id="navTarget">
                                 <option value="_self">Same Tab</option>
                                 <option value="_blank">New Tab</option>
-                            </select>
-                        </div>
+                            </select></div>
                     </div>
                     <button class="btn btn-primary" onclick="createNavItem()">➕ Add Nav Item</button>
                 </div>
-
                 <div class="table-container">
-                    <h3 style="padding: 16px; margin: 0; border-bottom: 1px solid var(--border);">📋 Custom Navigation Items</h3>
+                    <h3 style="padding: 16px;">📋 Custom Navigation Items</h3>
                     <table>
                         <thead>
-                            <tr><th>Icon</th><th>Name</th><th>Link</th><th>Badge</th><th>Target</th><th>Actions</th></tr>
+                            <tr>
+                                <th>Icon</th>
+                                <th>Name</th>
+                                <th>Link</th>
+                                <th>Badge</th>
+                                <th>Target</th>
+                                <th>Actions</th>
+                            </tr>
                         </thead>
                         <tbody id="navItemsTableBody">
-                            <tr><td colspan="6" class="loading">Loading nav items...<\/td><\/tr>
+                            <tr>
+                                <td colspan="6" class="loading">Loading nav items...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
-
                 <div class="info-card">
                     <h4>📌 Static Nav Items (Always Visible)</h4>
                     <p>Home, Events, Team, Gallery, Notices, Results, Contact, Login</p>
-                    <p class="small">These cannot be removed. Custom items appear after these. Badge effects: LIVE (red + pulse), NEW (green), UPCOMING (yellow)</p>
                 </div>
             </div>
         </div>
@@ -790,101 +906,65 @@
     <script>
         const API_BASE_URL = 'https://backend-glo6.onrender.com';
         let adminToken = localStorage.getItem('adminToken');
-        
-        // Check authentication
-        if (!adminToken) {
-            window.location.href = 'admin-login.html';
-        }
+        if (!adminToken) window.location.href = 'admin-login.html';
 
-        // Theme
         const savedTheme = localStorage.getItem('theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
 
-        // ========== MOBILE SIDEBAR TOGGLE ==========
+        // Mobile Sidebar Toggle
         const mobileMenuToggle = document.getElementById('mobileMenuToggle');
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
-        
-        function closeSidebar() {
-            sidebar.classList.remove('open');
-            sidebarOverlay.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-        
-        function openSidebar() {
-            sidebar.classList.add('open');
-            sidebarOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        
+
+        function closeSidebar() { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; }
+        function openSidebar() { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
+
         if (mobileMenuToggle) {
-            mobileMenuToggle.addEventListener('click', (e) => {
+            mobileMenuToggle.addEventListener('click', function (e) {
                 e.stopPropagation();
-                if (sidebar.classList.contains('open')) {
-                    closeSidebar();
-                } else {
-                    openSidebar();
-                }
+                if (sidebar.classList.contains('open')) closeSidebar(); else openSidebar();
             });
         }
-        
-        if (sidebarOverlay) {
-            sidebarOverlay.addEventListener('click', closeSidebar);
-        }
-        
-        // Close sidebar when clicking a menu item (on mobile)
+        if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
+
         const menuItemsList = document.querySelectorAll('.menu-item');
-        menuItemsList.forEach(item => {
-            item.addEventListener('click', () => {
-                if (window.innerWidth <= 768) {
-                    closeSidebar();
-                }
-            });
+        menuItemsList.forEach(function (item) {
+            item.addEventListener('click', function () { if (window.innerWidth <= 768) closeSidebar(); });
         });
-        
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 768) {
-                closeSidebar();
-                sidebar.classList.remove('open');
-                sidebarOverlay.classList.remove('active');
-                document.body.style.overflow = 'auto';
-            }
+        window.addEventListener('resize', function () {
+            if (window.innerWidth > 768) { closeSidebar(); sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; }
         });
 
-        // Get all menu items and panels
         const panels = {
             dashboard: document.getElementById('dashboardPanel'),
             events: document.getElementById('eventsPanel'),
             members: document.getElementById('membersPanel'),
             notifications: document.getElementById('notificationsPanel'),
-            'nav-manager': document.getElementById('navManagerPanel')
+            'nav-manager': document.getElementById('navManagerPanel'),
+            gallery: document.getElementById('galleryPanel'),
+            categories: document.getElementById('categoriesPanel')
         };
         const pageTitle = document.getElementById('pageTitle');
 
-        // Panel switching function
         function switchPanel(panelId, panelName) {
-            Object.values(panels).forEach(panel => {
-                if (panel) panel.classList.remove('active');
-            });
+            for (let key in panels) { if (panels[key]) panels[key].classList.remove('active'); }
             if (panels[panelId]) panels[panelId].classList.add('active');
             if (pageTitle) pageTitle.textContent = panelName;
         }
 
-        // Add click event to menu items
-        menuItemsList.forEach(item => {
-            item.addEventListener('click', () => {
-                const panelId = item.dataset.panel;
-                const panelName = item.textContent.trim();
-                
-                menuItemsList.forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
+        menuItemsList.forEach(function (item) {
+            item.addEventListener('click', function () {
+                const panelId = this.dataset.panel;
+                const panelName = this.textContent.trim();
+                menuItemsList.forEach(function (i) { i.classList.remove('active'); });
+                this.classList.add('active');
                 switchPanel(panelId, panelName);
-                
                 if (panelId === 'events') loadEvents();
                 if (panelId === 'members') loadMembers();
                 if (panelId === 'notifications') loadNotifications();
                 if (panelId === 'nav-manager') loadNavItems();
+                if (panelId === 'gallery') { loadGalleryImages(); loadCategoryDropdown(); }
+                if (panelId === 'categories') loadCategories();
                 if (panelId === 'dashboard') loadDashboard();
             });
         });
@@ -892,471 +972,391 @@
         // Dashboard
         async function loadDashboard() {
             try {
-                const [membersRes, eventsRes] = await Promise.all([
-                    fetch(`${API_BASE_URL}/admin/members`, { headers: { 'Authorization': `Bearer ${adminToken}` } }),
-                    fetch(`${API_BASE_URL}/admin/events`, { headers: { 'Authorization': `Bearer ${adminToken}` } })
-                ]);
+                const membersRes = await fetch(`${API_BASE_URL}/admin/members`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
+                const eventsRes = await fetch(`${API_BASE_URL}/admin/events`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
                 const members = await membersRes.json();
                 const events = await eventsRes.json();
-                
-                const totalMembersElem = document.getElementById('totalMembers');
-                const totalEventsElem = document.getElementById('totalEvents');
-                const verifiedMembersElem = document.getElementById('verifiedMembers');
-                const activeEventsElem = document.getElementById('activeEvents');
-                
-                if (totalMembersElem) totalMembersElem.textContent = members.members?.length || 0;
-                if (totalEventsElem) totalEventsElem.textContent = events.length || 0;
-                if (verifiedMembersElem) verifiedMembersElem.textContent = members.members?.filter(m => m.isverified).length || 0;
-                if (activeEventsElem) activeEventsElem.textContent = events.filter(e => e.isOpen).length || 0;
-            } catch (error) { 
-                console.error('Dashboard error:', error); 
-            }
+                document.getElementById('totalMembers').textContent = members.members?.length || 0;
+                document.getElementById('totalEvents').textContent = events.length || 0;
+                let verifiedCount = 0;
+                if (members.members) { for (let i = 0; i < members.members.length; i++) { if (members.members[i].isverified) verifiedCount++; } }
+                document.getElementById('verifiedMembers').textContent = verifiedCount;
+                let activeCount = 0;
+                for (let i = 0; i < events.length; i++) { if (events[i].isOpen) activeCount++; }
+                document.getElementById('activeEvents').textContent = activeCount;
+            } catch (error) { console.error(error); }
         }
 
-        // Events
+        // Events (simplified - similar to previous working version)
         async function loadEvents() {
             const tbody = document.getElementById('eventsTableBody');
             if (!tbody) return;
-            tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading events...<\/td><\/tr>';
-            
+            tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading events...</td></tr>';
             try {
                 const response = await fetch(`${API_BASE_URL}/admin/events`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
                 const events = await response.json();
-                
-                if (!events || events.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No events found<\/td><\/tr>';
-                    return;
+                if (!events || events.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No events found</td></tr>'; return; }
+                let html = '';
+                for (let i = 0; i < events.length; i++) {
+                    const e = events[i];
+                    html += '<tr><td>' + escapeHtml(e.name) + '</td><td>' + new Date(e.date).toLocaleDateString() + '</td><td>' + escapeHtml(e.location) + '</td>' +
+                        '<td><span class="status-badge ' + (e.isOpen ? 'status-open' : 'status-closed') + '">' + (e.isOpen ? 'Open' : 'Closed') + '</span></td>' +
+                        '<td>' + (e.participantsCount || 0) + '</td>' +
+                        '<td class="action-buttons"><button class="btn btn-warning btn-sm" onclick="toggleEventStatus(\'' + e._id + '\', ' + e.isOpen + ')">' + (e.isOpen ? 'Close' : 'Open') + '</button>' +
+                        '<button class="btn btn-danger btn-sm" onclick="deleteEvent(\'' + e._id + '\')">Delete</button></td></tr>';
                 }
-                
-                tbody.innerHTML = events.map(event => `
-                    <tr>
-                        <td>${escapeHtml(event.name)}</td>
-                        <td>${new Date(event.date).toLocaleDateString()}</td>
-                        <td>${escapeHtml(event.location)}</td>
-                        <td><span class="status-badge ${event.isOpen ? 'status-open' : 'status-closed'}">${event.isOpen ? 'Open' : 'Closed'}</span></td>
-                        <td>${event.participantsCount || 0}</td>
-                        <td class="action-buttons">
-                            <button class="btn btn-warning btn-sm" onclick="toggleEventStatus('${event._id}', ${event.isOpen})">${event.isOpen ? 'Close' : 'Open'}</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteEvent('${event._id}')">Delete</button>
-                        </td>
-                    </tr>
-                `).join('');
-            } catch (error) { 
-                console.error(error);
-                tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load events<\/td><\/tr>';
-            }
+                tbody.innerHTML = html;
+            } catch (error) { tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load events</td></tr>'; }
         }
 
-        document.getElementById('createEventForm')?.addEventListener('submit', async (e) => {
+        document.getElementById('createEventForm')?.addEventListener('submit', async function (e) {
             e.preventDefault();
             const eventData = {
-                name: document.getElementById('eventName').value,
-                imagelink: document.getElementById('eventImage').value,
-                date: document.getElementById('eventDate').value,
-                location: document.getElementById('eventLocation').value,
-                prize: document.getElementById('eventPrize').value,
-                pdflink: document.getElementById('eventPdfLink').value,
-                description: document.getElementById('eventDescription').value,
-                isOpen: document.getElementById('eventIsOpen').value === 'true'
+                name: document.getElementById('eventName').value, imagelink: document.getElementById('eventImage').value,
+                date: document.getElementById('eventDate').value, location: document.getElementById('eventLocation').value,
+                prize: document.getElementById('eventPrize').value, pdflink: document.getElementById('eventPdfLink').value,
+                description: document.getElementById('eventDescription').value, isOpen: document.getElementById('eventIsOpen').value === 'true'
             };
             try {
-                const response = await fetch(`${API_BASE_URL}/admin/events/create`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify(eventData)
-                });
-                if (response.ok) {
-                    alert('Event created successfully');
-                    document.getElementById('createEventForm').reset();
-                    loadEvents();
-                    loadDashboard();
-                } else {
-                    alert('Failed to create event');
-                }
-            } catch (error) { alert('Error creating event'); }
+                const response = await fetch(`${API_BASE_URL}/admin/events/create`, { method: 'POST', headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify(eventData) });
+                if (response.ok) { alert('Event created'); this.reset(); loadEvents(); loadDashboard(); }
+                else alert('Failed');
+            } catch (error) { alert('Error'); }
         });
 
-        window.deleteEvent = async (id) => {
-            if (confirm('Delete this event?')) {
-                await fetch(`${API_BASE_URL}/admin/events/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${adminToken}` } });
-                loadEvents();
-                loadDashboard();
-            }
-        };
-        
-        window.toggleEventStatus = async (id, status) => {
-            await fetch(`${API_BASE_URL}/admin/events/${id}`, {
-                method: 'PUT',
-                headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ isOpen: !status })
-            });
-            loadEvents();
-            loadDashboard();
-        };
+        window.deleteEvent = async function (id) { if (confirm('Delete event?')) { await fetch(`${API_BASE_URL}/admin/events/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${adminToken}` } }); loadEvents(); loadDashboard(); } };
+        window.toggleEventStatus = async function (id, status) { await fetch(`${API_BASE_URL}/admin/events/${id}`, { method: 'PUT', headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ isOpen: !status }) }); loadEvents(); loadDashboard(); };
 
         // Members
         async function loadMembers() {
             const tbody = document.getElementById('membersTableBody');
             if (!tbody) return;
-            tbody.innerHTML = '<tr><td colspan="7" class="loading">Loading members...<\/td><\/tr>';
-            
+            tbody.innerHTML = '<tr><td colspan="7" class="loading">Loading members...</td></tr>';
             try {
                 const response = await fetch(`${API_BASE_URL}/admin/members`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
                 const data = await response.json();
                 const members = data.members || [];
-                
-                if (members.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No members found<\/td><\/tr>';
-                    return;
+                if (members.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No members found</td></tr>'; return; }
+                let html = '';
+                for (let i = 0; i < members.length; i++) {
+                    const m = members[i];
+                    html += '<tr><td>' + escapeHtml(m.name) + '</td><td>' + escapeHtml(m.email) + '</td><td>' + escapeHtml(m.branch) + '</td><td>' + m.batch + '</td><td>' + m.regno + '</td><td>' + (m.isverified ? '✅' : '❌') + '</td><td><button class="btn btn-danger btn-sm" onclick="deleteMember(\'' + m._id + '\')">Delete</button></td></tr>';
                 }
-                
-                tbody.innerHTML = members.map(m => `
-                    <tr>
-                        <td>${escapeHtml(m.name)}</td>
-                        <td>${escapeHtml(m.email)}</td>
-                        <td>${escapeHtml(m.branch)}</td>
-                        <td>${m.batch}</td>
-                        <td>${m.regno}</td>
-                        <td>${m.isverified ? '✅' : '❌'}</td>
-                        <td><button class="btn btn-danger btn-sm" onclick="deleteMember('${m._id}')">Delete</button></td>
-                    </tr>
-                `).join('');
-            } catch (error) { 
-                console.error(error);
-                tbody.innerHTML = '<tr><td colspan="7" class="loading">Failed to load members<\/td><\/tr>';
-            }
+                tbody.innerHTML = html;
+            } catch (error) { tbody.innerHTML = '<tr><td colspan="7" class="loading">Failed to load members</td></tr>'; }
         }
-        
-        window.deleteMember = async (id) => {
-            if (confirm('Delete this member?')) {
-                await fetch(`${API_BASE_URL}/admin/members/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${adminToken}` } });
-                loadMembers();
-                loadDashboard();
-            }
-        };
+        window.deleteMember = async function (id) { if (confirm('Delete member?')) { await fetch(`${API_BASE_URL}/admin/members/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${adminToken}` } }); loadMembers(); loadDashboard(); } };
 
-        const searchMember = document.getElementById('searchMember');
-        if (searchMember) {
-            searchMember.addEventListener('input', async (e) => {
-                const search = e.target.value;
-                const response = await fetch(`${API_BASE_URL}/admin/members?search=${search}`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
-                const data = await response.json();
-                const members = data.members || [];
-                const tbody = document.getElementById('membersTableBody');
-                if (tbody) {
-                    tbody.innerHTML = members.map(m => `
-                        <tr>
-                            <td>${escapeHtml(m.name)}</td>
-                            <td>${escapeHtml(m.email)}</td>
-                            <td>${escapeHtml(m.branch)}</td>
-                            <td>${m.batch}</td>
-                            <td>${m.regno}</td>
-                            <td>${m.isverified ? '✅' : '❌'}</td>
-                            <td><button class="btn btn-danger btn-sm" onclick="deleteMember('${m._id}')">Delete</button></td>
-                        </tr>
-                    `).join('');
+        document.getElementById('searchMember')?.addEventListener('input', async function (e) {
+            const search = e.target.value;
+            const response = await fetch(`${API_BASE_URL}/admin/members?search=${search}`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
+            const data = await response.json();
+            const members = data.members || [];
+            const tbody = document.getElementById('membersTableBody');
+            if (tbody) {
+                let html = '';
+                for (let i = 0; i < members.length; i++) {
+                    const m = members[i];
+                    html += '<tr><td>' + escapeHtml(m.name) + '</td><td>' + escapeHtml(m.email) + '</td><td>' + escapeHtml(m.branch) + '</td><td>' + m.batch + '</td><td>' + m.regno + '</td><td>' + (m.isverified ? '✅' : '❌') + '</td><td><button class="btn btn-danger btn-sm" onclick="deleteMember(\'' + m._id + '\')">Delete</button></td></tr>';
                 }
-            });
-        }
+                tbody.innerHTML = html;
+            }
+        });
 
         // Notifications
         async function loadNotifications() {
             const tbody = document.getElementById('notificationsTableBody');
             if (!tbody) return;
-            tbody.innerHTML = '<tr><td colspan="4" class="loading">Loading notifications...<\/td><\/tr>';
-            
+            tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading notifications...</td></tr>';
             try {
                 const response = await fetch(`${API_BASE_URL}/admin/notifications`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
                 const notifications = await response.json();
-                
-                if (!notifications || notifications.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No notifications found<\/td><\/tr>';
-                    return;
+                if (!notifications || notifications.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No notifications found</td></tr>'; return; }
+                let html = '';
+                for (let i = 0; i < notifications.length; i++) {
+                    const n = notifications[i];
+                    let priorityBadge = n.isPriority ? '<span style="background:#ff44441a;color:#ff4444;padding:4px 8px;border-radius:12px;">🔴 Priority</span>' : '<span>Normal</span>';
+                    let badgeHtml = n.badge === 'live' ? '<span class="badge-live">LIVE</span>' : (n.badge === 'new' ? '<span class="badge-new">NEW</span>' : (n.badge === 'upcoming' ? '<span class="badge-upcoming">UPCOMING</span>' : '<span style="opacity:0.5;">None</span>'));
+                    html += '<tr><td><strong>' + escapeHtml(n.title) + '</strong></td><td>' + escapeHtml(n.message.substring(0, 50)) + '...</td><td>' + priorityBadge + '</td><td>' + badgeHtml + '</td><td>' + new Date(n.date).toLocaleDateString() + '</td><td><button class="btn btn-danger btn-sm" onclick="deleteNotification(\'' + n._id + '\')">Delete</button></td></tr>';
                 }
-                
-                tbody.innerHTML = notifications.map(n => `
-                    <tr>
-                        <td>${escapeHtml(n.title)}</td>
-                        <td>${escapeHtml(n.message.substring(0, 50))}...<\/td>
-                        <td>${new Date(n.date).toLocaleDateString()}<\/td>
-                        <td><button class="btn btn-danger btn-sm" onclick="deleteNotification('${n._id}')">Delete</button></td>
-                    </tr>
-                `).join('');
-            } catch (error) { 
-                console.error(error);
-                tbody.innerHTML = '<tr><td colspan="4" class="loading">Failed to load notifications<\/td><\/tr>';
-            }
+                tbody.innerHTML = html;
+            } catch (error) { tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load notifications</td></tr>'; }
         }
-        
-       // Updated sendNotification function
-window.sendNotification = async () => {
-    const title = document.getElementById('notifTitle')?.value;
-    const message = document.getElementById('notifMessage')?.value;
-    const isPriority = document.getElementById('notifPriority')?.value === 'true';
-    const badge = document.getElementById('notifBadge')?.value;
-    const button1Text = document.getElementById('notifBtn1Text')?.value;
-    const button1Link = document.getElementById('notifBtn1Link')?.value;
-    const button2Text = document.getElementById('notifBtn2Text')?.value;
-    const button2Link = document.getElementById('notifBtn2Link')?.value;
-    
-    if (!title || !message) { 
-        alert('Please fill title and message'); 
-        return; 
-    }
-    
-    try {
-        const response = await fetch(`${API_BASE_URL}/admin/notifications/create`, {
-            method: 'POST',
-            headers: { 
-                'Authorization': `Bearer ${adminToken}`, 
-                'Content-Type': 'application/json' 
-            },
-            body: JSON.stringify({ 
-                title, message, isPriority, badge,
-                button1Text, button1Link, button2Text, button2Link
-            })
-        });
-        
-        if (response.ok) {
-            alert('✅ Notification sent successfully!');
-            document.getElementById('notifTitle').value = '';
-            document.getElementById('notifMessage').value = '';
-            document.getElementById('notifPriority').value = 'false';
-            document.getElementById('notifBadge').value = 'none';
-            document.getElementById('notifBtn1Text').value = '';
-            document.getElementById('notifBtn1Link').value = '';
-            document.getElementById('notifBtn2Text').value = '';
-            document.getElementById('notifBtn2Link').value = '';
-            loadNotifications();
-        } else {
-            alert('❌ Failed to send notification');
-        }
-    } catch (error) {
-        alert('Error sending notification');
-    }
-};
-// Updated loadNotifications function (to show priority and badge)
-async function loadNotifications() {
-    const tbody = document.getElementById('notificationsTableBody');
-    if (!tbody) return;
-    tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading notifications...<\/td><\/tr>';
-    
-    try {
-        const response = await fetch(`${API_BASE_URL}/admin/notifications`, { 
-            headers: { 'Authorization': `Bearer ${adminToken}` } 
-        });
-        const notifications = await response.json();
-        
-        if (!notifications || notifications.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No notifications found<\/td><\/tr>';
-            return;
-        }
-        
-        tbody.innerHTML = notifications.map(n => {
-            let priorityBadge = n.isPriority ? '<span class="status-open" style="background:#ff44441a;color:#ff4444;">🔴 Priority</span>' : '<span class="status-closed">Normal</span>';
-            let badgeHtml = '';
-            if (n.badge === 'live') badgeHtml = '<span class="badge-live">LIVE</span>';
-            else if (n.badge === 'new') badgeHtml = '<span class="badge-new">NEW</span>';
-            else if (n.badge === 'upcoming') badgeHtml = '<span class="badge-upcoming">UPCOMING</span>';
-            else badgeHtml = '<span style="opacity:0.5;">None</span>';
-            
-            return `
-                <tr>
-                    <td><strong>${escapeHtml(n.title)}</strong><\/td>
-                    <td>${escapeHtml(n.message.substring(0, 50))}...<\/td>
-                    <td>${priorityBadge}<\/td>
-                    <td>${badgeHtml}<\/td>
-                    <td>${new Date(n.date).toLocaleDateString()}<\/td>
-                    <td><button class="btn btn-danger btn-sm" onclick="deleteNotification('${n._id}')">Delete<\/button><\/td>
-                <\/tr>
-            `;
-        }).join('');
-    } catch (error) { 
-        console.error(error);
-        tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load notifications<\/td><\/tr>';
-    }
-}
-        window.deleteNotification = async (id) => {
-            if (confirm('Delete this notification?')) {
-                await fetch(`${API_BASE_URL}/admin/notifications/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${adminToken}` } });
-                loadNotifications();
-            }
-        };
 
-        // ========== NAV MANAGER FUNCTIONS ==========
+        window.sendNotification = async function () {
+            const title = document.getElementById('notifTitle')?.value;
+            const message = document.getElementById('notifMessage')?.value;
+            const isPriority = document.getElementById('notifPriority')?.value === 'true';
+            const badge = document.getElementById('notifBadge')?.value;
+            const b1t = document.getElementById('notifBtn1Text')?.value, b1l = document.getElementById('notifBtn1Link')?.value;
+            const b2t = document.getElementById('notifBtn2Text')?.value, b2l = document.getElementById('notifBtn2Link')?.value;
+            if (!title || !message) { alert('Please fill title and message'); return; }
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/notifications/create`, { method: 'POST', headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ title, message, isPriority, badge, button1Text: b1t, button1Link: b1l, button2Text: b2t, button2Link: b2l }) });
+                if (response.ok) { alert('✅ Notification sent!'); document.getElementById('notifTitle').value = ''; document.getElementById('notifMessage').value = ''; document.getElementById('notifPriority').value = 'false'; document.getElementById('notifBadge').value = 'none'; if (document.getElementById('notifBtn1Text')) document.getElementById('notifBtn1Text').value = ''; if (document.getElementById('notifBtn1Link')) document.getElementById('notifBtn1Link').value = ''; if (document.getElementById('notifBtn2Text')) document.getElementById('notifBtn2Text').value = ''; if (document.getElementById('notifBtn2Link')) document.getElementById('notifBtn2Link').value = ''; loadNotifications(); }
+                else alert('❌ Failed');
+            } catch (error) { alert('Error'); }
+        };
+        window.deleteNotification = async function (id) { if (confirm('Delete notification?')) { await fetch(`${API_BASE_URL}/admin/notifications/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${adminToken}` } }); loadNotifications(); } };
+
+        // Nav Manager
         async function loadNavItems() {
             const tbody = document.getElementById('navItemsTableBody');
             if (!tbody) return;
-            tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading nav items...<\/td><\/tr>';
-            
+            tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading nav items...</td></tr>';
             try {
-                const response = await fetch(`${API_BASE_URL}/admin/nav-items`, {
-                    headers: { 'Authorization': `Bearer ${adminToken}` }
-                });
-                if (!response.ok) throw new Error('Failed to fetch');
+                const response = await fetch(`${API_BASE_URL}/admin/nav-items`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
                 const items = await response.json();
-                displayNavItems(items);
-            } catch (error) {
-                console.error('Error loading nav items:', error);
-                tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load nav items<\/td><\/tr>';
-            }
+                if (!items || items.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No custom nav items added yet</td></tr>'; return; }
+                let html = '';
+                for (let i = 0; i < items.length; i++) {
+                    const it = items[i];
+                    let badgeHtml = it.badge === 'live' ? '<span class="badge-live">LIVE</span>' : (it.badge === 'new' ? '<span class="badge-new">NEW</span>' : (it.badge === 'upcoming' ? '<span class="badge-upcoming">UPCOMING</span>' : '<span style="opacity:0.5;">None</span>'));
+                    html += '<tr><td><i class="fas ' + it.icon + '"></i></td><td><strong>' + escapeHtml(it.name) + '</strong></td><td><a href="' + it.link + '" target="_blank">' + escapeHtml(it.link.substring(0, 40)) + (it.link.length > 40 ? '...' : '') + '</a></td><td>' + badgeHtml + '</td><td>' + (it.target === '_blank' ? '🔗 New Tab' : '📄 Same Tab') + '</td><td class="action-buttons"><button class="btn btn-warning btn-sm" onclick="editNavItem(\'' + it._id + '\')">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteNavItem(\'' + it._id + '\')">Delete</button></td></tr>';
+                }
+                tbody.innerHTML = html;
+            } catch (error) { tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load nav items</td></tr>'; }
         }
 
-        function displayNavItems(items) {
-            const tbody = document.getElementById('navItemsTableBody');
-            if (!tbody) return;
-            
-            if (!items || items.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No custom nav items added yet. Create one above!<\/td><\/tr>';
-                return;
-            }
-            
-            tbody.innerHTML = items.map(item => {
-                let badgeHtml = '';
-                if (item.badge === 'live') badgeHtml = '<span class="badge-live">LIVE</span>';
-                else if (item.badge === 'new') badgeHtml = '<span class="badge-new">NEW</span>';
-                else if (item.badge === 'upcoming') badgeHtml = '<span class="badge-upcoming">UPCOMING</span>';
-                else badgeHtml = '<span style="opacity:0.5;">None</span>';
-                
-                return `
-                    <tr>
-                        <td><i class="fas ${item.icon}"></i></td>
-                        <td><strong>${escapeHtml(item.name)}</strong></td>
-                        <td><a href="${item.link}" target="_blank">${escapeHtml(item.link.substring(0, 40))}${item.link.length > 40 ? '...' : ''}</a></td>
-                        <td>${badgeHtml}</td>
-                        <td>${item.target === '_blank' ? '🔗 New Tab' : '📄 Same Tab'}</td>
-                        <td class="action-buttons">
-                            <button class="btn btn-warning btn-sm" onclick="editNavItem('${item._id}')">Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteNavItem('${item._id}')">Delete</button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        window.createNavItem = async () => {
+        window.createNavItem = async function () {
             const name = document.getElementById('navName')?.value;
             let link = document.getElementById('navLink')?.value;
             const icon = document.getElementById('navIcon')?.value;
             const badge = document.getElementById('navBadge')?.value;
             const target = document.getElementById('navTarget')?.value;
-            
-            if (!name || !link) {
-                alert('Please fill Name and Link');
-                return;
-            }
-            
-            // Auto-add https:// if missing for external links
-            if (!link.startsWith('http://') && !link.startsWith('https://') && !link.startsWith('/') && !link.startsWith('#')) {
-                link = 'https://' + link;
-            }
-            
+            if (!name || !link) { alert('Please fill Name and Link'); return; }
+            if (!link.startsWith('http://') && !link.startsWith('https://') && !link.startsWith('/') && !link.startsWith('#')) link = 'https://' + link;
             try {
-                const response = await fetch(`${API_BASE_URL}/admin/nav-items`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${adminToken}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ name, link, icon, badge, target })
-                });
-                
-                if (response.ok) {
-                    alert('Nav item added successfully!');
-                    if (document.getElementById('navName')) document.getElementById('navName').value = '';
-                    if (document.getElementById('navLink')) document.getElementById('navLink').value = '';
-                    if (document.getElementById('navIcon')) document.getElementById('navIcon').value = 'fa-link';
-                    if (document.getElementById('navBadge')) document.getElementById('navBadge').value = 'none';
-                    if (document.getElementById('navTarget')) document.getElementById('navTarget').value = '_self';
-                    loadNavItems();
-                } else {
-                    const data = await response.json();
-                    alert(data.message || 'Failed to add nav item');
-                }
-            } catch (error) {
-                alert('Error adding nav item');
-            }
+                const response = await fetch(`${API_BASE_URL}/admin/nav-items`, { method: 'POST', headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ name, link, icon, badge, target }) });
+                if (response.ok) { alert('Nav item added!'); document.getElementById('navName').value = ''; document.getElementById('navLink').value = ''; loadNavItems(); }
+                else alert('Failed');
+            } catch (error) { alert('Error'); }
         };
+        window.editNavItem = async function (id) {
+            const newName = prompt('Edit Item Name:'); if (!newName) return;
+            let newLink = prompt('Edit Link URL:'); if (!newLink) return;
+            if (!newLink.startsWith('http://') && !newLink.startsWith('https://') && !newLink.startsWith('/') && !newLink.startsWith('#')) newLink = 'https://' + newLink;
+            const newIcon = prompt('Edit Icon (fa-xxx):') || 'fa-link';
+            const newBadge = prompt('Edit Badge (live/new/upcoming/none):') || 'none';
+            const newTarget = prompt('Open in (_self/_blank):') || '_self';
+            await fetch(`${API_BASE_URL}/admin/nav-items/${id}`, { method: 'PUT', headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ name: newName, link: newLink, icon: newIcon, badge: newBadge, target: newTarget }) });
+            alert('Updated'); loadNavItems();
+        };
+        window.deleteNavItem = async function (id) { if (confirm('Delete this nav item?')) { await fetch(`${API_BASE_URL}/admin/nav-items/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${adminToken}` } }); loadNavItems(); } };
 
-        window.editNavItem = async (id) => {
+        // ========== GALLERY MANAGEMENT ==========
+        async function loadGalleryImages() {
+            const container = document.getElementById('galleryGridAdmin');
+            if (!container) return;
+            container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading images...</div>';
             try {
-                const response = await fetch(`${API_BASE_URL}/admin/nav-items`, {
-                    headers: { 'Authorization': `Bearer ${adminToken}` }
-                });
-                const items = await response.json();
-                const item = items.find(i => i._id === id);
-                if (!item) return;
-                
-                const newName = prompt('Edit Item Name:', item.name);
-                if (!newName) return;
-                let newLink = prompt('Edit Link URL:', item.link);
-                if (!newLink) return;
-                
-                // Auto-add https:// if missing
-                if (!newLink.startsWith('http://') && !newLink.startsWith('https://') && !newLink.startsWith('/') && !newLink.startsWith('#')) {
-                    newLink = 'https://' + newLink;
+                const response = await fetch(`${API_BASE_URL}/admin/gallery`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
+                const images = await response.json();
+                displayGalleryImages(images);
+            } catch (error) { container.innerHTML = '<div class="empty-state">Failed to load images</div>'; }
+        }
+
+        function displayGalleryImages(images) {
+            const container = document.getElementById('galleryGridAdmin');
+            if (!images || images.length === 0) { container.innerHTML = '<div class="empty-state">No images uploaded yet</div>'; return; }
+            let html = '';
+            for (let i = 0; i < images.length; i++) {
+                const img = images[i];
+                let categoryBadge = '<span class="category-badge" style="background:#00f0ff20; color:#00f0ff;">🎯 ' + escapeHtml(img.category) + '</span>';
+                html += '<div class="gallery-item-admin" data-id="' + img._id + '">' +
+                    '<img src="' + img.cloudinaryUrl + '" alt="' + escapeHtml(img.title) + '" loading="lazy">' +
+                    '<div class="info">' +
+                    '<div class="title">' + escapeHtml(img.title) + '</div>' +
+                    '<div class="date">📅 ' + new Date(img.uploadDate).toLocaleDateString() + '</div>' +
+                    categoryBadge +
+                    '<input type="text" id="edit-title-' + img._id + '" class="edit-title" placeholder="New title" value="' + escapeHtml(img.title) + '">' +
+                    '<select id="edit-category-' + img._id + '" class="edit-category" id="catSelect-' + img._id + '"></select>' +
+                    '<button class="update-image-btn" onclick="updateImage(\'' + img._id + '\')"><i class="fas fa-save"></i> Update</button>' +
+                    '<button class="delete-image-btn" onclick="deleteGalleryImage(\'' + img._id + '\')"><i class="fas fa-trash-alt"></i> Delete</button>' +
+                    '</div>' +
+                    '</div>';
+            }
+            container.innerHTML = html;
+            // Populate category dropdowns
+            for (let i = 0; i < images.length; i++) {
+                populateCategoryDropdown(images[i]._id, images[i].category);
+            }
+        }
+
+        async function populateCategoryDropdown(imageId, selectedCategory) {
+            const select = document.getElementById('edit-category-' + imageId);
+            if (!select) return;
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/categories`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
+                const categories = await response.json();
+                let options = '';
+                for (let i = 0; i < categories.length; i++) {
+                    const cat = categories[i];
+                    const selected = (cat.name === selectedCategory) ? 'selected' : '';
+                    options += '<option value="' + cat.name + '" ' + selected + '>' + cat.icon + ' ' + cat.name + '</option>';
                 }
-                
-                const newIcon = prompt('Edit Icon (fa-xxx):', item.icon) || 'fa-link';
-                const newBadge = prompt('Edit Badge (live/new/upcoming/none):', item.badge) || 'none';
-                const newTarget = prompt('Open in (_self/_blank):', item.target) || '_self';
-                
-                const updateResponse = await fetch(`${API_BASE_URL}/admin/nav-items/${id}`, {
+                select.innerHTML = options;
+            } catch (error) { console.error('Error loading dropdown:', error); }
+        }
+
+        async function loadCategoryDropdown() {
+            const categorySelect = document.getElementById('imageCategory');
+            if (!categorySelect) return;
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/categories`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
+                const categories = await response.json();
+                categorySelect.innerHTML = '';
+                for (let i = 0; i < categories.length; i++) {
+                    const cat = categories[i];
+                    const option = document.createElement('option');
+                    option.value = cat.name;
+                    option.textContent = cat.icon + ' ' + cat.name;
+                    categorySelect.appendChild(option);
+                }
+            } catch (error) { console.error('Error loading dropdown:', error); }
+        }
+
+        document.getElementById('uploadImageForm')?.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const title = document.getElementById('imageTitle').value;
+            const category = document.getElementById('imageCategory').value;
+            const file = document.getElementById('imageFile').files[0];
+            if (!title || !file) { alert('Please fill title and select an image'); return; }
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('category', category);
+            formData.append('image', file);
+            const uploadBtn = this.querySelector('button');
+            uploadBtn.disabled = true;
+            uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/gallery/upload`, { method: 'POST', headers: { 'Authorization': `Bearer ${adminToken}` }, body: formData });
+                if (response.ok) { alert('✅ Image uploaded!'); this.reset(); document.getElementById('uploadPreview').style.display = 'none'; loadGalleryImages(); }
+                else { alert('❌ Upload failed'); }
+            } catch (error) { alert('❌ Error uploading'); }
+            finally { uploadBtn.disabled = false; uploadBtn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload to Cloudinary'; }
+        });
+
+        document.getElementById('imageFile')?.addEventListener('change', function () {
+            const preview = document.getElementById('uploadPreview');
+            const previewImg = document.getElementById('previewImg');
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (event) { previewImg.src = event.target.result; preview.style.display = 'block'; };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        window.updateImage = async function (id) {
+            const newTitle = document.getElementById('edit-title-' + id).value;
+            const newCategory = document.getElementById('edit-category-' + id).value;
+            if (!newTitle) { alert('Please enter a title'); return; }
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/gallery/${id}`, {
                     method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${adminToken}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ name: newName, link: newLink, icon: newIcon, badge: newBadge, target: newTarget })
+                    headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title: newTitle, category: newCategory })
                 });
-                
-                if (updateResponse.ok) {
-                    alert('Nav item updated successfully');
-                    loadNavItems();
-                } else {
-                    alert('Failed to update');
-                }
-            } catch (error) {
-                alert('Error updating nav item');
+                if (response.ok) { alert('Image updated'); loadGalleryImages(); }
+                else { alert('Failed to update'); }
+            } catch (error) { alert('Error updating'); }
+        };
+
+        window.deleteGalleryImage = async function (id) {
+            if (confirm('Delete this image?')) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/admin/gallery/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${adminToken}` } });
+                    if (response.ok) { alert('Image deleted'); loadGalleryImages(); }
+                    else { alert('Failed to delete'); }
+                } catch (error) { alert('Error deleting'); }
             }
         };
 
-        window.deleteNavItem = async (id) => {
-            if (confirm('Delete this navigation item? This cannot be undone.')) {
+        // ========== CATEGORY MANAGEMENT ==========
+        async function loadCategories() {
+            const container = document.getElementById('categoriesList');
+            if (!container) return;
+            container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading categories...</div>';
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/categories`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
+                const categories = await response.json();
+                displayCategories(categories);
+            } catch (error) { container.innerHTML = '<div class="empty-state">Failed to load categories</div>'; }
+        }
+
+        function displayCategories(categories) {
+            const container = document.getElementById('categoriesList');
+            if (!categories || categories.length === 0) { container.innerHTML = '<div class="empty-state">No categories added yet. Create one above!</div>'; return; }
+            let html = '';
+            for (let i = 0; i < categories.length; i++) {
+                const cat = categories[i];
+                html += '<div class="gallery-item-admin" data-id="' + cat._id + '">' +
+                    '<div class="info">' +
+                    '<div class="title" style="font-size: 32px; text-align: center;">' + cat.icon + '</div>' +
+                    '<div class="title"><strong>' + escapeHtml(cat.name) + '</strong></div>' +
+                    '<div class="date">Created: ' + new Date(cat.createdAt).toLocaleDateString() + '</div>' +
+                    '<div style="width: 40px; height: 4px; background: ' + cat.color + '; margin: 8px auto; border-radius: 2px;"></div>' +
+                    '<input type="text" id="edit-cat-name-' + cat._id + '" class="edit-title" placeholder="Name" value="' + escapeHtml(cat.name) + '">' +
+                    '<input type="text" id="edit-cat-icon-' + cat._id + '" class="edit-title" placeholder="Icon" value="' + cat.icon + '">' +
+                    '<input type="color" id="edit-cat-color-' + cat._id + '" class="edit-title" value="' + cat.color + '">' +
+                    '<button class="update-image-btn" onclick="updateCategory(\'' + cat._id + '\')"><i class="fas fa-save"></i> Update</button>' +
+                    '<button class="delete-image-btn" onclick="deleteCategory(\'' + cat._id + '\')"><i class="fas fa-trash-alt"></i> Delete</button>' +
+                    '</div>' +
+                    '</div>';
+            }
+            container.innerHTML = html;
+        }
+
+        window.createCategory = async function () {
+            const name = document.getElementById('catName')?.value;
+            const icon = document.getElementById('catIcon')?.value || '📸';
+            const color = document.getElementById('catColor')?.value || '#00f0ff';
+            if (!name) { alert('Please enter category name'); return; }
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/categories`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, icon, color })
+                });
+                if (response.ok) { alert('Category created!'); document.getElementById('catName').value = ''; loadCategories(); loadCategoryDropdown(); }
+                else { const data = await response.json(); alert(data.message || 'Failed to create'); }
+            } catch (error) { alert('Error creating category'); }
+        };
+
+        window.updateCategory = async function (id) {
+            const name = document.getElementById('edit-cat-name-' + id).value;
+            const icon = document.getElementById('edit-cat-icon-' + id).value;
+            const color = document.getElementById('edit-cat-color-' + id).value;
+            if (!name) { alert('Category name required'); return; }
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/categories/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, icon, color })
+                });
+                if (response.ok) { alert('Category updated!'); loadCategories(); loadCategoryDropdown(); }
+                else { alert('Failed to update'); }
+            } catch (error) { alert('Error updating'); }
+        };
+
+        window.deleteCategory = async function (id) {
+            if (confirm('Delete this category? Images using this category will NOT be deleted, but will show as "other".')) {
                 try {
-                    const response = await fetch(`${API_BASE_URL}/admin/nav-items/${id}`, {
+                    const response = await fetch(`${API_BASE_URL}/admin/categories/${id}`, {
                         method: 'DELETE',
                         headers: { 'Authorization': `Bearer ${adminToken}` }
                     });
-                    if (response.ok) {
-                        alert('Nav item deleted successfully');
-                        loadNavItems();
-                    } else {
-                        alert('Failed to delete');
-                    }
-                } catch (error) {
-                    alert('Error deleting nav item');
-                }
+                    if (response.ok) { alert('Category deleted'); loadCategories(); loadCategoryDropdown(); loadGalleryImages(); }
+                    else { const data = await response.json(); alert(data.message || 'Failed to delete'); }
+                } catch (error) { alert('Error deleting'); }
             }
         };
 
-        // Helper Functions
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+        function escapeHtml(text) { if (!text) return ''; const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
+        window.logout = function () { localStorage.removeItem('adminToken'); window.location.href = 'admin-login.html'; };
 
-        // Logout
-        window.logout = () => {
-            localStorage.removeItem('adminToken');
-            localStorage.removeItem('adminData');
-            window.location.href = 'admin-login.html';
-        };
-
-        // Initial load
         loadDashboard();
     </script>
 </body>
+
 </html>
