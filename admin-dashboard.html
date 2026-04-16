@@ -904,17 +904,21 @@
     </div>
 
     <script>
-        const API_BASE_URL = 'https://backend-glo6.onrender.com';
-        let adminToken = localStorage.getItem('adminToken');
+        var API_BASE_URL = 'https://backend-glo6.onrender.com';
+        var adminToken = localStorage.getItem('adminToken');
         if (!adminToken) window.location.href = 'admin-login.html';
 
-        const savedTheme = localStorage.getItem('theme') || 'dark';
+        var savedTheme = localStorage.getItem('theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
 
+        // Cache for categories
+        var categoriesCache = null;
+        var isLoadingCategories = false;
+
         // Mobile Sidebar Toggle
-        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        var mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        var sidebar = document.getElementById('sidebar');
+        var sidebarOverlay = document.getElementById('sidebarOverlay');
 
         function closeSidebar() { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; }
         function openSidebar() { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
@@ -927,15 +931,15 @@
         }
         if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
 
-        const menuItemsList = document.querySelectorAll('.menu-item');
-        menuItemsList.forEach(function (item) {
-            item.addEventListener('click', function () { if (window.innerWidth <= 768) closeSidebar(); });
-        });
+        var menuItemsList = document.querySelectorAll('.menu-item');
+        for (var i = 0; i < menuItemsList.length; i++) {
+            menuItemsList[i].addEventListener('click', function () { if (window.innerWidth <= 768) closeSidebar(); });
+        }
         window.addEventListener('resize', function () {
             if (window.innerWidth > 768) { closeSidebar(); sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; }
         });
 
-        const panels = {
+        var panels = {
             dashboard: document.getElementById('dashboardPanel'),
             events: document.getElementById('eventsPanel'),
             members: document.getElementById('membersPanel'),
@@ -944,19 +948,19 @@
             gallery: document.getElementById('galleryPanel'),
             categories: document.getElementById('categoriesPanel')
         };
-        const pageTitle = document.getElementById('pageTitle');
+        var pageTitle = document.getElementById('pageTitle');
 
         function switchPanel(panelId, panelName) {
-            for (let key in panels) { if (panels[key]) panels[key].classList.remove('active'); }
+            for (var key in panels) { if (panels[key]) panels[key].classList.remove('active'); }
             if (panels[panelId]) panels[panelId].classList.add('active');
             if (pageTitle) pageTitle.textContent = panelName;
         }
 
-        menuItemsList.forEach(function (item) {
-            item.addEventListener('click', function () {
-                const panelId = this.dataset.panel;
-                const panelName = this.textContent.trim();
-                menuItemsList.forEach(function (i) { i.classList.remove('active'); });
+        for (var i = 0; i < menuItemsList.length; i++) {
+            menuItemsList[i].addEventListener('click', function () {
+                var panelId = this.dataset.panel;
+                var panelName = this.textContent.trim();
+                for (var j = 0; j < menuItemsList.length; j++) { menuItemsList[j].classList.remove('active'); }
                 this.classList.add('active');
                 switchPanel(panelId, panelName);
                 if (panelId === 'events') loadEvents();
@@ -967,202 +971,263 @@
                 if (panelId === 'categories') loadCategories();
                 if (panelId === 'dashboard') loadDashboard();
             });
-        });
+        }
 
         // Dashboard
         async function loadDashboard() {
             try {
-                const membersRes = await fetch(`${API_BASE_URL}/admin/members`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
-                const eventsRes = await fetch(`${API_BASE_URL}/admin/events`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
-                const members = await membersRes.json();
-                const events = await eventsRes.json();
-                document.getElementById('totalMembers').textContent = members.members?.length || 0;
+                var membersRes = await fetch(API_BASE_URL + '/admin/members', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                var eventsRes = await fetch(API_BASE_URL + '/admin/events', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                var members = await membersRes.json();
+                var events = await eventsRes.json();
+                document.getElementById('totalMembers').textContent = members.members ? members.members.length : 0;
                 document.getElementById('totalEvents').textContent = events.length || 0;
-                let verifiedCount = 0;
-                if (members.members) { for (let i = 0; i < members.members.length; i++) { if (members.members[i].isverified) verifiedCount++; } }
+                var verifiedCount = 0;
+                if (members.members) { for (var i = 0; i < members.members.length; i++) { if (members.members[i].isverified) verifiedCount++; } }
                 document.getElementById('verifiedMembers').textContent = verifiedCount;
-                let activeCount = 0;
-                for (let i = 0; i < events.length; i++) { if (events[i].isOpen) activeCount++; }
+                var activeCount = 0;
+                for (var i = 0; i < events.length; i++) { if (events[i].isOpen) activeCount++; }
                 document.getElementById('activeEvents').textContent = activeCount;
             } catch (error) { console.error(error); }
         }
 
-        // Events (simplified - similar to previous working version)
+        // Events
         async function loadEvents() {
-            const tbody = document.getElementById('eventsTableBody');
+            var tbody = document.getElementById('eventsTableBody');
             if (!tbody) return;
             tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading events...</td></tr>';
             try {
-                const response = await fetch(`${API_BASE_URL}/admin/events`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
-                const events = await response.json();
+                var response = await fetch(API_BASE_URL + '/admin/events', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                var events = await response.json();
                 if (!events || events.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No events found</td></tr>'; return; }
-                let html = '';
-                for (let i = 0; i < events.length; i++) {
-                    const e = events[i];
-                    html += '<tr><td>' + escapeHtml(e.name) + '</td><td>' + new Date(e.date).toLocaleDateString() + '</td><td>' + escapeHtml(e.location) + '</td>' +
+                var html = '';
+                for (var i = 0; i < events.length; i++) {
+                    var e = events[i];
+                    html += '<tr>' +
+                        '<td>' + escapeHtml(e.name) + '</td>' +
+                        '<td>' + new Date(e.date).toLocaleDateString() + '</td>' +
+                        '<td>' + escapeHtml(e.location) + '</td>' +
                         '<td><span class="status-badge ' + (e.isOpen ? 'status-open' : 'status-closed') + '">' + (e.isOpen ? 'Open' : 'Closed') + '</span></td>' +
                         '<td>' + (e.participantsCount || 0) + '</td>' +
-                        '<td class="action-buttons"><button class="btn btn-warning btn-sm" onclick="toggleEventStatus(\'' + e._id + '\', ' + e.isOpen + ')">' + (e.isOpen ? 'Close' : 'Open') + '</button>' +
-                        '<button class="btn btn-danger btn-sm" onclick="deleteEvent(\'' + e._id + '\')">Delete</button></td></tr>';
+                        '<td class="action-buttons"><button class="btn btn-warning btn-sm" onclick="toggleEventStatus(\'' + e._id + '\', ' + e.isOpen + ')">' + (e.isOpen ? 'Close' : 'Open') + '</button><button class="btn btn-danger btn-sm" onclick="deleteEvent(\'' + e._id + '\')">Delete</button></td>' +
+                        '</tr>';
                 }
                 tbody.innerHTML = html;
             } catch (error) { tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load events</td></tr>'; }
         }
 
-        document.getElementById('createEventForm')?.addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const eventData = {
-                name: document.getElementById('eventName').value, imagelink: document.getElementById('eventImage').value,
-                date: document.getElementById('eventDate').value, location: document.getElementById('eventLocation').value,
-                prize: document.getElementById('eventPrize').value, pdflink: document.getElementById('eventPdfLink').value,
-                description: document.getElementById('eventDescription').value, isOpen: document.getElementById('eventIsOpen').value === 'true'
-            };
-            try {
-                const response = await fetch(`${API_BASE_URL}/admin/events/create`, { method: 'POST', headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify(eventData) });
-                if (response.ok) { alert('Event created'); this.reset(); loadEvents(); loadDashboard(); }
-                else alert('Failed');
-            } catch (error) { alert('Error'); }
-        });
+        var createEventForm = document.getElementById('createEventForm');
+        if (createEventForm) {
+            createEventForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                var eventData = {
+                    name: document.getElementById('eventName').value,
+                    imagelink: document.getElementById('eventImage').value,
+                    date: document.getElementById('eventDate').value,
+                    location: document.getElementById('eventLocation').value,
+                    prize: document.getElementById('eventPrize').value,
+                    pdflink: document.getElementById('eventPdfLink').value,
+                    description: document.getElementById('eventDescription').value,
+                    isOpen: document.getElementById('eventIsOpen').value === 'true'
+                };
+                try {
+                    var response = await fetch(API_BASE_URL + '/admin/events/create', { method: 'POST', headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, body: JSON.stringify(eventData) });
+                    if (response.ok) { alert('Event created'); createEventForm.reset(); loadEvents(); loadDashboard(); }
+                    else alert('Failed');
+                } catch (error) { alert('Error'); }
+            });
+        }
 
-        window.deleteEvent = async function (id) { if (confirm('Delete event?')) { await fetch(`${API_BASE_URL}/admin/events/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${adminToken}` } }); loadEvents(); loadDashboard(); } };
-        window.toggleEventStatus = async function (id, status) { await fetch(`${API_BASE_URL}/admin/events/${id}`, { method: 'PUT', headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ isOpen: !status }) }); loadEvents(); loadDashboard(); };
+        window.deleteEvent = async function (id) { if (confirm('Delete this event?')) { await fetch(API_BASE_URL + '/admin/events/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); loadEvents(); loadDashboard(); } };
+        window.toggleEventStatus = async function (id, status) { await fetch(API_BASE_URL + '/admin/events/' + id, { method: 'PUT', headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, body: JSON.stringify({ isOpen: !status }) }); loadEvents(); loadDashboard(); };
 
         // Members
         async function loadMembers() {
-            const tbody = document.getElementById('membersTableBody');
+            var tbody = document.getElementById('membersTableBody');
             if (!tbody) return;
-            tbody.innerHTML = '<tr><td colspan="7" class="loading">Loading members...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="loading">Loading members...<\/td><\/tr>';
             try {
-                const response = await fetch(`${API_BASE_URL}/admin/members`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
-                const data = await response.json();
-                const members = data.members || [];
-                if (members.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No members found</td></tr>'; return; }
-                let html = '';
-                for (let i = 0; i < members.length; i++) {
-                    const m = members[i];
-                    html += '<tr><td>' + escapeHtml(m.name) + '</td><td>' + escapeHtml(m.email) + '</td><td>' + escapeHtml(m.branch) + '</td><td>' + m.batch + '</td><td>' + m.regno + '</td><td>' + (m.isverified ? '✅' : '❌') + '</td><td><button class="btn btn-danger btn-sm" onclick="deleteMember(\'' + m._id + '\')">Delete</button></td></tr>';
+                var response = await fetch(API_BASE_URL + '/admin/members', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                var data = await response.json();
+                var members = data.members || [];
+                if (members.length === 0) { tbody.innerHTML = '<td><td colspan="7" class="empty-state">No members found<\/td><\/tr>'; return; }
+                var html = '';
+                for (var i = 0; i < members.length; i++) {
+                    var m = members[i];
+                    html += '<tr>' +
+                        '<td>' + escapeHtml(m.name) + '</td>' +
+                        '<td>' + escapeHtml(m.email) + '</td>' +
+                        '<td>' + escapeHtml(m.branch) + '</td>' +
+                        '<td>' + m.batch + '</td>' +
+                        '<td>' + m.regno + '</td>' +
+                        '<td>' + (m.isverified ? '✅' : '❌') + '</td>' +
+                        '<td class="action-buttons"><button class="btn btn-danger btn-sm" onclick="deleteMember(\'' + m._id + '\')">Delete</button></td>' +
+                        '</tr>';
                 }
                 tbody.innerHTML = html;
-            } catch (error) { tbody.innerHTML = '<tr><td colspan="7" class="loading">Failed to load members</td></tr>'; }
+            } catch (error) { tbody.innerHTML = '<tr><td colspan="7" class="loading">Failed to load members<\/td><\/tr>'; }
         }
-        window.deleteMember = async function (id) { if (confirm('Delete member?')) { await fetch(`${API_BASE_URL}/admin/members/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${adminToken}` } }); loadMembers(); loadDashboard(); } };
+        window.deleteMember = async function (id) { if (confirm('Delete this member?')) { await fetch(API_BASE_URL + '/admin/members/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); loadMembers(); loadDashboard(); } };
 
-        document.getElementById('searchMember')?.addEventListener('input', async function (e) {
-            const search = e.target.value;
-            const response = await fetch(`${API_BASE_URL}/admin/members?search=${search}`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
-            const data = await response.json();
-            const members = data.members || [];
-            const tbody = document.getElementById('membersTableBody');
-            if (tbody) {
-                let html = '';
-                for (let i = 0; i < members.length; i++) {
-                    const m = members[i];
-                    html += '<tr><td>' + escapeHtml(m.name) + '</td><td>' + escapeHtml(m.email) + '</td><td>' + escapeHtml(m.branch) + '</td><td>' + m.batch + '</td><td>' + m.regno + '</td><td>' + (m.isverified ? '✅' : '❌') + '</td><td><button class="btn btn-danger btn-sm" onclick="deleteMember(\'' + m._id + '\')">Delete</button></td></tr>';
+        var searchMemberInput = document.getElementById('searchMember');
+        if (searchMemberInput) {
+            searchMemberInput.addEventListener('input', async function (e) {
+                var search = e.target.value;
+                var response = await fetch(API_BASE_URL + '/admin/members?search=' + search, { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                var data = await response.json();
+                var members = data.members || [];
+                var tbody = document.getElementById('membersTableBody');
+                if (tbody) {
+                    var html = '';
+                    for (var i = 0; i < members.length; i++) {
+                        var m = members[i];
+                        html += '<tr>' +
+                            '<td>' + escapeHtml(m.name) + '</td>' +
+                            '<td>' + escapeHtml(m.email) + '</td>' +
+                            '<td>' + escapeHtml(m.branch) + '</td>' +
+                            '<td>' + m.batch + '</td>' +
+                            '<td>' + m.regno + '</td>' +
+                            '<td>' + (m.isverified ? '✅' : '❌') + '</td>' +
+                            '<td class="action-buttons"><button class="btn btn-danger btn-sm" onclick="deleteMember(\'' + m._id + '\')">Delete</button></td>' +
+                            '</tr>';
+                    }
+                    tbody.innerHTML = html;
                 }
-                tbody.innerHTML = html;
-            }
-        });
+            });
+        }
 
         // Notifications
         async function loadNotifications() {
-            const tbody = document.getElementById('notificationsTableBody');
+            var tbody = document.getElementById('notificationsTableBody');
             if (!tbody) return;
-            tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading notifications...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading notifications...<\/td><\/tr>';
             try {
-                const response = await fetch(`${API_BASE_URL}/admin/notifications`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
-                const notifications = await response.json();
-                if (!notifications || notifications.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No notifications found</td></tr>'; return; }
-                let html = '';
-                for (let i = 0; i < notifications.length; i++) {
-                    const n = notifications[i];
-                    let priorityBadge = n.isPriority ? '<span style="background:#ff44441a;color:#ff4444;padding:4px 8px;border-radius:12px;">🔴 Priority</span>' : '<span>Normal</span>';
-                    let badgeHtml = n.badge === 'live' ? '<span class="badge-live">LIVE</span>' : (n.badge === 'new' ? '<span class="badge-new">NEW</span>' : (n.badge === 'upcoming' ? '<span class="badge-upcoming">UPCOMING</span>' : '<span style="opacity:0.5;">None</span>'));
-                    html += '<tr><td><strong>' + escapeHtml(n.title) + '</strong></td><td>' + escapeHtml(n.message.substring(0, 50)) + '...</td><td>' + priorityBadge + '</td><td>' + badgeHtml + '</td><td>' + new Date(n.date).toLocaleDateString() + '</td><td><button class="btn btn-danger btn-sm" onclick="deleteNotification(\'' + n._id + '\')">Delete</button></td></tr>';
+                var response = await fetch(API_BASE_URL + '/admin/notifications', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                var notifications = await response.json();
+                if (!notifications || notifications.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No notifications found<\/td><\/tr>'; return; }
+                var html = '';
+                for (var i = 0; i < notifications.length; i++) {
+                    var n = notifications[i];
+                    var priorityBadge = n.isPriority ? '<span style="background:#ff44441a;color:#ff4444;padding:4px 8px;border-radius:12px;">🔴 Priority</span>' : '<span>Normal</span>';
+                    var badgeHtml = '';
+                    if (n.badge === 'live') badgeHtml = '<span class="badge-live">LIVE</span>';
+                    else if (n.badge === 'new') badgeHtml = '<span class="badge-new">NEW</span>';
+                    else if (n.badge === 'upcoming') badgeHtml = '<span class="badge-upcoming">UPCOMING</span>';
+                    else badgeHtml = '<span style="opacity:0.5;">None</span>';
+                    html += '<tr>' +
+                        '<td><strong>' + escapeHtml(n.title) + '<\/strong><\/td>' +
+                        '<td>' + escapeHtml(n.message.substring(0, 50)) + '...<\/td>' +
+                        '<td>' + priorityBadge + '<\/td>' +
+                        '<td>' + badgeHtml + '<\/td>' +
+                        '<td>' + new Date(n.date).toLocaleDateString() + '<\/td>' +
+                        '<td class="action-buttons"><button class="btn btn-danger btn-sm" onclick="deleteNotification(\'' + n._id + '\')">Delete<\/button><\/td>' +
+                        '<\/tr>';
                 }
                 tbody.innerHTML = html;
-            } catch (error) { tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load notifications</td></tr>'; }
+            } catch (error) { tbody.innerHTML = '<td><td colspan="6" class="loading">Failed to load notifications<\/td><\/tr>'; }
         }
 
         window.sendNotification = async function () {
-            const title = document.getElementById('notifTitle')?.value;
-            const message = document.getElementById('notifMessage')?.value;
-            const isPriority = document.getElementById('notifPriority')?.value === 'true';
-            const badge = document.getElementById('notifBadge')?.value;
-            const b1t = document.getElementById('notifBtn1Text')?.value, b1l = document.getElementById('notifBtn1Link')?.value;
-            const b2t = document.getElementById('notifBtn2Text')?.value, b2l = document.getElementById('notifBtn2Link')?.value;
+            var title = document.getElementById('notifTitle')?.value;
+            var message = document.getElementById('notifMessage')?.value;
+            var isPriority = document.getElementById('notifPriority')?.value === 'true';
+            var badge = document.getElementById('notifBadge')?.value;
+            var b1t = document.getElementById('notifBtn1Text')?.value, b1l = document.getElementById('notifBtn1Link')?.value;
+            var b2t = document.getElementById('notifBtn2Text')?.value, b2l = document.getElementById('notifBtn2Link')?.value;
             if (!title || !message) { alert('Please fill title and message'); return; }
             try {
-                const response = await fetch(`${API_BASE_URL}/admin/notifications/create`, { method: 'POST', headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ title, message, isPriority, badge, button1Text: b1t, button1Link: b1l, button2Text: b2t, button2Link: b2l }) });
-                if (response.ok) { alert('✅ Notification sent!'); document.getElementById('notifTitle').value = ''; document.getElementById('notifMessage').value = ''; document.getElementById('notifPriority').value = 'false'; document.getElementById('notifBadge').value = 'none'; if (document.getElementById('notifBtn1Text')) document.getElementById('notifBtn1Text').value = ''; if (document.getElementById('notifBtn1Link')) document.getElementById('notifBtn1Link').value = ''; if (document.getElementById('notifBtn2Text')) document.getElementById('notifBtn2Text').value = ''; if (document.getElementById('notifBtn2Link')) document.getElementById('notifBtn2Link').value = ''; loadNotifications(); }
-                else alert('❌ Failed');
+                var response = await fetch(API_BASE_URL + '/admin/notifications/create', { method: 'POST', headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, body: JSON.stringify({ title: title, message: message, isPriority: isPriority, badge: badge, button1Text: b1t, button1Link: b1l, button2Text: b2t, button2Link: b2l }) });
+                if (response.ok) {
+                    alert('✅ Notification sent!');
+                    document.getElementById('notifTitle').value = '';
+                    document.getElementById('notifMessage').value = '';
+                    document.getElementById('notifPriority').value = 'false';
+                    document.getElementById('notifBadge').value = 'none';
+                    if (document.getElementById('notifBtn1Text')) document.getElementById('notifBtn1Text').value = '';
+                    if (document.getElementById('notifBtn1Link')) document.getElementById('notifBtn1Link').value = '';
+                    if (document.getElementById('notifBtn2Text')) document.getElementById('notifBtn2Text').value = '';
+                    if (document.getElementById('notifBtn2Link')) document.getElementById('notifBtn2Link').value = '';
+                    loadNotifications();
+                } else { alert('❌ Failed'); }
             } catch (error) { alert('Error'); }
         };
-        window.deleteNotification = async function (id) { if (confirm('Delete notification?')) { await fetch(`${API_BASE_URL}/admin/notifications/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${adminToken}` } }); loadNotifications(); } };
+        window.deleteNotification = async function (id) { if (confirm('Delete this notification?')) { await fetch(API_BASE_URL + '/admin/notifications/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); loadNotifications(); } };
 
         // Nav Manager
         async function loadNavItems() {
-            const tbody = document.getElementById('navItemsTableBody');
+            var tbody = document.getElementById('navItemsTableBody');
             if (!tbody) return;
-            tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading nav items...</td></tr>';
+            tbody.innerHTML = '<td><td colspan="6" class="loading">Loading nav items...<\/td><\/tr>';
             try {
-                const response = await fetch(`${API_BASE_URL}/admin/nav-items`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
-                const items = await response.json();
-                if (!items || items.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No custom nav items added yet</td></tr>'; return; }
-                let html = '';
-                for (let i = 0; i < items.length; i++) {
-                    const it = items[i];
-                    let badgeHtml = it.badge === 'live' ? '<span class="badge-live">LIVE</span>' : (it.badge === 'new' ? '<span class="badge-new">NEW</span>' : (it.badge === 'upcoming' ? '<span class="badge-upcoming">UPCOMING</span>' : '<span style="opacity:0.5;">None</span>'));
-                    html += '<tr><td><i class="fas ' + it.icon + '"></i></td><td><strong>' + escapeHtml(it.name) + '</strong></td><td><a href="' + it.link + '" target="_blank">' + escapeHtml(it.link.substring(0, 40)) + (it.link.length > 40 ? '...' : '') + '</a></td><td>' + badgeHtml + '</td><td>' + (it.target === '_blank' ? '🔗 New Tab' : '📄 Same Tab') + '</td><td class="action-buttons"><button class="btn btn-warning btn-sm" onclick="editNavItem(\'' + it._id + '\')">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteNavItem(\'' + it._id + '\')">Delete</button></td></tr>';
+                var response = await fetch(API_BASE_URL + '/admin/nav-items', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                var items = await response.json();
+                if (!items || items.length === 0) { tbody.innerHTML = '<td><td colspan="6" class="empty-state">No custom nav items added yet<\/td><\/tr>'; return; }
+                var html = '';
+                for (var i = 0; i < items.length; i++) {
+                    var it = items[i];
+                    var badgeHtml = '';
+                    if (it.badge === 'live') badgeHtml = '<span class="badge-live">LIVE</span>';
+                    else if (it.badge === 'new') badgeHtml = '<span class="badge-new">NEW</span>';
+                    else if (it.badge === 'upcoming') badgeHtml = '<span class="badge-upcoming">UPCOMING</span>';
+                    else badgeHtml = '<span style="opacity:0.5;">None</span>';
+                    html += '<tr>' +
+                        '<td><i class="fas ' + it.icon + '"><\/i></td>' +
+                        '<td><strong>' + escapeHtml(it.name) + '<\/strong></td>' +
+                        '<td><a href="' + it.link + '" target="_blank">' + escapeHtml(it.link.substring(0, 40)) + (it.link.length > 40 ? '...' : '') + '<\/a></td>' +
+                        '<td>' + badgeHtml + '</td>' +
+                        '<td>' + (it.target === '_blank' ? '🔗 New Tab' : '📄 Same Tab') + '</td>' +
+                        '<td class="action-buttons"><button class="btn btn-warning btn-sm" onclick="editNavItem(\'' + it._id + '\')">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteNavItem(\'' + it._id + '\')">Delete</button><\/td>' +
+                        '</tr>';
                 }
                 tbody.innerHTML = html;
-            } catch (error) { tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load nav items</td></tr>'; }
+            } catch (error) { tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load nav items<\/td><\/tr>'; }
         }
 
         window.createNavItem = async function () {
-            const name = document.getElementById('navName')?.value;
-            let link = document.getElementById('navLink')?.value;
-            const icon = document.getElementById('navIcon')?.value;
-            const badge = document.getElementById('navBadge')?.value;
-            const target = document.getElementById('navTarget')?.value;
+            var name = document.getElementById('navName')?.value;
+            var link = document.getElementById('navLink')?.value;
+            var icon = document.getElementById('navIcon')?.value;
+            var badge = document.getElementById('navBadge')?.value;
+            var target = document.getElementById('navTarget')?.value;
             if (!name || !link) { alert('Please fill Name and Link'); return; }
             if (!link.startsWith('http://') && !link.startsWith('https://') && !link.startsWith('/') && !link.startsWith('#')) link = 'https://' + link;
             try {
-                const response = await fetch(`${API_BASE_URL}/admin/nav-items`, { method: 'POST', headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ name, link, icon, badge, target }) });
+                var response = await fetch(API_BASE_URL + '/admin/nav-items', { method: 'POST', headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, body: JSON.stringify({ name: name, link: link, icon: icon, badge: badge, target: target }) });
                 if (response.ok) { alert('Nav item added!'); document.getElementById('navName').value = ''; document.getElementById('navLink').value = ''; loadNavItems(); }
                 else alert('Failed');
             } catch (error) { alert('Error'); }
         };
         window.editNavItem = async function (id) {
-            const newName = prompt('Edit Item Name:'); if (!newName) return;
-            let newLink = prompt('Edit Link URL:'); if (!newLink) return;
+            var newName = prompt('Edit Item Name:'); if (!newName) return;
+            var newLink = prompt('Edit Link URL:'); if (!newLink) return;
             if (!newLink.startsWith('http://') && !newLink.startsWith('https://') && !newLink.startsWith('/') && !newLink.startsWith('#')) newLink = 'https://' + newLink;
-            const newIcon = prompt('Edit Icon (fa-xxx):') || 'fa-link';
-            const newBadge = prompt('Edit Badge (live/new/upcoming/none):') || 'none';
-            const newTarget = prompt('Open in (_self/_blank):') || '_self';
-            await fetch(`${API_BASE_URL}/admin/nav-items/${id}`, { method: 'PUT', headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ name: newName, link: newLink, icon: newIcon, badge: newBadge, target: newTarget }) });
+            var newIcon = prompt('Edit Icon (fa-xxx):') || 'fa-link';
+            var newBadge = prompt('Edit Badge (live/new/upcoming/none):') || 'none';
+            var newTarget = prompt('Open in (_self/_blank):') || '_self';
+            await fetch(API_BASE_URL + '/admin/nav-items/' + id, { method: 'PUT', headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, body: JSON.stringify({ name: newName, link: newLink, icon: newIcon, badge: newBadge, target: newTarget }) });
             alert('Updated'); loadNavItems();
         };
-        window.deleteNavItem = async function (id) { if (confirm('Delete this nav item?')) { await fetch(`${API_BASE_URL}/admin/nav-items/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${adminToken}` } }); loadNavItems(); } };
+        window.deleteNavItem = async function (id) { if (confirm('Delete this nav item?')) { await fetch(API_BASE_URL + '/admin/nav-items/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); loadNavItems(); } };
 
-        // ========== GALLERY MANAGEMENT ==========
+        // Gallery Management
         async function loadGalleryImages() {
-            const container = document.getElementById('galleryGridAdmin');
+            var container = document.getElementById('galleryGridAdmin');
             if (!container) return;
             container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading images...</div>';
             try {
-                const response = await fetch(`${API_BASE_URL}/admin/gallery`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
-                const images = await response.json();
+                var response = await fetch(API_BASE_URL + '/admin/gallery', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                var images = await response.json();
                 displayGalleryImages(images);
             } catch (error) { container.innerHTML = '<div class="empty-state">Failed to load images</div>'; }
         }
 
         function displayGalleryImages(images) {
-            const container = document.getElementById('galleryGridAdmin');
+            var container = document.getElementById('galleryGridAdmin');
             if (!images || images.length === 0) { container.innerHTML = '<div class="empty-state">No images uploaded yet</div>'; return; }
-            let html = '';
-            for (let i = 0; i < images.length; i++) {
-                const img = images[i];
-                let categoryBadge = '<span class="category-badge" style="background:#00f0ff20; color:#00f0ff;">🎯 ' + escapeHtml(img.category) + '</span>';
+            var html = '';
+            for (var i = 0; i < images.length; i++) {
+                var img = images[i];
+                var categoryBadge = '<span class="category-badge" style="background:#00f0ff20; color:#00f0ff;">🎯 ' + escapeHtml(img.category) + '</span>';
                 html += '<div class="gallery-item-admin" data-id="' + img._id + '">' +
                     '<img src="' + img.cloudinaryUrl + '" alt="' + escapeHtml(img.title) + '" loading="lazy">' +
                     '<div class="info">' +
@@ -1170,91 +1235,160 @@
                     '<div class="date">📅 ' + new Date(img.uploadDate).toLocaleDateString() + '</div>' +
                     categoryBadge +
                     '<input type="text" id="edit-title-' + img._id + '" class="edit-title" placeholder="New title" value="' + escapeHtml(img.title) + '">' +
-                    '<select id="edit-category-' + img._id + '" class="edit-category" id="catSelect-' + img._id + '"></select>' +
+                    '<select id="edit-category-' + img._id + '" class="edit-category"></select>' +
                     '<button class="update-image-btn" onclick="updateImage(\'' + img._id + '\')"><i class="fas fa-save"></i> Update</button>' +
                     '<button class="delete-image-btn" onclick="deleteGalleryImage(\'' + img._id + '\')"><i class="fas fa-trash-alt"></i> Delete</button>' +
                     '</div>' +
                     '</div>';
             }
             container.innerHTML = html;
-            // Populate category dropdowns
-            for (let i = 0; i < images.length; i++) {
+            for (var i = 0; i < images.length; i++) {
                 populateCategoryDropdown(images[i]._id, images[i].category);
             }
         }
 
         async function populateCategoryDropdown(imageId, selectedCategory) {
-            const select = document.getElementById('edit-category-' + imageId);
+            var select = document.getElementById('edit-category-' + imageId);
             if (!select) return;
-            try {
-                const response = await fetch(`${API_BASE_URL}/admin/categories`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
-                const categories = await response.json();
-                let options = '';
-                for (let i = 0; i < categories.length; i++) {
-                    const cat = categories[i];
-                    const selected = (cat.name === selectedCategory) ? 'selected' : '';
+
+            var categories = categoriesCache;
+            if (categories === null) {
+                try {
+                    var response = await fetch(API_BASE_URL + '/admin/categories', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                    categories = await response.json();
+                    categoriesCache = categories;
+                } catch (error) {
+                    console.error('Error loading dropdown:', error);
+                    return;
+                }
+            }
+
+            var options = '';
+            var staticCats = [
+                { name: 'events', icon: '🎯' },
+                { name: 'workshops', icon: '💻' },
+                { name: 'competitions', icon: '🏆' },
+                { name: 'recruitment', icon: '📢' },
+                { name: 'other', icon: '📸' }
+            ];
+
+            for (var i = 0; i < staticCats.length; i++) {
+                var cat = staticCats[i];
+                var selected = (cat.name === selectedCategory) ? 'selected' : '';
+                options += '<option value="' + cat.name + '" ' + selected + '>' + cat.icon + ' ' + cat.name + '</option>';
+            }
+
+            for (var i = 0; i < categories.length; i++) {
+                var cat = categories[i];
+                var isStatic = false;
+                for (var j = 0; j < staticCats.length; j++) {
+                    if (staticCats[j].name === cat.name) { isStatic = true; break; }
+                }
+                if (!isStatic) {
+                    var selected = (cat.name === selectedCategory) ? 'selected' : '';
                     options += '<option value="' + cat.name + '" ' + selected + '>' + cat.icon + ' ' + cat.name + '</option>';
                 }
-                select.innerHTML = options;
-            } catch (error) { console.error('Error loading dropdown:', error); }
+            }
+            select.innerHTML = options;
         }
 
         async function loadCategoryDropdown() {
-            const categorySelect = document.getElementById('imageCategory');
+            var categorySelect = document.getElementById('imageCategory');
             if (!categorySelect) return;
+
+            if (categoriesCache !== null) {
+                populateCategorySelect(categorySelect, categoriesCache);
+                return;
+            }
+
+            if (isLoadingCategories) {
+                setTimeout(function () { loadCategoryDropdown(); }, 100);
+                return;
+            }
+
+            isLoadingCategories = true;
             try {
-                const response = await fetch(`${API_BASE_URL}/admin/categories`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
-                const categories = await response.json();
-                categorySelect.innerHTML = '';
-                for (let i = 0; i < categories.length; i++) {
-                    const cat = categories[i];
-                    const option = document.createElement('option');
+                var response = await fetch(API_BASE_URL + '/admin/categories', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                var categories = await response.json();
+                categoriesCache = categories;
+                populateCategorySelect(categorySelect, categories);
+            } catch (error) {
+                console.error('Error loading dropdown:', error);
+            } finally {
+                isLoadingCategories = false;
+            }
+        }
+
+        function populateCategorySelect(categorySelect, categories) {
+            if (!categorySelect) return;
+
+            var staticValues = ['events', 'workshops', 'competitions', 'recruitment', 'other'];
+            var optionsToRemove = [];
+            for (var i = 0; i < categorySelect.options.length; i++) {
+                if (!staticValues.includes(categorySelect.options[i].value)) {
+                    optionsToRemove.push(i);
+                }
+            }
+            for (var i = optionsToRemove.length - 1; i >= 0; i--) {
+                categorySelect.remove(optionsToRemove[i]);
+            }
+
+            for (var i = 0; i < categories.length; i++) {
+                var cat = categories[i];
+                if (!staticValues.includes(cat.name)) {
+                    var option = document.createElement('option');
                     option.value = cat.name;
                     option.textContent = cat.icon + ' ' + cat.name;
                     categorySelect.appendChild(option);
                 }
-            } catch (error) { console.error('Error loading dropdown:', error); }
+            }
         }
 
-        document.getElementById('uploadImageForm')?.addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const title = document.getElementById('imageTitle').value;
-            const category = document.getElementById('imageCategory').value;
-            const file = document.getElementById('imageFile').files[0];
-            if (!title || !file) { alert('Please fill title and select an image'); return; }
-            const formData = new FormData();
-            formData.append('title', title);
-            formData.append('category', category);
-            formData.append('image', file);
-            const uploadBtn = this.querySelector('button');
-            uploadBtn.disabled = true;
-            uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
-            try {
-                const response = await fetch(`${API_BASE_URL}/admin/gallery/upload`, { method: 'POST', headers: { 'Authorization': `Bearer ${adminToken}` }, body: formData });
-                if (response.ok) { alert('✅ Image uploaded!'); this.reset(); document.getElementById('uploadPreview').style.display = 'none'; loadGalleryImages(); }
-                else { alert('❌ Upload failed'); }
-            } catch (error) { alert('❌ Error uploading'); }
-            finally { uploadBtn.disabled = false; uploadBtn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload to Cloudinary'; }
-        });
+        var uploadForm = document.getElementById('uploadImageForm');
+        if (uploadForm) {
+            uploadForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                var title = document.getElementById('imageTitle').value;
+                var category = document.getElementById('imageCategory').value;
+                var file = document.getElementById('imageFile').files[0];
+                if (!title || !file) { alert('Please fill title and select an image'); return; }
+                var formData = new FormData();
+                formData.append('title', title);
+                formData.append('category', category);
+                formData.append('image', file);
+                var uploadBtn = uploadForm.querySelector('button');
+                uploadBtn.disabled = true;
+                uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+                try {
+                    var response = await fetch(API_BASE_URL + '/admin/gallery/upload', { method: 'POST', headers: { 'Authorization': 'Bearer ' + adminToken }, body: formData });
+                    if (response.ok) { alert('✅ Image uploaded!'); uploadForm.reset(); document.getElementById('uploadPreview').style.display = 'none'; loadGalleryImages(); }
+                    else { alert('❌ Upload failed'); }
+                } catch (error) { alert('❌ Error uploading'); }
+                finally { uploadBtn.disabled = false; uploadBtn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload to Cloudinary'; }
+            });
+        }
 
-        document.getElementById('imageFile')?.addEventListener('change', function () {
-            const preview = document.getElementById('uploadPreview');
-            const previewImg = document.getElementById('previewImg');
-            if (this.files && this.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function (event) { previewImg.src = event.target.result; preview.style.display = 'block'; };
-                reader.readAsDataURL(this.files[0]);
-            }
-        });
+        var imageFileInput = document.getElementById('imageFile');
+        if (imageFileInput) {
+            imageFileInput.addEventListener('change', function () {
+                var preview = document.getElementById('uploadPreview');
+                var previewImg = document.getElementById('previewImg');
+                if (this.files && this.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (event) { previewImg.src = event.target.result; preview.style.display = 'block'; };
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        }
 
         window.updateImage = async function (id) {
-            const newTitle = document.getElementById('edit-title-' + id).value;
-            const newCategory = document.getElementById('edit-category-' + id).value;
+            var newTitle = document.getElementById('edit-title-' + id).value;
+            var newCategory = document.getElementById('edit-category-' + id).value;
             if (!newTitle) { alert('Please enter a title'); return; }
             try {
-                const response = await fetch(`${API_BASE_URL}/admin/gallery/${id}`, {
+                var response = await fetch(API_BASE_URL + '/admin/gallery/' + id, {
                     method: 'PUT',
-                    headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' },
+                    headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ title: newTitle, category: newCategory })
                 });
                 if (response.ok) { alert('Image updated'); loadGalleryImages(); }
@@ -1265,31 +1399,31 @@
         window.deleteGalleryImage = async function (id) {
             if (confirm('Delete this image?')) {
                 try {
-                    const response = await fetch(`${API_BASE_URL}/admin/gallery/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${adminToken}` } });
+                    var response = await fetch(API_BASE_URL + '/admin/gallery/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } });
                     if (response.ok) { alert('Image deleted'); loadGalleryImages(); }
                     else { alert('Failed to delete'); }
                 } catch (error) { alert('Error deleting'); }
             }
         };
 
-        // ========== CATEGORY MANAGEMENT ==========
+        // Category Management
         async function loadCategories() {
-            const container = document.getElementById('categoriesList');
+            var container = document.getElementById('categoriesList');
             if (!container) return;
             container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading categories...</div>';
             try {
-                const response = await fetch(`${API_BASE_URL}/admin/categories`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
-                const categories = await response.json();
+                var response = await fetch(API_BASE_URL + '/admin/categories', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                var categories = await response.json();
                 displayCategories(categories);
             } catch (error) { container.innerHTML = '<div class="empty-state">Failed to load categories</div>'; }
         }
 
         function displayCategories(categories) {
-            const container = document.getElementById('categoriesList');
+            var container = document.getElementById('categoriesList');
             if (!categories || categories.length === 0) { container.innerHTML = '<div class="empty-state">No categories added yet. Create one above!</div>'; return; }
-            let html = '';
-            for (let i = 0; i < categories.length; i++) {
-                const cat = categories[i];
+            var html = '';
+            for (var i = 0; i < categories.length; i++) {
+                var cat = categories[i];
                 html += '<div class="gallery-item-admin" data-id="' + cat._id + '">' +
                     '<div class="info">' +
                     '<div class="title" style="font-size: 32px; text-align: center;">' + cat.icon + '</div>' +
@@ -1308,51 +1442,73 @@
         }
 
         window.createCategory = async function () {
-            const name = document.getElementById('catName')?.value;
-            const icon = document.getElementById('catIcon')?.value || '📸';
-            const color = document.getElementById('catColor')?.value || '#00f0ff';
+            var name = document.getElementById('catName')?.value;
+            var icon = document.getElementById('catIcon')?.value || '📸';
+            var color = document.getElementById('catColor')?.value || '#00f0ff';
             if (!name) { alert('Please enter category name'); return; }
             try {
-                const response = await fetch(`${API_BASE_URL}/admin/categories`, {
+                var response = await fetch(API_BASE_URL + '/admin/categories', {
                     method: 'POST',
-                    headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, icon, color })
+                    headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name, icon: icon, color: color })
                 });
-                if (response.ok) { alert('Category created!'); document.getElementById('catName').value = ''; loadCategories(); loadCategoryDropdown(); }
-                else { const data = await response.json(); alert(data.message || 'Failed to create'); }
+                if (response.ok) {
+                    alert('Category created!');
+                    document.getElementById('catName').value = '';
+                    categoriesCache = null;
+                    loadCategories();
+                    loadCategoryDropdown();
+                } else {
+                    var data = await response.json();
+                    alert(data.message || 'Failed to create');
+                }
             } catch (error) { alert('Error creating category'); }
         };
 
         window.updateCategory = async function (id) {
-            const name = document.getElementById('edit-cat-name-' + id).value;
-            const icon = document.getElementById('edit-cat-icon-' + id).value;
-            const color = document.getElementById('edit-cat-color-' + id).value;
+            var name = document.getElementById('edit-cat-name-' + id).value;
+            var icon = document.getElementById('edit-cat-icon-' + id).value;
+            var color = document.getElementById('edit-cat-color-' + id).value;
             if (!name) { alert('Category name required'); return; }
             try {
-                const response = await fetch(`${API_BASE_URL}/admin/categories/${id}`, {
+                var response = await fetch(API_BASE_URL + '/admin/categories/' + id, {
                     method: 'PUT',
-                    headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, icon, color })
+                    headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name, icon: icon, color: color })
                 });
-                if (response.ok) { alert('Category updated!'); loadCategories(); loadCategoryDropdown(); }
-                else { alert('Failed to update'); }
+                if (response.ok) {
+                    alert('Category updated!');
+                    categoriesCache = null;
+                    loadCategories();
+                    loadCategoryDropdown();
+                } else {
+                    alert('Failed to update');
+                }
             } catch (error) { alert('Error updating'); }
         };
 
         window.deleteCategory = async function (id) {
             if (confirm('Delete this category? Images using this category will NOT be deleted, but will show as "other".')) {
                 try {
-                    const response = await fetch(`${API_BASE_URL}/admin/categories/${id}`, {
+                    var response = await fetch(API_BASE_URL + '/admin/categories/' + id, {
                         method: 'DELETE',
-                        headers: { 'Authorization': `Bearer ${adminToken}` }
+                        headers: { 'Authorization': 'Bearer ' + adminToken }
                     });
-                    if (response.ok) { alert('Category deleted'); loadCategories(); loadCategoryDropdown(); loadGalleryImages(); }
-                    else { const data = await response.json(); alert(data.message || 'Failed to delete'); }
+                    if (response.ok) {
+                        alert('Category deleted');
+                        categoriesCache = null;
+                        loadCategories();
+                        loadCategoryDropdown();
+                        loadGalleryImages();
+                    } else {
+                        var data = await response.json();
+                        alert(data.message || 'Failed to delete');
+                    }
                 } catch (error) { alert('Error deleting'); }
             }
         };
 
-        function escapeHtml(text) { if (!text) return ''; const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
+        function escapeHtml(text) { if (!text) return ''; var div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
         window.logout = function () { localStorage.removeItem('adminToken'); window.location.href = 'admin-login.html'; };
 
         loadDashboard();
