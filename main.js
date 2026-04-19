@@ -599,4 +599,85 @@ function initCodeBackground() {
 // Make functions global for retry buttons
 window.fetchEvents = fetchEvents;
 window.fetchNotices = fetchNotices;
+// ========== ADVANCED SCROLL FADE-IN ==========
+function initScrollReveal() {
+    // Section titles — from bottom
+    document.querySelectorAll('.section-title, .section-description').forEach(el => {
+        el.classList.add('reveal', 'from-bottom');
+    });
+
+    // Event cards — staggered from bottom
+    document.querySelectorAll('.event-card').forEach((el, i) => {
+        el.classList.add('reveal', 'from-bottom');
+        if (i < 6) el.classList.add(`delay-${(i % 3) + 1}`);
+    });
+
+    // Member & faculty cards — alternate left/right
+    document.querySelectorAll('.member-card, .faculty-card').forEach((el, i) => {
+        el.classList.add('reveal', i % 2 === 0 ? 'from-left' : 'from-right');
+        if (i < 6) el.classList.add(`delay-${(i % 3) + 1}`);
+    });
+
+    // Recruit cards — scale in
+    document.querySelectorAll('.recruit-card').forEach((el, i) => {
+        el.classList.add('reveal', 'scale-in');
+        if (i < 6) el.classList.add(`delay-${(i % 6) + 1}`);
+    });
+
+    // Winner cards — scale in
+    document.querySelectorAll('.winner-card').forEach((el, i) => {
+        el.classList.add('reveal', 'scale-in');
+        if (i < 6) el.classList.add(`delay-${(i % 3) + 1}`);
+    });
+
+    // Notice items — from left
+    document.querySelectorAll('.notice-item').forEach((el, i) => {
+        el.classList.add('reveal', 'from-left');
+        if (i < 6) el.classList.add(`delay-${(i % 3) + 1}`);
+    });
+
+    // Priority notices — from bottom
+    document.querySelectorAll('.recruitment-notice').forEach((el, i) => {
+        el.classList.add('reveal', 'from-bottom');
+        el.classList.add(`delay-${i + 1}`);
+    });
+
+    // Footer sections — from bottom
+    document.querySelectorAll('.footer-about, .footer-links, .footer-contact').forEach((el, i) => {
+        el.classList.add('reveal', 'from-bottom');
+        el.classList.add(`delay-${i + 1}`);
+    });
+
+    // Intersection Observer
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -60px 0px'
+    });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+}
+
+// Re-run reveal on dynamic content load (events/notices loaded via API)
+function reinitReveal() {
+    document.querySelectorAll('.event-card:not(.reveal), .notice-item:not(.reveal), .recruitment-notice:not(.reveal)').forEach((el, i) => {
+        el.classList.add('reveal', 'from-bottom');
+        if (i < 6) el.classList.add(`delay-${(i % 3) + 1}`);
+        observer.observe(el);
+    });
+}
+
+initScrollReveal();
+
+// Also re-run after dynamic content loads
+const originalDisplayEvents = window.displayEvents;
+window.addEventListener('load', () => {
+    setTimeout(initScrollReveal, 1500);
+});
 window.loadDynamicNavItems = loadDynamicNavItems;

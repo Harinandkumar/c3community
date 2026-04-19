@@ -1730,3 +1730,39 @@ footer::before {
     .nav-links a { font-size: 0.83rem; padding: 6px 9px; gap: 5px; }
     .nav-links a i { font-size: 0.78rem; width: 12px; }
 }
+/* ========== ADVANCED SCROLL FADE-IN ========== */
+.reveal {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reveal.from-left {
+    transform: translateX(-60px);
+}
+
+.reveal.from-right {
+    transform: translateX(60px);
+}
+
+.reveal.from-bottom {
+    transform: translateY(60px);
+}
+
+.reveal.scale-in {
+    transform: scale(0.85);
+    opacity: 0;
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0) translateX(0) scale(1);
+}
+
+.reveal.delay-1 { transition-delay: 0.05s; }
+.reveal.delay-2 { transition-delay: 0.15s; }
+.reveal.delay-3 { transition-delay: 0.25s; }
+.reveal.delay-4 { transition-delay: 0.35s; }
+.reveal.delay-5 { transition-delay: 0.45s; }
+.reveal.delay-6 { transition-delay: 0.55s; }
