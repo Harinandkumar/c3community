@@ -674,7 +674,70 @@ function reinitReveal() {
 }
 
 initScrollReveal();
+// ========== MOBILE BOTTOM NAV ACTIVE LINK ==========
+function updateActiveBottomNav() {
+    const sections = ['home', 'events', 'members', 'notices', 'contact'];
+    const scrollPosition = window.scrollY + 150;
 
+    for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+            const offsetTop = element.offsetTop;
+            const offsetBottom = offsetTop + element.offsetHeight;
+            
+            if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
+                // Remove active class from all bottom nav items
+                document.querySelectorAll('.bottom-nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Add active class to matching item
+                const activeLink = document.querySelector(`.bottom-nav-item[href="#${section}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+                break;
+            }
+        }
+    }
+}
+
+// For gallery page
+if (window.location.pathname.includes('gallery.html')) {
+    const galleryBtn = document.querySelector('.bottom-nav-item[href="gallery.html"]');
+    if (galleryBtn) galleryBtn.classList.add('active');
+}
+
+// Smooth scroll for bottom nav items
+document.querySelectorAll('.bottom-nav-item').forEach(item => {
+    item.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        
+        // Check if it's a section link (starts with #)
+        if (href && href.startsWith('#')) {
+            e.preventDefault();
+            const targetId = href.substring(1);
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                
+                // Update active state
+                document.querySelectorAll('.bottom-nav-item').forEach(link => {
+                    link.classList.remove('active');
+                });
+                this.classList.add('active');
+            }
+        }
+    });
+});
+
+// Listen to scroll events
+window.addEventListener('scroll', updateActiveBottomNav);
+window.addEventListener('load', updateActiveBottomNav);
 // Also re-run after dynamic content loads
 const originalDisplayEvents = window.displayEvents;
 window.addEventListener('load', () => {
