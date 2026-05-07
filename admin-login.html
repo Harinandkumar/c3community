@@ -84,6 +84,51 @@
             font-size: 14px;
         }
 
+        /* Login Tabs */
+        .login-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .login-tab {
+            flex: 1;
+            padding: 10px;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .login-tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .login-tab:not(.active):hover {
+            background: rgba(0, 240, 255, 0.1);
+        }
+
+        .login-panel {
+            display: none;
+        }
+
+        .login-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .form-group {
             margin-bottom: 24px;
         }
@@ -129,6 +174,12 @@
             box-shadow: 0 10px 20px rgba(0, 240, 255, 0.3);
         }
 
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .back-link {
             text-align: center;
             margin-top: 24px;
@@ -159,6 +210,37 @@
             display: block;
         }
 
+        .success-message {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 3px solid #10b981;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #10b981;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .otp-timer {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 13px;
+            color: var(--primary);
+        }
+
+        .resend-otp {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 10px;
+        }
+
         @media (max-width: 480px) {
             .login-card {
                 padding: 24px;
@@ -171,31 +253,63 @@
         <div class="login-card">
             <div class="login-header">
                 <div class="login-logo">
-                    <img src="assets/img/logowithoutname.png" alt="C3 Logo">
+                    <img src="assets/img/logowithoutname.png" alt="C3 Logo" onerror="this.src='https://c3community.netlify.app/assets/img/logowithoutname.png'">
                 </div>
-                <h1>Admin Login</h1>
-                <p>Enter your credentials to access dashboard</p>
+                <h1>Admin Portal</h1>
+                <p>Login to access dashboard</p>
             </div>
 
             <div class="error-message" id="errorMessage">
                 <i class="fas fa-exclamation-circle"></i> <span id="errorText"></span>
             </div>
+            <div class="success-message" id="successMessage">
+                <i class="fas fa-check-circle"></i> <span id="successText"></span>
+            </div>
 
-            <form id="adminLoginForm">
-                <div class="form-group">
-                    <label><i class="fas fa-envelope"></i> Email Address</label>
-                    <input type="email" id="adminEmail" placeholder="admin@c3community.com" required autocomplete="email">
-                </div>
+            <!-- Login Tabs -->
+            <div class="login-tabs">
+                <button class="login-tab active" data-tab="password">🔐 Password Login</button>
+                <button class="login-tab" data-tab="otp">📧 OTP Login</button>
+            </div>
 
-                <div class="form-group">
-                    <label><i class="fas fa-lock"></i> Password</label>
-                    <input type="password" id="adminPassword" placeholder="Enter your password" required autocomplete="current-password">
-                </div>
+            <!-- Password Login Panel -->
+            <div class="login-panel active" id="passwordPanel">
+                <form id="adminLoginForm">
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email Address</label>
+                        <input type="email" id="adminEmail" placeholder="admin@c3community.com" required autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Password</label>
+                        <input type="password" id="adminPassword" placeholder="Enter your password" required autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="btn-login" id="passwordLoginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </form>
+            </div>
 
-                <button type="submit" class="btn-login">
-                    <i class="fas fa-sign-in-alt"></i> Login to Dashboard
-                </button>
-            </form>
+            <!-- OTP Login Panel -->
+            <div class="login-panel" id="otpPanel">
+                <form id="otpLoginForm">
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email Address</label>
+                        <input type="email" id="otpEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group" id="otpInputGroup" style="display: none;">
+                        <label><i class="fas fa-key"></i> Enter OTP</label>
+                        <input type="text" id="otpCode" placeholder="Enter 6-digit OTP" maxlength="6">
+                        <div class="otp-timer" id="otpTimer"></div>
+                        <button type="button" class="resend-otp" id="resendOtpBtn" style="display: none;">Resend OTP</button>
+                    </div>
+                    <button type="submit" class="btn-login" id="sendOtpBtn">
+                        <i class="fas fa-paper-plane"></i> Send OTP
+                    </button>
+                    <button type="submit" class="btn-login" id="verifyOtpBtn" style="display: none;">
+                        <i class="fas fa-check-circle"></i> Verify & Login
+                    </button>
+                </form>
+            </div>
 
             <div class="back-link">
                 <a href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
@@ -205,31 +319,82 @@
 
     <script>
         const API_BASE_URL = 'https://backend-glo6.onrender.com';
-
+        
         // Theme
         const savedTheme = localStorage.getItem('theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
 
-        // Admin Login
-        const loginForm = document.getElementById('adminLoginForm');
-        const errorMessage = document.getElementById('errorMessage');
-        const errorText = document.getElementById('errorText');
+        // Tab switching
+        let currentOtpEmail = '';
+        let otpTimerInterval = null;
+        let otpExpiryTime = null;
 
-        loginForm.addEventListener('submit', async (e) => {
+        document.querySelectorAll('.login-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.dataset.tab;
+                
+                document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                document.querySelectorAll('.login-panel').forEach(panel => panel.classList.remove('active'));
+                document.getElementById(`${tabId}Panel`).classList.add('active');
+                
+                // Reset OTP state when switching tabs
+                resetOtpState();
+            });
+        });
+
+        function resetOtpState() {
+            if (otpTimerInterval) clearInterval(otpTimerInterval);
+            document.getElementById('otpInputGroup').style.display = 'none';
+            document.getElementById('sendOtpBtn').style.display = 'block';
+            document.getElementById('verifyOtpBtn').style.display = 'none';
+            document.getElementById('otpCode').value = '';
+            document.getElementById('otpTimer').innerHTML = '';
+            document.getElementById('resendOtpBtn').style.display = 'none';
+            currentOtpEmail = '';
+            hideMessages();
+        }
+
+        function hideMessages() {
+            document.getElementById('errorMessage').classList.remove('show');
+            document.getElementById('successMessage').classList.remove('show');
+        }
+
+        function showError(message) {
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('errorMessage').classList.add('show');
+            setTimeout(() => {
+                document.getElementById('errorMessage').classList.remove('show');
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            document.getElementById('successText').textContent = message;
+            document.getElementById('successMessage').classList.add('show');
+            setTimeout(() => {
+                document.getElementById('successMessage').classList.remove('show');
+            }, 3000);
+        }
+
+        // ========== PASSWORD LOGIN (Existing - Preserved) ==========
+        const passwordForm = document.getElementById('adminLoginForm');
+        const passwordLoginBtn = document.getElementById('passwordLoginBtn');
+
+        passwordForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            hideMessages();
             
             const email = document.getElementById('adminEmail').value;
             const password = document.getElementById('adminPassword').value;
 
-            // Hide previous error
-            errorMessage.classList.remove('show');
+            passwordLoginBtn.disabled = true;
+            passwordLoginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
 
             try {
                 const response = await fetch(`${API_BASE_URL}/admin-login`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
                 });
 
@@ -239,18 +404,175 @@
                     throw new Error(data.message || 'Login failed');
                 }
 
-                // Store admin token
                 localStorage.setItem('adminToken', data.token);
                 localStorage.setItem('adminData', JSON.stringify(data.admin));
-
-                // Redirect to admin dashboard
-                window.location.href = 'admin-dashboard.html';
+                localStorage.setItem('loginMethod', 'password');
+                
+                showSuccess('Login successful! Redirecting...');
+                setTimeout(() => {
+                    window.location.href = 'admin-dashboard.html';
+                }, 1000);
 
             } catch (error) {
-                errorText.textContent = error.message;
-                errorMessage.classList.add('show');
+                showError(error.message);
+                passwordLoginBtn.disabled = false;
+                passwordLoginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
             }
         });
+
+        // ========== OTP LOGIN (NEW) ==========
+        const otpForm = document.getElementById('otpLoginForm');
+        const sendOtpBtn = document.getElementById('sendOtpBtn');
+        const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+        const otpEmailInput = document.getElementById('otpEmail');
+        const otpCodeInput = document.getElementById('otpCode');
+
+        // Send OTP
+        sendOtpBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            hideMessages();
+            
+            const email = otpEmailInput.value.trim();
+            if (!email) {
+                showError('Please enter email address');
+                return;
+            }
+
+            sendOtpBtn.disabled = true;
+            sendOtpBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending OTP...';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/team/send-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to send OTP');
+                }
+
+                currentOtpEmail = email;
+                showSuccess('OTP sent to your email! Valid for 5 minutes.');
+                
+                // Show OTP input
+                document.getElementById('otpInputGroup').style.display = 'block';
+                sendOtpBtn.style.display = 'none';
+                verifyOtpBtn.style.display = 'block';
+                
+                // Start timer
+                startOtpTimer();
+
+            } catch (error) {
+                showError(error.message);
+                sendOtpBtn.disabled = false;
+                sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
+            }
+        });
+
+        // Verify OTP
+        verifyOtpBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            hideMessages();
+            
+            const otp = otpCodeInput.value.trim();
+            if (!otp || otp.length !== 6) {
+                showError('Please enter 6-digit OTP');
+                return;
+            }
+
+            verifyOtpBtn.disabled = true;
+            verifyOtpBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/team/verify-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: currentOtpEmail, otp })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Invalid OTP');
+                }
+
+                // Store team token
+                localStorage.setItem('adminToken', data.token);
+                localStorage.setItem('adminData', JSON.stringify(data.member));
+                localStorage.setItem('loginMethod', 'otp');
+                localStorage.setItem('teamMember', JSON.stringify(data.member));
+                
+                showSuccess('Login successful! Redirecting...');
+                setTimeout(() => {
+                    window.location.href = 'admin-dashboard.html';
+                }, 1000);
+
+            } catch (error) {
+                showError(error.message);
+                verifyOtpBtn.disabled = false;
+                verifyOtpBtn.innerHTML = '<i class="fas fa-check-circle"></i> Verify & Login';
+            }
+        });
+
+        // Resend OTP
+        document.getElementById('resendOtpBtn').addEventListener('click', async () => {
+            if (!currentOtpEmail) return;
+            
+            document.getElementById('resendOtpBtn').disabled = true;
+            document.getElementById('resendOtpBtn').innerHTML = 'Sending...';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/team/send-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: currentOtpEmail })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to resend OTP');
+                }
+                
+                showSuccess('OTP resent! Check your email.');
+                startOtpTimer();
+                
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                document.getElementById('resendOtpBtn').disabled = false;
+                document.getElementById('resendOtpBtn').innerHTML = 'Resend OTP';
+            }
+        });
+
+        function startOtpTimer() {
+            if (otpTimerInterval) clearInterval(otpTimerInterval);
+            
+            let timeLeft = 300; // 5 minutes in seconds
+            const timerDisplay = document.getElementById('otpTimer');
+            const resendBtn = document.getElementById('resendOtpBtn');
+            
+            resendBtn.style.display = 'none';
+            
+            otpTimerInterval = setInterval(() => {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerDisplay.innerHTML = `OTP expires in: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(otpTimerInterval);
+                    timerDisplay.innerHTML = 'OTP expired. Please request again.';
+                    resendBtn.style.display = 'block';
+                    verifyOtpBtn.style.display = 'none';
+                    sendOtpBtn.style.display = 'block';
+                    document.getElementById('otpInputGroup').style.display = 'none';
+                }
+                timeLeft--;
+            }, 1000);
+        }
 
         // Check if already logged in
         const adminToken = localStorage.getItem('adminToken');

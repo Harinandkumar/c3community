@@ -84,6 +84,12 @@
             color: transparent;
         }
 
+        .sidebar-header p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
         .sidebar-menu {
             padding: 20px 0;
         }
@@ -110,8 +116,27 @@
             border-left-color: var(--primary);
         }
 
+        .menu-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .menu-item.disabled:hover {
+            background: none;
+            color: var(--text-secondary);
+        }
+
         .menu-item i {
             width: 20px;
+        }
+
+        .sub-menu {
+            padding-left: 48px;
+            font-size: 13px;
+        }
+
+        .sub-menu .menu-item {
+            padding: 8px 24px;
         }
 
         .mobile-menu-toggle {
@@ -163,6 +188,20 @@
             border-bottom: 1px solid var(--border);
             flex-wrap: wrap;
             gap: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-badge {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
         }
 
         .page-title {
@@ -439,17 +478,6 @@
             border-left: 3px solid var(--primary);
         }
 
-        .info-card h4 {
-            margin-bottom: 8px;
-            color: var(--primary);
-        }
-
-        .info-card .small {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 8px;
-        }
-
         /* Gallery Grid */
         .gallery-grid-admin {
             display: grid;
@@ -553,6 +581,19 @@
             vertical-align: middle;
         }
 
+        /* Permission denied message */
+        .permission-denied {
+            text-align: center;
+            padding: 60px;
+            color: var(--text-secondary);
+        }
+
+        .permission-denied i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: var(--danger);
+        }
+
         @media (max-width: 768px) {
             .mobile-menu-toggle {
                 display: flex;
@@ -604,25 +645,23 @@
     <div class="admin-container">
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <img src="assets/img/logowithoutname.png" alt="Logo">
+                <img src="assets/img/logowithoutname.png" alt="Logo" onerror="this.src='https://c3community.netlify.app/assets/img/logowithoutname.png'">
                 <h3>C3 Admin Panel</h3>
+                <p id="userRoleBadge">Loading...</p>
             </div>
-            <div class="sidebar-menu">
-                <div class="menu-item active" data-panel="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard
-                </div>
-                <div class="menu-item" data-panel="events"><i class="fas fa-calendar-alt"></i> Events</div>
-                <div class="menu-item" data-panel="members"><i class="fas fa-users"></i> Members</div>
-                <div class="menu-item" data-panel="notifications"><i class="fas fa-bell"></i> Notifications</div>
-                <div class="menu-item" data-panel="nav-manager"><i class="fas fa-bars"></i> Nav Manager</div>
-                <div class="menu-item" data-panel="gallery"><i class="fas fa-images"></i> Gallery</div>
-                <div class="menu-item" data-panel="categories"><i class="fas fa-tags"></i> Categories</div>
+            <div class="sidebar-menu" id="sidebarMenu">
+                <!-- Menu items will be dynamically loaded based on permissions -->
+                <div class="loading">Loading menu...</div>
             </div>
         </div>
 
         <div class="content">
             <div class="top-bar">
                 <h2 class="page-title" id="pageTitle">Dashboard</h2>
-                <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                <div class="user-info">
+                    <span class="user-badge" id="userNameDisplay">Admin</span>
+                    <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
             </div>
 
             <!-- Dashboard Panel -->
@@ -657,34 +696,38 @@
                         <div class="stat-icon"><i class="fas fa-play-circle"></i></div>
                     </div>
                 </div>
+                
+                <!-- Team Management Link for Super Admin -->
+                <div id="teamManagementLink" style="display: none;">
+                    <div class="form-card" style="background: linear-gradient(135deg, rgba(0,240,255,0.1), rgba(255,45,117,0.05));">
+                        <h3 class="form-title"><i class="fas fa-users-cog"></i> Team Management</h3>
+                        <p>Manage team members, roles, and permissions.</p>
+                        <button class="btn btn-primary" onclick="window.location.href='admin-team-management.html'">
+                            <i class="fas fa-arrow-right"></i> Go to Team Management
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- Events Panel -->
             <div id="eventsPanel" class="panel">
-                <div class="form-card">
+                <div class="form-card" id="createEventCard">
                     <h3 class="form-title">Create New Event</h3>
                     <form id="createEventForm">
                         <div class="form-grid">
-                            <div class="form-group"><label>Event Name *</label><input type="text" id="eventName"
-                                    required></div>
-                            <div class="form-group"><label>Image URL *</label><input type="text" id="eventImage"
-                                    required></div>
-                            <div class="form-group"><label>Date *</label><input type="date" id="eventDate" required>
-                            </div>
-                            <div class="form-group"><label>Location *</label><input type="text" id="eventLocation"
-                                    required></div>
-                            <div class="form-group"><label>Prize *</label><input type="text" id="eventPrize" required>
-                            </div>
-                            <div class="form-group"><label>PDF Link *</label><input type="text" id="eventPdfLink"
-                                    required></div>
+                            <div class="form-group"><label>Event Name *</label><input type="text" id="eventName" required></div>
+                            <div class="form-group"><label>Image URL *</label><input type="text" id="eventImage" required></div>
+                            <div class="form-group"><label>Date *</label><input type="date" id="eventDate" required></div>
+                            <div class="form-group"><label>Location *</label><input type="text" id="eventLocation" required></div>
+                            <div class="form-group"><label>Prize *</label><input type="text" id="eventPrize" required></div>
+                            <div class="form-group"><label>PDF Link *</label><input type="text" id="eventPdfLink" required></div>
                             <div class="form-group"><label>Status</label><select id="eventIsOpen">
                                     <option value="true">Open</option>
                                     <option value="false">Closed</option>
                                 </select></div>
                         </div>
-                        <div class="form-group"><label>Description *</label><textarea id="eventDescription" rows="4"
-                                required></textarea></div>
-                        <button type="submit" class="btn btn-primary">Create Event</button>
+                        <div class="form-group"><label>Description *</label><textarea id="eventDescription" rows="4" required></textarea></div>
+                        <button type="submit" class="btn btn-primary" id="createEventBtn">Create Event</button>
                     </form>
                 </div>
                 <div class="table-container">
@@ -738,12 +781,10 @@
 
             <!-- Notifications Panel -->
             <div id="notificationsPanel" class="panel">
-                <div class="form-card">
+                <div class="form-card" id="createNotificationCard">
                     <h3 class="form-title">Send Notification</h3>
-                    <div class="form-group"><label>Title</label><input type="text" id="notifTitle"
-                            placeholder="Notification title"></div>
-                    <div class="form-group"><label>Message</label><textarea id="notifMessage" rows="3"
-                            placeholder="Notification message"></textarea></div>
+                    <div class="form-group"><label>Title</label><input type="text" id="notifTitle" placeholder="Notification title"></div>
+                    <div class="form-group"><label>Message</label><textarea id="notifMessage" rows="3" placeholder="Notification message"></textarea></div>
                     <div class="form-group"><label>Priority Notice</label><select id="notifPriority">
                             <option value="false">Normal</option>
                             <option value="true">🔴 Priority</option>
@@ -755,18 +796,14 @@
                             <option value="upcoming">🟡 UPCOMING</option>
                         </select></div>
                     <div class="form-row">
-                        <div class="form-group"><label>Button 1 Text</label><input type="text" id="notifBtn1Text"
-                                placeholder="e.g., Apply Now"></div>
-                        <div class="form-group"><label>Button 1 Link</label><input type="text" id="notifBtn1Link"
-                                placeholder="https://..."></div>
+                        <div class="form-group"><label>Button 1 Text</label><input type="text" id="notifBtn1Text" placeholder="e.g., Apply Now"></div>
+                        <div class="form-group"><label>Button 1 Link</label><input type="text" id="notifBtn1Link" placeholder="https://..."></div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group"><label>Button 2 Text</label><input type="text" id="notifBtn2Text"
-                                placeholder="e.g., Rule Book"></div>
-                        <div class="form-group"><label>Button 2 Link</label><input type="text" id="notifBtn2Link"
-                                placeholder="https://..."></div>
+                        <div class="form-group"><label>Button 2 Text</label><input type="text" id="notifBtn2Text" placeholder="e.g., Rule Book"></div>
+                        <div class="form-group"><label>Button 2 Link</label><input type="text" id="notifBtn2Link" placeholder="https://..."></div>
                     </div>
-                    <button class="btn btn-primary" onclick="sendNotification()">Send Notification</button>
+                    <button class="btn btn-primary" id="sendNotifBtn" onclick="sendNotification()">Send Notification</button>
                 </div>
                 <div class="table-container">
                     <h3 style="padding: 16px;">📋 All Notifications</h3>
@@ -792,11 +829,10 @@
 
             <!-- Gallery Panel -->
             <div id="galleryPanel" class="panel">
-                <div class="form-card">
+                <div class="form-card" id="uploadImageCard">
                     <h3 class="form-title">📸 Upload New Image</h3>
                     <form id="uploadImageForm" enctype="multipart/form-data">
-                        <div class="form-group"><label>Image Title</label><input type="text" id="imageTitle"
-                                placeholder="Enter image title" required></div>
+                        <div class="form-group"><label>Image Title</label><input type="text" id="imageTitle" placeholder="Enter image title" required></div>
                         <div class="form-group"><label>📁 Category</label>
                             <select id="imageCategory">
                                 <option value="events">🎯 Events</option>
@@ -806,12 +842,9 @@
                                 <option value="other">📸 Other</option>
                             </select>
                         </div>
-                        <div class="form-group"><label>Choose Image (Max 10MB)</label><input type="file" id="imageFile"
-                                accept="image/*" required></div>
-                        <div id="uploadPreview" style="margin: 15px 0; display: none;"><img id="previewImg"
-                                style="max-width: 200px; border-radius: 8px; border: 2px solid var(--primary);"></div>
-                        <button type="submit" class="btn btn-primary"><i class="fas fa-cloud-upload-alt"></i> Upload to
-                            Cloudinary</button>
+                        <div class="form-group"><label>Choose Image (Max 10MB)</label><input type="file" id="imageFile" accept="image/*" required></div>
+                        <div id="uploadPreview" style="margin: 15px 0; display: none;"><img id="previewImg" style="max-width: 200px; border-radius: 8px; border: 2px solid var(--primary);"></div>
+                        <button type="submit" class="btn btn-primary" id="uploadImageBtn"><i class="fas fa-cloud-upload-alt"></i> Upload to Cloudinary</button>
                     </form>
                 </div>
                 <div class="table-container">
@@ -824,17 +857,14 @@
 
             <!-- Categories Panel -->
             <div id="categoriesPanel" class="panel">
-                <div class="form-card">
+                <div class="form-card" id="createCategoryCard">
                     <h3 class="form-title">🏷️ Add New Category</h3>
                     <div class="form-grid">
-                        <div class="form-group"><label>Category Name</label><input type="text" id="catName"
-                                placeholder="e.g., Hackathon, Seminar" required></div>
-                        <div class="form-group"><label>Icon (Emoji)</label><input type="text" id="catIcon"
-                                placeholder="e.g., 🎯, 💻, 🏆" value="📸"></div>
-                        <div class="form-group"><label>Color</label><input type="color" id="catColor" value="#00f0ff">
-                        </div>
+                        <div class="form-group"><label>Category Name</label><input type="text" id="catName" placeholder="e.g., Hackathon, Seminar" required></div>
+                        <div class="form-group"><label>Icon (Emoji)</label><input type="text" id="catIcon" placeholder="e.g., 🎯, 💻, 🏆" value="📸"></div>
+                        <div class="form-group"><label>Color</label><input type="color" id="catColor" value="#00f0ff"></div>
                     </div>
-                    <button class="btn btn-primary" onclick="createCategory()">➕ Add Category</button>
+                    <button class="btn btn-primary" id="createCategoryBtn" onclick="createCategory()">➕ Add Category</button>
                 </div>
                 <div class="table-container">
                     <h3 style="padding: 16px;">📋 All Categories</h3>
@@ -846,13 +876,11 @@
 
             <!-- Nav Manager Panel -->
             <div id="navManagerPanel" class="panel">
-                <div class="form-card">
+                <div class="form-card" id="createNavCard">
                     <h3 class="form-title">➕ Add Custom Navigation Item</h3>
                     <div class="form-grid">
-                        <div class="form-group"><label>Item Name *</label><input type="text" id="navName"
-                                placeholder="e.g., Exam, Resources"></div>
-                        <div class="form-group"><label>Link URL *</label><input type="text" id="navLink"
-                                placeholder="https://... or /page.html"></div>
+                        <div class="form-group"><label>Item Name *</label><input type="text" id="navName" placeholder="e.g., Exam, Resources"></div>
+                        <div class="form-group"><label>Link URL *</label><input type="text" id="navLink" placeholder="https://... or /page.html"></div>
                         <div class="form-group"><label>Icon</label><select id="navIcon">
                                 <option value="fa-link">🔗 Link</option>
                                 <option value="fa-book">📖 Book</option>
@@ -873,7 +901,7 @@
                                 <option value="_blank">New Tab</option>
                             </select></div>
                     </div>
-                    <button class="btn btn-primary" onclick="createNavItem()">➕ Add Nav Item</button>
+                    <button class="btn btn-primary" id="createNavBtn" onclick="createNavItem()">➕ Add Nav Item</button>
                 </div>
                 <div class="table-container">
                     <h3 style="padding: 16px;">📋 Custom Navigation Items</h3>
@@ -906,7 +934,156 @@
     <script>
         var API_BASE_URL = 'https://backend-glo6.onrender.com';
         var adminToken = localStorage.getItem('adminToken');
+        var loginMethod = localStorage.getItem('loginMethod');
+        var teamMemberData = localStorage.getItem('teamMember');
+        
+        // User permissions
+        var userPermissions = null;
+        var userRole = null;
+        var isSuperAdmin = false;
+        var userId = null;
+        
         if (!adminToken) window.location.href = 'admin-login.html';
+
+        // Parse team member data if exists
+        if (teamMemberData) {
+            try {
+                var member = JSON.parse(teamMemberData);
+                userPermissions = member.permissions;
+                userRole = member.role;
+                isSuperAdmin = (userRole === 'super_admin');
+                userId = member.id;
+                document.getElementById('userNameDisplay').innerHTML = member.name + ' <span style="font-size:10px">(' + (isSuperAdmin ? 'Super Admin' : userRole) + ')</span>';
+                document.getElementById('userRoleBadge').innerHTML = isSuperAdmin ? '👑 Super Admin' : (userRole ? userRole.replace('_', ' ') : 'Team Member');
+            } catch(e) {
+                isSuperAdmin = true; // Old admin has full access
+                document.getElementById('userNameDisplay').innerHTML = 'Admin';
+                document.getElementById('userRoleBadge').innerHTML = '👑 Full Admin';
+            }
+        } else {
+            isSuperAdmin = true; // Old admin has full access
+            document.getElementById('userNameDisplay').innerHTML = 'Admin';
+            document.getElementById('userRoleBadge').innerHTML = '👑 Full Admin';
+        }
+        
+        // Check permission helper
+        function hasPermission(module, action) {
+            if (isSuperAdmin) return true;
+            if (!userPermissions) return false;
+            if (userPermissions[module] && userPermissions[module][action] === true) return true;
+            return false;
+        }
+        
+        // Show/hide UI elements based on permissions
+        function applyPermissions() {
+            // Events Module
+            if (!hasPermission('events', 'create')) {
+                var createEventCard = document.getElementById('createEventCard');
+                if (createEventCard) createEventCard.style.display = 'none';
+            }
+            
+            // Notifications Module
+            if (!hasPermission('notifications', 'create')) {
+                var createNotifCard = document.getElementById('createNotificationCard');
+                if (createNotifCard) createNotifCard.style.display = 'none';
+            }
+            if (!hasPermission('notifications', 'delete')) {
+                // Delete buttons will be hidden in JS
+            }
+            
+            // Gallery Module
+            if (!hasPermission('gallery', 'upload')) {
+                var uploadCard = document.getElementById('uploadImageCard');
+                if (uploadCard) uploadCard.style.display = 'none';
+            }
+            
+            // Categories Module
+            if (!hasPermission('categories', 'create')) {
+                var createCatCard = document.getElementById('createCategoryCard');
+                if (createCatCard) createCatCard.style.display = 'none';
+            }
+            if (!hasPermission('categories', 'edit') && !hasPermission('categories', 'delete')) {
+                // Edit/delete buttons will be hidden in display
+            }
+            
+            // Nav Items Module
+            if (!hasPermission('navItems', 'create')) {
+                var createNavCard = document.getElementById('createNavCard');
+                if (createNavCard) createNavCard.style.display = 'none';
+            }
+            
+            // Members Module - view permission
+            if (!hasPermission('members', 'view') && !isSuperAdmin) {
+                document.getElementById('membersPanel').style.display = 'none';
+                // Remove members from menu
+            }
+            
+            // Team Management Link (Super Admin only)
+            if (isSuperAdmin) {
+                document.getElementById('teamManagementLink').style.display = 'block';
+            }
+        }
+        
+        // Build sidebar menu based on permissions
+        function buildSidebarMenu() {
+            var menuHtml = '';
+            
+            // Dashboard - always visible
+            menuHtml += '<div class="menu-item active" data-panel="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</div>';
+            
+            // Events - check any event permission
+            if (hasPermission('events', 'create') || hasPermission('events', 'edit') || hasPermission('events', 'delete')) {
+                menuHtml += '<div class="menu-item" data-panel="events"><i class="fas fa-calendar-alt"></i> Events</div>';
+            }
+            
+            // Members
+            if (hasPermission('members', 'view') || isSuperAdmin) {
+                menuHtml += '<div class="menu-item" data-panel="members"><i class="fas fa-users"></i> Members</div>';
+            }
+            
+            // Notifications
+            if (hasPermission('notifications', 'create') || hasPermission('notifications', 'delete')) {
+                menuHtml += '<div class="menu-item" data-panel="notifications"><i class="fas fa-bell"></i> Notifications</div>';
+            }
+            
+            // Nav Manager
+            if (hasPermission('navItems', 'create') || hasPermission('navItems', 'edit') || hasPermission('navItems', 'delete')) {
+                menuHtml += '<div class="menu-item" data-panel="nav-manager"><i class="fas fa-bars"></i> Nav Manager</div>';
+            }
+            
+            // Gallery
+            if (hasPermission('gallery', 'upload') || hasPermission('gallery', 'delete')) {
+                menuHtml += '<div class="menu-item" data-panel="gallery"><i class="fas fa-images"></i> Gallery</div>';
+            }
+            
+            // Categories
+            if (hasPermission('categories', 'create') || hasPermission('categories', 'edit') || hasPermission('categories', 'delete')) {
+                menuHtml += '<div class="menu-item" data-panel="categories"><i class="fas fa-tags"></i> Categories</div>';
+            }
+            
+            document.getElementById('sidebarMenu').innerHTML = menuHtml;
+            
+            // Attach click handlers
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    var panelId = this.dataset.panel;
+                    var panelName = this.textContent.trim();
+                    
+                    document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    switchPanel(panelId, panelName);
+                    
+                    if (panelId === 'events') loadEvents();
+                    if (panelId === 'members') loadMembers();
+                    if (panelId === 'notifications') loadNotifications();
+                    if (panelId === 'nav-manager') loadNavItems();
+                    if (panelId === 'gallery') { loadGalleryImages(); loadCategoryDropdown(); }
+                    if (panelId === 'categories') loadCategories();
+                    if (panelId === 'dashboard') loadDashboard();
+                });
+            });
+        }
 
         var savedTheme = localStorage.getItem('theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
@@ -931,14 +1108,6 @@
         }
         if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
 
-        var menuItemsList = document.querySelectorAll('.menu-item');
-        for (var i = 0; i < menuItemsList.length; i++) {
-            menuItemsList[i].addEventListener('click', function () { if (window.innerWidth <= 768) closeSidebar(); });
-        }
-        window.addEventListener('resize', function () {
-            if (window.innerWidth > 768) { closeSidebar(); sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; }
-        });
-
         var panels = {
             dashboard: document.getElementById('dashboardPanel'),
             events: document.getElementById('eventsPanel'),
@@ -954,23 +1123,6 @@
             for (var key in panels) { if (panels[key]) panels[key].classList.remove('active'); }
             if (panels[panelId]) panels[panelId].classList.add('active');
             if (pageTitle) pageTitle.textContent = panelName;
-        }
-
-        for (var i = 0; i < menuItemsList.length; i++) {
-            menuItemsList[i].addEventListener('click', function () {
-                var panelId = this.dataset.panel;
-                var panelName = this.textContent.trim();
-                for (var j = 0; j < menuItemsList.length; j++) { menuItemsList[j].classList.remove('active'); }
-                this.classList.add('active');
-                switchPanel(panelId, panelName);
-                if (panelId === 'events') loadEvents();
-                if (panelId === 'members') loadMembers();
-                if (panelId === 'notifications') loadNotifications();
-                if (panelId === 'nav-manager') loadNavItems();
-                if (panelId === 'gallery') { loadGalleryImages(); loadCategoryDropdown(); }
-                if (panelId === 'categories') loadCategories();
-                if (panelId === 'dashboard') loadDashboard();
-            });
         }
 
         // Dashboard
@@ -991,7 +1143,7 @@
             } catch (error) { console.error(error); }
         }
 
-        // Events
+        // Events (with permission checks)
         async function loadEvents() {
             var tbody = document.getElementById('eventsTableBody');
             if (!tbody) return;
@@ -1001,15 +1153,22 @@
                 var events = await response.json();
                 if (!events || events.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No events found</td></tr>'; return; }
                 var html = '';
+                var canEdit = hasPermission('events', 'edit');
+                var canDelete = hasPermission('events', 'delete');
                 for (var i = 0; i < events.length; i++) {
                     var e = events[i];
+                    var actions = '';
+                    if (canEdit) actions += '<button class="btn btn-warning btn-sm" onclick="toggleEventStatus(\'' + e._id + '\', ' + e.isOpen + ')">' + (e.isOpen ? 'Close' : 'Open') + '</button>';
+                    if (canDelete) actions += '<button class="btn btn-danger btn-sm" onclick="deleteEvent(\'' + e._id + '\')">Delete</button>';
+                    if (!actions) actions = '<span style="opacity:0.5;">No actions</span>';
+                    
                     html += '<tr>' +
                         '<td>' + escapeHtml(e.name) + '</td>' +
                         '<td>' + new Date(e.date).toLocaleDateString() + '</td>' +
                         '<td>' + escapeHtml(e.location) + '</td>' +
                         '<td><span class="status-badge ' + (e.isOpen ? 'status-open' : 'status-closed') + '">' + (e.isOpen ? 'Open' : 'Closed') + '</span></td>' +
                         '<td>' + (e.participantsCount || 0) + '</td>' +
-                        '<td class="action-buttons"><button class="btn btn-warning btn-sm" onclick="toggleEventStatus(\'' + e._id + '\', ' + e.isOpen + ')">' + (e.isOpen ? 'Close' : 'Open') + '</button><button class="btn btn-danger btn-sm" onclick="deleteEvent(\'' + e._id + '\')">Delete</button></td>' +
+                        '<td class="action-buttons">' + actions + '</td>' +
                         '</tr>';
                 }
                 tbody.innerHTML = html;
@@ -1020,6 +1179,7 @@
         if (createEventForm) {
             createEventForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
+                if (!hasPermission('events', 'create')) { alert('You do not have permission to create events'); return; }
                 var eventData = {
                     name: document.getElementById('eventName').value,
                     imagelink: document.getElementById('eventImage').value,
@@ -1038,22 +1198,27 @@
             });
         }
 
-        window.deleteEvent = async function (id) { if (confirm('Delete this event?')) { await fetch(API_BASE_URL + '/admin/events/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); loadEvents(); loadDashboard(); } };
-        window.toggleEventStatus = async function (id, status) { await fetch(API_BASE_URL + '/admin/events/' + id, { method: 'PUT', headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, body: JSON.stringify({ isOpen: !status }) }); loadEvents(); loadDashboard(); };
+        window.deleteEvent = async function (id) { if (!hasPermission('events', 'delete')) { alert('No permission'); return; } if (confirm('Delete this event?')) { await fetch(API_BASE_URL + '/admin/events/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); loadEvents(); loadDashboard(); } };
+        window.toggleEventStatus = async function (id, status) { if (!hasPermission('events', 'edit')) { alert('No permission'); return; } await fetch(API_BASE_URL + '/admin/events/' + id, { method: 'PUT', headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, body: JSON.stringify({ isOpen: !status }) }); loadEvents(); loadDashboard(); };
 
         // Members
         async function loadMembers() {
             var tbody = document.getElementById('membersTableBody');
             if (!tbody) return;
-            tbody.innerHTML = '<tr><td colspan="7" class="loading">Loading members...<\/td><\/tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="loading">Loading members...</td></tr>';
             try {
                 var response = await fetch(API_BASE_URL + '/admin/members', { headers: { 'Authorization': 'Bearer ' + adminToken } });
                 var data = await response.json();
                 var members = data.members || [];
-                if (members.length === 0) { tbody.innerHTML = '<td><td colspan="7" class="empty-state">No members found<\/td><\/tr>'; return; }
+                if (members.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No members found</td></tr>'; return; }
                 var html = '';
+                var canDelete = hasPermission('members', 'delete');
                 for (var i = 0; i < members.length; i++) {
                     var m = members[i];
+                    var actions = '';
+                    if (canDelete) actions = '<button class="btn btn-danger btn-sm" onclick="deleteMember(\'' + m._id + '\')">Delete</button>';
+                    else actions = '<span style="opacity:0.5;">Read only</span>';
+                    
                     html += '<tr>' +
                         '<td>' + escapeHtml(m.name) + '</td>' +
                         '<td>' + escapeHtml(m.email) + '</td>' +
@@ -1061,13 +1226,13 @@
                         '<td>' + m.batch + '</td>' +
                         '<td>' + m.regno + '</td>' +
                         '<td>' + (m.isverified ? '✅' : '❌') + '</td>' +
-                        '<td class="action-buttons"><button class="btn btn-danger btn-sm" onclick="deleteMember(\'' + m._id + '\')">Delete</button></td>' +
+                        '<td class="action-buttons">' + actions + '</td>' +
                         '</tr>';
                 }
                 tbody.innerHTML = html;
-            } catch (error) { tbody.innerHTML = '<tr><td colspan="7" class="loading">Failed to load members<\/td><\/tr>'; }
+            } catch (error) { tbody.innerHTML = '<tr><td colspan="7" class="loading">Failed to load members</td></tr>'; }
         }
-        window.deleteMember = async function (id) { if (confirm('Delete this member?')) { await fetch(API_BASE_URL + '/admin/members/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); loadMembers(); loadDashboard(); } };
+        window.deleteMember = async function (id) { if (!hasPermission('members', 'delete')) { alert('No permission'); return; } if (confirm('Delete this member?')) { await fetch(API_BASE_URL + '/admin/members/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); loadMembers(); loadDashboard(); } };
 
         var searchMemberInput = document.getElementById('searchMember');
         if (searchMemberInput) {
@@ -1079,8 +1244,13 @@
                 var tbody = document.getElementById('membersTableBody');
                 if (tbody) {
                     var html = '';
+                    var canDelete = hasPermission('members', 'delete');
                     for (var i = 0; i < members.length; i++) {
                         var m = members[i];
+                        var actions = '';
+                        if (canDelete) actions = '<button class="btn btn-danger btn-sm" onclick="deleteMember(\'' + m._id + '\')">Delete</button>';
+                        else actions = '<span style="opacity:0.5;">Read only</span>';
+                        
                         html += '<tr>' +
                             '<td>' + escapeHtml(m.name) + '</td>' +
                             '<td>' + escapeHtml(m.email) + '</td>' +
@@ -1088,7 +1258,7 @@
                             '<td>' + m.batch + '</td>' +
                             '<td>' + m.regno + '</td>' +
                             '<td>' + (m.isverified ? '✅' : '❌') + '</td>' +
-                            '<td class="action-buttons"><button class="btn btn-danger btn-sm" onclick="deleteMember(\'' + m._id + '\')">Delete</button></td>' +
+                            '<td class="action-buttons">' + actions + '</td>' +
                             '</tr>';
                     }
                     tbody.innerHTML = html;
@@ -1100,12 +1270,13 @@
         async function loadNotifications() {
             var tbody = document.getElementById('notificationsTableBody');
             if (!tbody) return;
-            tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading notifications...<\/td><\/tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading notifications...</td></tr>';
             try {
                 var response = await fetch(API_BASE_URL + '/admin/notifications', { headers: { 'Authorization': 'Bearer ' + adminToken } });
                 var notifications = await response.json();
-                if (!notifications || notifications.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No notifications found<\/td><\/tr>'; return; }
+                if (!notifications || notifications.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No notifications found</td></tr>'; return; }
                 var html = '';
+                var canDelete = hasPermission('notifications', 'delete');
                 for (var i = 0; i < notifications.length; i++) {
                     var n = notifications[i];
                     var priorityBadge = n.isPriority ? '<span style="background:#ff44441a;color:#ff4444;padding:4px 8px;border-radius:12px;">🔴 Priority</span>' : '<span>Normal</span>';
@@ -1114,20 +1285,24 @@
                     else if (n.badge === 'new') badgeHtml = '<span class="badge-new">NEW</span>';
                     else if (n.badge === 'upcoming') badgeHtml = '<span class="badge-upcoming">UPCOMING</span>';
                     else badgeHtml = '<span style="opacity:0.5;">None</span>';
+                    var actions = '';
+                    if (canDelete) actions = '<button class="btn btn-danger btn-sm" onclick="deleteNotification(\'' + n._id + '\')">Delete</button>';
+                    
                     html += '<tr>' +
-                        '<td><strong>' + escapeHtml(n.title) + '<\/strong><\/td>' +
-                        '<td>' + escapeHtml(n.message.substring(0, 50)) + '...<\/td>' +
-                        '<td>' + priorityBadge + '<\/td>' +
-                        '<td>' + badgeHtml + '<\/td>' +
-                        '<td>' + new Date(n.date).toLocaleDateString() + '<\/td>' +
-                        '<td class="action-buttons"><button class="btn btn-danger btn-sm" onclick="deleteNotification(\'' + n._id + '\')">Delete<\/button><\/td>' +
-                        '<\/tr>';
+                        '<td><strong>' + escapeHtml(n.title) + '</strong></td>' +
+                        '<td>' + escapeHtml(n.message.substring(0, 50)) + '...</td>' +
+                        '<td>' + priorityBadge + '</td>' +
+                        '<td>' + badgeHtml + '</td>' +
+                        '<td>' + new Date(n.date).toLocaleDateString() + '</td>' +
+                        '<td class="action-buttons">' + actions + '</td>' +
+                        '</tr>';
                 }
                 tbody.innerHTML = html;
-            } catch (error) { tbody.innerHTML = '<td><td colspan="6" class="loading">Failed to load notifications<\/td><\/tr>'; }
+            } catch (error) { tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load notifications</td></tr>'; }
         }
 
         window.sendNotification = async function () {
+            if (!hasPermission('notifications', 'create')) { alert('You do not have permission to create notifications'); return; }
             var title = document.getElementById('notifTitle')?.value;
             var message = document.getElementById('notifMessage')?.value;
             var isPriority = document.getElementById('notifPriority')?.value === 'true';
@@ -1151,18 +1326,20 @@
                 } else { alert('❌ Failed'); }
             } catch (error) { alert('Error'); }
         };
-        window.deleteNotification = async function (id) { if (confirm('Delete this notification?')) { await fetch(API_BASE_URL + '/admin/notifications/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); loadNotifications(); } };
+        window.deleteNotification = async function (id) { if (!hasPermission('notifications', 'delete')) { alert('No permission'); return; } if (confirm('Delete this notification?')) { await fetch(API_BASE_URL + '/admin/notifications/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); loadNotifications(); } };
 
         // Nav Manager
         async function loadNavItems() {
             var tbody = document.getElementById('navItemsTableBody');
             if (!tbody) return;
-            tbody.innerHTML = '<td><td colspan="6" class="loading">Loading nav items...<\/td><\/tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading nav items...<\/td><\/tr>';
             try {
                 var response = await fetch(API_BASE_URL + '/admin/nav-items', { headers: { 'Authorization': 'Bearer ' + adminToken } });
                 var items = await response.json();
-                if (!items || items.length === 0) { tbody.innerHTML = '<td><td colspan="6" class="empty-state">No custom nav items added yet<\/td><\/tr>'; return; }
+                if (!items || items.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No custom nav items added yet<\/td><\/tr>'; return; }
                 var html = '';
+                var canEdit = hasPermission('navItems', 'edit');
+                var canDelete = hasPermission('navItems', 'delete');
                 for (var i = 0; i < items.length; i++) {
                     var it = items[i];
                     var badgeHtml = '';
@@ -1170,20 +1347,26 @@
                     else if (it.badge === 'new') badgeHtml = '<span class="badge-new">NEW</span>';
                     else if (it.badge === 'upcoming') badgeHtml = '<span class="badge-upcoming">UPCOMING</span>';
                     else badgeHtml = '<span style="opacity:0.5;">None</span>';
+                    var actions = '';
+                    if (canEdit) actions += '<button class="btn btn-warning btn-sm" onclick="editNavItem(\'' + it._id + '\')">Edit</button>';
+                    if (canDelete) actions += '<button class="btn btn-danger btn-sm" onclick="deleteNavItem(\'' + it._id + '\')">Delete</button>';
+                    if (!actions) actions = '<span style="opacity:0.5;">Read only</span>';
+                    
                     html += '<tr>' +
                         '<td><i class="fas ' + it.icon + '"><\/i></td>' +
                         '<td><strong>' + escapeHtml(it.name) + '<\/strong></td>' +
                         '<td><a href="' + it.link + '" target="_blank">' + escapeHtml(it.link.substring(0, 40)) + (it.link.length > 40 ? '...' : '') + '<\/a></td>' +
                         '<td>' + badgeHtml + '</td>' +
                         '<td>' + (it.target === '_blank' ? '🔗 New Tab' : '📄 Same Tab') + '</td>' +
-                        '<td class="action-buttons"><button class="btn btn-warning btn-sm" onclick="editNavItem(\'' + it._id + '\')">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteNavItem(\'' + it._id + '\')">Delete</button><\/td>' +
-                        '</tr>';
+                        '<td class="action-buttons">' + actions + '<\/td>' +
+                        '<\/tr>';
                 }
                 tbody.innerHTML = html;
             } catch (error) { tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load nav items<\/td><\/tr>'; }
         }
 
         window.createNavItem = async function () {
+            if (!hasPermission('navItems', 'create')) { alert('No permission to create nav items'); return; }
             var name = document.getElementById('navName')?.value;
             var link = document.getElementById('navLink')?.value;
             var icon = document.getElementById('navIcon')?.value;
@@ -1197,17 +1380,8 @@
                 else alert('Failed');
             } catch (error) { alert('Error'); }
         };
-        window.editNavItem = async function (id) {
-            var newName = prompt('Edit Item Name:'); if (!newName) return;
-            var newLink = prompt('Edit Link URL:'); if (!newLink) return;
-            if (!newLink.startsWith('http://') && !newLink.startsWith('https://') && !newLink.startsWith('/') && !newLink.startsWith('#')) newLink = 'https://' + newLink;
-            var newIcon = prompt('Edit Icon (fa-xxx):') || 'fa-link';
-            var newBadge = prompt('Edit Badge (live/new/upcoming/none):') || 'none';
-            var newTarget = prompt('Open in (_self/_blank):') || '_self';
-            await fetch(API_BASE_URL + '/admin/nav-items/' + id, { method: 'PUT', headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, body: JSON.stringify({ name: newName, link: newLink, icon: newIcon, badge: newBadge, target: newTarget }) });
-            alert('Updated'); loadNavItems();
-        };
-        window.deleteNavItem = async function (id) { if (confirm('Delete this nav item?')) { await fetch(API_BASE_URL + '/admin/nav-items/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); loadNavItems(); } };
+        window.editNavItem = async function (id) { if (!hasPermission('navItems', 'edit')) { alert('No permission'); return; } var newName = prompt('Edit Item Name:'); if (!newName) return; var newLink = prompt('Edit Link URL:'); if (!newLink) return; if (!newLink.startsWith('http://') && !newLink.startsWith('https://') && !newLink.startsWith('/') && !newLink.startsWith('#')) newLink = 'https://' + newLink; var newIcon = prompt('Edit Icon (fa-xxx):') || 'fa-link'; var newBadge = prompt('Edit Badge (live/new/upcoming/none):') || 'none'; var newTarget = prompt('Open in (_self/_blank):') || '_self'; await fetch(API_BASE_URL + '/admin/nav-items/' + id, { method: 'PUT', headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, body: JSON.stringify({ name: newName, link: newLink, icon: newIcon, badge: newBadge, target: newTarget }) }); alert('Updated'); loadNavItems(); };
+        window.deleteNavItem = async function (id) { if (!hasPermission('navItems', 'delete')) { alert('No permission'); return; } if (confirm('Delete this nav item?')) { await fetch(API_BASE_URL + '/admin/nav-items/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); loadNavItems(); } };
 
         // Gallery Management
         async function loadGalleryImages() {
@@ -1225,19 +1399,25 @@
             var container = document.getElementById('galleryGridAdmin');
             if (!images || images.length === 0) { container.innerHTML = '<div class="empty-state">No images uploaded yet</div>'; return; }
             var html = '';
+            var canUpload = hasPermission('gallery', 'upload');
+            var canDelete = hasPermission('gallery', 'delete');
             for (var i = 0; i < images.length; i++) {
                 var img = images[i];
                 var categoryBadge = '<span class="category-badge" style="background:#00f0ff20; color:#00f0ff;">🎯 ' + escapeHtml(img.category) + '</span>';
+                var actions = '';
+                if (canUpload) actions += '<input type="text" id="edit-title-' + img._id + '" class="edit-title" placeholder="New title" value="' + escapeHtml(img.title) + '">' +
+                    '<select id="edit-category-' + img._id + '" class="edit-category"></select>' +
+                    '<button class="update-image-btn" onclick="updateImage(\'' + img._id + '\')"><i class="fas fa-save"></i> Update</button>';
+                if (canDelete) actions += '<button class="delete-image-btn" onclick="deleteGalleryImage(\'' + img._id + '\')"><i class="fas fa-trash-alt"></i> Delete</button>';
+                if (!actions) actions = '<div style="text-align:center;padding:10px;opacity:0.5;">Read only</div>';
+                
                 html += '<div class="gallery-item-admin" data-id="' + img._id + '">' +
                     '<img src="' + img.cloudinaryUrl + '" alt="' + escapeHtml(img.title) + '" loading="lazy">' +
                     '<div class="info">' +
                     '<div class="title">' + escapeHtml(img.title) + '</div>' +
                     '<div class="date">📅 ' + new Date(img.uploadDate).toLocaleDateString() + '</div>' +
                     categoryBadge +
-                    '<input type="text" id="edit-title-' + img._id + '" class="edit-title" placeholder="New title" value="' + escapeHtml(img.title) + '">' +
-                    '<select id="edit-category-' + img._id + '" class="edit-category"></select>' +
-                    '<button class="update-image-btn" onclick="updateImage(\'' + img._id + '\')"><i class="fas fa-save"></i> Update</button>' +
-                    '<button class="delete-image-btn" onclick="deleteGalleryImage(\'' + img._id + '\')"><i class="fas fa-trash-alt"></i> Delete</button>' +
+                    actions +
                     '</div>' +
                     '</div>';
             }
@@ -1348,6 +1528,7 @@
         if (uploadForm) {
             uploadForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
+                if (!hasPermission('gallery', 'upload')) { alert('You do not have permission to upload images'); return; }
                 var title = document.getElementById('imageTitle').value;
                 var category = document.getElementById('imageCategory').value;
                 var file = document.getElementById('imageFile').files[0];
@@ -1382,6 +1563,7 @@
         }
 
         window.updateImage = async function (id) {
+            if (!hasPermission('gallery', 'upload')) { alert('No permission to update'); return; }
             var newTitle = document.getElementById('edit-title-' + id).value;
             var newCategory = document.getElementById('edit-category-' + id).value;
             if (!newTitle) { alert('Please enter a title'); return; }
@@ -1397,6 +1579,7 @@
         };
 
         window.deleteGalleryImage = async function (id) {
+            if (!hasPermission('gallery', 'delete')) { alert('No permission to delete'); return; }
             if (confirm('Delete this image?')) {
                 try {
                     var response = await fetch(API_BASE_URL + '/admin/gallery/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } });
@@ -1422,19 +1605,25 @@
             var container = document.getElementById('categoriesList');
             if (!categories || categories.length === 0) { container.innerHTML = '<div class="empty-state">No categories added yet. Create one above!</div>'; return; }
             var html = '';
+            var canEdit = hasPermission('categories', 'edit');
+            var canDelete = hasPermission('categories', 'delete');
             for (var i = 0; i < categories.length; i++) {
                 var cat = categories[i];
+                var actions = '';
+                if (canEdit) actions += '<input type="text" id="edit-cat-name-' + cat._id + '" class="edit-title" placeholder="Name" value="' + escapeHtml(cat.name) + '">' +
+                    '<input type="text" id="edit-cat-icon-' + cat._id + '" class="edit-title" placeholder="Icon" value="' + cat.icon + '">' +
+                    '<input type="color" id="edit-cat-color-' + cat._id + '" class="edit-title" value="' + cat.color + '">' +
+                    '<button class="update-image-btn" onclick="updateCategory(\'' + cat._id + '\')"><i class="fas fa-save"></i> Update</button>';
+                if (canDelete) actions += '<button class="delete-image-btn" onclick="deleteCategory(\'' + cat._id + '\')"><i class="fas fa-trash-alt"></i> Delete</button>';
+                if (!actions) actions = '<div style="text-align:center;padding:10px;opacity:0.5;">Read only</div>';
+                
                 html += '<div class="gallery-item-admin" data-id="' + cat._id + '">' +
                     '<div class="info">' +
                     '<div class="title" style="font-size: 32px; text-align: center;">' + cat.icon + '</div>' +
                     '<div class="title"><strong>' + escapeHtml(cat.name) + '</strong></div>' +
                     '<div class="date">Created: ' + new Date(cat.createdAt).toLocaleDateString() + '</div>' +
                     '<div style="width: 40px; height: 4px; background: ' + cat.color + '; margin: 8px auto; border-radius: 2px;"></div>' +
-                    '<input type="text" id="edit-cat-name-' + cat._id + '" class="edit-title" placeholder="Name" value="' + escapeHtml(cat.name) + '">' +
-                    '<input type="text" id="edit-cat-icon-' + cat._id + '" class="edit-title" placeholder="Icon" value="' + cat.icon + '">' +
-                    '<input type="color" id="edit-cat-color-' + cat._id + '" class="edit-title" value="' + cat.color + '">' +
-                    '<button class="update-image-btn" onclick="updateCategory(\'' + cat._id + '\')"><i class="fas fa-save"></i> Update</button>' +
-                    '<button class="delete-image-btn" onclick="deleteCategory(\'' + cat._id + '\')"><i class="fas fa-trash-alt"></i> Delete</button>' +
+                    actions +
                     '</div>' +
                     '</div>';
             }
@@ -1442,6 +1631,7 @@
         }
 
         window.createCategory = async function () {
+            if (!hasPermission('categories', 'create')) { alert('No permission to create categories'); return; }
             var name = document.getElementById('catName')?.value;
             var icon = document.getElementById('catIcon')?.value || '📸';
             var color = document.getElementById('catColor')?.value || '#00f0ff';
@@ -1466,6 +1656,7 @@
         };
 
         window.updateCategory = async function (id) {
+            if (!hasPermission('categories', 'edit')) { alert('No permission'); return; }
             var name = document.getElementById('edit-cat-name-' + id).value;
             var icon = document.getElementById('edit-cat-icon-' + id).value;
             var color = document.getElementById('edit-cat-color-' + id).value;
@@ -1488,6 +1679,7 @@
         };
 
         window.deleteCategory = async function (id) {
+            if (!hasPermission('categories', 'delete')) { alert('No permission'); return; }
             if (confirm('Delete this category? Images using this category will NOT be deleted, but will show as "other".')) {
                 try {
                     var response = await fetch(API_BASE_URL + '/admin/categories/' + id, {
@@ -1509,8 +1701,18 @@
         };
 
         function escapeHtml(text) { if (!text) return ''; var div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
-        window.logout = function () { localStorage.removeItem('adminToken'); window.location.href = 'admin-login.html'; };
+        
+        window.logout = function () { 
+            localStorage.removeItem('adminToken'); 
+            localStorage.removeItem('adminData');
+            localStorage.removeItem('teamMember');
+            localStorage.removeItem('loginMethod');
+            window.location.href = 'admin-login.html'; 
+        };
 
+        // Initialize
+        applyPermissions();
+        buildSidebarMenu();
         loadDashboard();
     </script>
 </body>
