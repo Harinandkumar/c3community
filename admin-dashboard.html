@@ -368,6 +368,11 @@
             font-size: 12px;
         }
 
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
         .action-buttons {
             display: flex;
             gap: 8px;
@@ -456,6 +461,36 @@
         .status-closed {
             background: rgba(239, 68, 68, 0.1);
             color: var(--danger);
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .status-in_progress {
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .status-completed {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .priority-high {
+            color: var(--danger);
+            font-weight: bold;
+        }
+
+        .priority-medium {
+            color: var(--warning);
+            font-weight: bold;
+        }
+
+        .priority-low {
+            color: var(--success);
+            font-weight: bold;
         }
 
         .loading {
@@ -920,6 +955,69 @@
                     <p>Home, Events, Team, Gallery, Notices, Results, Contact, Login</p>
                 </div>
             </div>
+
+            <!-- ========== WORK ASSIGN PANEL (NEW) ========== -->
+            <div id="workPanel" class="panel">
+                <!-- Assign Work Form -->
+                <div class="form-card" id="assignWorkCard">
+                    <h3 class="form-title"><i class="fas fa-tasks"></i> Assign New Work</h3>
+                    <form id="assignWorkForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Task Title *</label>
+                                <input type="text" id="workTitle" required placeholder="e.g., Update Event Page">
+                            </div>
+                            <div class="form-group">
+                                <label>Assign To *</label>
+                                <select id="workAssignedTo" required>
+                                    <option value="">Select Team Member</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Priority</label>
+                                <select id="workPriority">
+                                    <option value="low">🟢 Low</option>
+                                    <option value="medium">🟡 Medium</option>
+                                    <option value="high">🔴 High</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Due Date (Optional)</label>
+                                <input type="date" id="workDueDate">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Description *</label>
+                            <textarea id="workDescription" rows="4" required placeholder="Detailed description of the task..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Assign Work</button>
+                    </form>
+                </div>
+
+                <!-- All Tasks / My Tasks -->
+                <div class="table-container">
+                    <h3 style="padding: 16px;" id="tasksTitle">📋 All Tasks</h3>
+                    <div style="overflow-x: auto;">
+                        <table style="min-width: 800px;">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Assigned To</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Due Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tasksTableBody">
+                                <tr>
+                                    <td colspan="6" class="loading">Loading tasks...<\/td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1025,6 +1123,9 @@ function buildSidebarMenu() {
     if (hasPermission('categories', 'create') || hasPermission('categories', 'edit') || hasPermission('categories', 'delete')) {
         menuHtml += '<div class="menu-item" data-panel="categories"><i class="fas fa-tags"></i> Categories</div>';
     }
+    // Work Panel - Super Admin can assign, Team Member can view their tasks
+    menuHtml += '<div class="menu-item" data-panel="work"><i class="fas fa-tasks"></i> Work</div>';
+    
     document.getElementById('sidebarMenu').innerHTML = menuHtml;
     document.querySelectorAll('.menu-item').forEach(item => {
         item.addEventListener('click', function() {
@@ -1039,6 +1140,7 @@ function buildSidebarMenu() {
             if (panelId === 'nav-manager') loadNavItems();
             if (panelId === 'gallery') { loadGalleryImages(); loadCategoryDropdown(); }
             if (panelId === 'categories') loadCategories();
+            if (panelId === 'work') { loadTeamMembersForAssign(); loadTasks(); }
             if (panelId === 'dashboard') loadDashboard();
         });
     });
@@ -1073,7 +1175,8 @@ var panels = {
     notifications: document.getElementById('notificationsPanel'),
     'nav-manager': document.getElementById('navManagerPanel'),
     gallery: document.getElementById('galleryPanel'),
-    categories: document.getElementById('categoriesPanel')
+    categories: document.getElementById('categoriesPanel'),
+    work: document.getElementById('workPanel')
 };
 var pageTitle = document.getElementById('pageTitle');
 
@@ -1209,13 +1312,11 @@ window.toggleEventStatus = async function (id, status) {
 };
 
 // ========== MEMBERS ==========
-// ========== MEMBERS (Regular Users) ==========
 async function loadMembers() {
     var tbody = document.getElementById('membersTableBody');
     if (!tbody) return;
-    tbody.innerHTML = '<tr><td colspan="7" class="loading">Loading members...<\/td><\/tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="loading">Loading members...</td></tr>';
     try {
-        // ✅ USERS endpoint se data lao (regular signup users)
         var response = await fetch(API_BASE_ADMIN + '/users', { headers: { 'Authorization': 'Bearer ' + adminToken } });
         
         if (!response.ok) {
@@ -1226,11 +1327,10 @@ async function loadMembers() {
         var users = await response.json();
         console.log('Users from /users endpoint:', users);
         
-        // Handle both array and object response
         var usersArray = Array.isArray(users) ? users : (users.users || users.members || []);
         
         if (usersArray.length === 0) { 
-            tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No users found. Users will appear here after signup.<\/td><\/tr>'; 
+            tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No users found. Users will appear here after signup.</td></tr>'; 
             return; 
         }
         
@@ -1256,11 +1356,10 @@ async function loadMembers() {
         tbody.innerHTML = html;
     } catch (error) { 
         console.error('Error loading users:', error);
-        tbody.innerHTML = '<tr><td colspan="7" class="loading">Failed to load users. Make sure /users endpoint exists.<\/td><\/tr>'; 
+        tbody.innerHTML = '<tr><td colspan="7" class="loading">Failed to load users. Make sure /users endpoint exists.</td></tr>'; 
     }
 }
 
-// Delete user function
 window.deleteUser = async function (id) { 
     if (!hasPermission('members', 'delete')) { alert('No permission'); return; } 
     if (confirm('Delete this user? This action cannot be undone.')) { 
@@ -1279,14 +1378,6 @@ window.deleteUser = async function (id) {
         } catch(error) {
             alert('Error deleting user');
         }
-    } 
-};
-window.deleteMember = async function (id) { 
-    if (!hasPermission('members', 'delete')) { alert('No permission'); return; } 
-    if (confirm('Delete this member?')) { 
-        await fetch(API_BASE_ADMIN + '/members/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); 
-        loadMembers(); 
-        loadDashboard(); 
     } 
 };
 
@@ -1831,6 +1922,184 @@ window.deleteCategory = async function (id) {
                 alert(data.message || 'Failed to delete');
             }
         } catch (error) { alert('Error deleting'); }
+    }
+};
+
+// ========== WORK ASSIGNMENT FUNCTIONS (NEW) ==========
+
+// Load team members for assign dropdown
+async function loadTeamMembersForAssign() {
+    try {
+        var response = await fetch(API_BASE_ADMIN + '/team-members', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+        if (!response.ok) throw new Error('Failed to load team members');
+        var data = await response.json();
+        var members = data.members || [];
+        
+        var select = document.getElementById('workAssignedTo');
+        if (!select) return;
+        
+        select.innerHTML = '<option value="">Select Team Member</option>';
+        for (var i = 0; i < members.length; i++) {
+            select.innerHTML += '<option value="' + members[i]._id + '">' + escapeHtml(members[i].name) + ' (' + escapeHtml(members[i].role) + ')</option>';
+        }
+    } catch (error) {
+        console.error('Error loading team members:', error);
+    }
+}
+
+// Load tasks (all for super admin, my tasks for team member)
+async function loadTasks() {
+    var tbody = document.getElementById('tasksTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading tasks...<\/td><\/tr>';
+    
+    try {
+        var url = isSuperAdmin ? API_BASE_ADMIN + '/work/all' : API_BASE_ADMIN + '/work/my';
+        var response = await fetch(url, { headers: { 'Authorization': 'Bearer ' + adminToken } });
+        if (!response.ok) throw new Error('Failed to load tasks');
+        var data = await response.json();
+        var tasks = data.works || [];
+        
+        if (tasks.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No tasks found<\/td><\/tr>';
+            return;
+        }
+        
+        var tasksTitle = document.getElementById('tasksTitle');
+        if (tasksTitle) {
+            tasksTitle.innerHTML = isSuperAdmin ? '📋 All Tasks' : '📋 My Tasks';
+        }
+        
+        var html = '';
+        for (var i = 0; i < tasks.length; i++) {
+            var task = tasks[i];
+            var priorityClass = task.priority === 'high' ? 'priority-high' : (task.priority === 'medium' ? 'priority-medium' : 'priority-low');
+            var statusClass = '';
+            if (task.status === 'pending') statusClass = 'status-pending';
+            else if (task.status === 'in_progress') statusClass = 'status-in_progress';
+            else if (task.status === 'completed') statusClass = 'status-completed';
+            
+            var assignedToName = task.assignedTo ? (task.assignedTo.name || task.assignedTo.email || 'Unknown') : 'Unknown';
+            var dueDateHtml = task.dueDate ? new Date(task.dueDate).toLocaleDateString() : '-';
+            
+            var actions = '';
+            if (task.status !== 'completed') {
+                if (task.status === 'pending') {
+                    actions += '<button class="btn btn-warning btn-sm" onclick="updateTaskStatus(\'' + task._id + '\', \'in_progress\')">Start</button>';
+                } else if (task.status === 'in_progress') {
+                    actions += '<button class="btn btn-success btn-sm" onclick="updateTaskStatus(\'' + task._id + '\', \'completed\')">Complete</button>';
+                }
+            }
+            if (isSuperAdmin && task.status !== 'completed') {
+                actions += '<button class="btn btn-danger btn-sm" onclick="deleteTask(\'' + task._id + '\')">Delete</button>';
+            }
+            if (!actions) actions = '<span style="opacity:0.5;">-</span>';
+            
+            html += '<tr>' +
+                '<td>' + escapeHtml(task.title) + '</td>' +
+                '<td>' + escapeHtml(assignedToName) + '</td>' +
+                '<td class="' + priorityClass + '">' + (task.priority === 'high' ? '🔴 High' : task.priority === 'medium' ? '🟡 Medium' : '🟢 Low') + '<\/td>' +
+                '<td class="' + statusClass + '">' + (task.status === 'pending' ? '⏳ Pending' : task.status === 'in_progress' ? '🔄 In Progress' : '✅ Completed') + '<\/td>' +
+                '<td>' + dueDateHtml + '<\/td>' +
+                '<td class="action-buttons">' + actions + '<\/td>' +
+                '</tr>';
+        }
+        tbody.innerHTML = html;
+    } catch (error) {
+        console.error('Error loading tasks:', error);
+        tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load tasks<\/td><\/tr>';
+    }
+}
+
+// Assign work form submit
+var assignWorkForm = document.getElementById('assignWorkForm');
+if (assignWorkForm) {
+    assignWorkForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        if (!isSuperAdmin) {
+            alert('Only Super Admin can assign work');
+            return;
+        }
+        
+        var workData = {
+            title: document.getElementById('workTitle').value,
+            description: document.getElementById('workDescription').value,
+            assignedTo: document.getElementById('workAssignedTo').value,
+            priority: document.getElementById('workPriority').value,
+            dueDate: document.getElementById('workDueDate').value || null
+        };
+        
+        if (!workData.title || !workData.description || !workData.assignedTo) {
+            alert('Please fill all required fields');
+            return;
+        }
+        
+        var submitBtn = assignWorkForm.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Assigning...';
+        
+        try {
+            var response = await fetch(API_BASE_ADMIN + '/work/assign', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' },
+                body: JSON.stringify(workData)
+            });
+            
+            if (response.ok) {
+                alert('✅ Work assigned successfully! Email notification sent.');
+                assignWorkForm.reset();
+                loadTasks();
+                loadTeamMembersForAssign();
+            } else {
+                var err = await response.json();
+                alert('❌ Failed: ' + (err.message || 'Unknown error'));
+            }
+        } catch (error) {
+            alert('❌ Error: ' + error.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Assign Work';
+        }
+    });
+}
+
+// Update task status
+window.updateTaskStatus = async function(taskId, newStatus) {
+    try {
+        var response = await fetch(API_BASE_ADMIN + '/work/' + taskId + '/status', {
+            method: 'PUT',
+            headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus })
+        });
+        
+        if (response.ok) {
+            alert('✅ Task status updated!');
+            loadTasks();
+        } else {
+            alert('❌ Failed to update status');
+        }
+    } catch (error) {
+        alert('❌ Error: ' + error.message);
+    }
+};
+
+// Delete task (Super Admin only)
+window.deleteTask = async function(taskId) {
+    if (!confirm('Delete this task? This action cannot be undone.')) return;
+    try {
+        var response = await fetch(API_BASE_ADMIN + '/work/' + taskId, {
+            method: 'DELETE',
+            headers: { 'Authorization': 'Bearer ' + adminToken }
+        });
+        
+        if (response.ok) {
+            alert('✅ Task deleted successfully');
+            loadTasks();
+        } else {
+            alert('❌ Failed to delete task');
+        }
+    } catch (error) {
+        alert('❌ Error: ' + error.message);
     }
 };
 
