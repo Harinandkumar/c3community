@@ -1278,6 +1278,7 @@ window.deleteEvent = async function (id) { if (!hasPermission('events', 'delete'
 window.toggleEventStatus = async function (id, status) { if (!hasPermission('events', 'edit')) { alert('No permission'); return; } await fetch(API_BASE_ADMIN + '/events/' + id, { method: 'PUT', headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, body: JSON.stringify({ isOpen: !status }) }); loadEvents(); loadDashboard(); };
 
 // ========== MEMBERS ==========
+// ========== MEMBERS ==========
 async function loadMembers() {
     var tbody = document.getElementById('membersTableBody');
     if (!tbody) return;
@@ -1287,18 +1288,40 @@ async function loadMembers() {
         if (!response.ok) throw new Error('Users API failed');
         var users = await response.json();
         var usersArray = Array.isArray(users) ? users : (users.users || users.members || []);
-        if (usersArray.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No users found.<\/td><\/tr>'; return; }
+        if (usersArray.length === 0) { 
+            tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No users found.<\/td><\/tr>'; 
+            return; 
+        }
         var html = '';
         var canDelete = hasPermission('members', 'delete');
         for (var i = 0; i < usersArray.length; i++) {
             var u = usersArray[i];
             var actions = canDelete ? '<button class="btn btn-danger btn-sm" onclick="deleteUser(\'' + u._id + '\')">Delete</button>' : '<span style="opacity:0.5;">Read only</span>';
-            html += '<td>' + escapeHtml(u.name || '') + 'NonNull</td><td>' + escapeHtml(u.email || '') + 'NonNull</td><td>' + escapeHtml(u.branch || '-') + 'NonNull</td><td>' + (u.batch || '-') + 'NonNull</td><td>' + (u.regno || '-') + 'NonNull</td><td>' + (u.isverified ? '✅' : '❌') + 'NonNull</td><td class="action-buttons">' + actions + 'NonNull</td><\/tr>';
+            
+            // ✅ FIX: Handle null/undefined values
+            var name = (u.name && u.name !== 'null' && u.name !== 'undefined') ? u.name : '-';
+            var email = (u.email && u.email !== 'null' && u.email !== 'undefined') ? u.email : '-';
+            var branch = (u.branch && u.branch !== 'null' && u.branch !== 'undefined') ? u.branch : '-';
+            var batch = (u.batch && u.batch !== 'null' && u.batch !== 'undefined') ? u.batch : '-';
+            var regno = (u.regno && u.regno !== 'null' && u.regno !== 'undefined') ? u.regno : '-';
+            var verified = u.isverified ? '✅' : '❌';
+            
+            html += '<tr>' +
+                '<td>' + escapeHtml(name) + '</td>' +
+                '<td>' + escapeHtml(email) + '</td>' +
+                '<td>' + escapeHtml(branch) + '</td>' +
+                '<td>' + escapeHtml(batch) + '</td>' +
+                '<td>' + escapeHtml(regno) + '</td>' +
+                '<td>' + verified + '</td>' +
+                '<td class="action-buttons">' + actions + '</td>' +
+                '</tr>';
         }
         tbody.innerHTML = html;
-    } catch (error) { tbody.innerHTML = '<td><td colspan="7" class="loading">Failed to load users.<\/td><\/tr>'; }
+    } catch (error) { 
+        console.error('Error loading users:', error);
+        tbody.innerHTML = '<tr><td colspan="7" class="loading">Failed to load users.<\/td><\/tr>'; 
+    }
 }
-
 window.deleteUser = async function (id) { if (!hasPermission('members', 'delete')) { alert('No permission'); return; } if (confirm('Delete this user?')) { await fetch(API_BASE_ADMIN + '/users/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); loadMembers(); loadDashboard(); } };
 
 var searchMemberInput = document.getElementById('searchMember');
@@ -1314,10 +1337,25 @@ if (searchMemberInput) {
             var html = '';
             var canDelete = hasPermission('members', 'delete');
             for (var i = 0; i < usersArray.length; i++) {
-                var u = usersArray[i];
-                var actions = canDelete ? '<button class="btn btn-danger btn-sm" onclick="deleteUser(\'' + u._id + '\')">Delete</button>' : '<span style="opacity:0.5;">Read only</span>';
-                html += '<td>' + escapeHtml(u.name) + 'NonNull</td><td>' + escapeHtml(u.email) + 'NonNull</td><td>' + escapeHtml(u.branch) + 'NonNull</td><td>' + u.batch + 'NonNull</td><td>' + u.regno + 'NonNull</td><td>' + (u.isverified ? '✅' : '❌') + 'NonNull</td><td class="action-buttons">' + actions + 'NonNull</td><\/tr>';
-            }
+    var u = usersArray[i];
+    var actions = canDelete ? '<button class="btn btn-danger btn-sm" onclick="deleteUser(\'' + u._id + '\')">Delete</button>' : '<span style="opacity:0.5;">Read only</span>';
+    
+    // ✅ Null check
+    var name = (u.name && u.name !== 'null' && u.name !== 'undefined') ? u.name : '-';
+    var email = (u.email && u.email !== 'null' && u.email !== 'undefined') ? u.email : '-';
+    var branch = (u.branch && u.branch !== 'null' && u.branch !== 'undefined') ? u.branch : '-';
+    var regno = (u.regno && u.regno !== 'null' && u.regno !== 'undefined') ? u.regno : '-';
+    
+    html += '<tr>' +
+        '<td>' + escapeHtml(name) + '</td>' +
+        '<td>' + escapeHtml(email) + '</td>' +
+        '<td>' + escapeHtml(branch) + '</td>' +
+        '<td>' + u.batch + '</td>' +
+        '<td>' + escapeHtml(regno) + '</td>' +
+        '<td>' + (u.isverified ? '✅' : '❌') + '</td>' +
+        '<td class="action-buttons">' + actions + '</td>' +
+        '</tr>';
+}
             tbody.innerHTML = html;
         }
     });
