@@ -789,7 +789,7 @@
             <div id="membersPanel" class="panel">
                 <div class="form-card"><input type="text" id="searchMember" placeholder="🔍 Search by name, email or registration number..." style="width:100%;padding:12px;border-radius:8px;background:var(--bg);border:1px solid var(--border);color:var(--text);"></div>
                 <div class="table-container">
-                    <table>
+                    <td>
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -956,9 +956,9 @@
                 </div>
             </div>
 
-            <!-- ========== WORK ASSIGN PANEL (NEW) ========== -->
+            <!-- ========== WORK ASSIGN PANEL ========== -->
             <div id="workPanel" class="panel">
-                <!-- Assign Work Form -->
+                <!-- Assign Work Form - Only Super Admin will see this -->
                 <div class="form-card" id="assignWorkCard" style="display: none;">
                     <h3 class="form-title"><i class="fas fa-tasks"></i> Assign New Work</h3>
                     <form id="assignWorkForm">
@@ -1072,7 +1072,6 @@ function hasPermission(module, action) {
 }
 
 // Show/hide UI elements based on permissions
-// Show/hide UI elements based on permissions
 function applyPermissions() {
     if (!hasPermission('events', 'create')) {
         var createEventCard = document.getElementById('createEventCard');
@@ -1095,7 +1094,8 @@ function applyPermissions() {
         if (createNavCard) createNavCard.style.display = 'none';
     }
     if (!hasPermission('members', 'view') && !isSuperAdmin) {
-        document.getElementById('membersPanel').style.display = 'none';
+        var membersPanel = document.getElementById('membersPanel');
+        if (membersPanel) membersPanel.style.display = 'none';
     }
     
     // ✅ WORK ASSIGN - Only Super Admin can assign work
@@ -1109,10 +1109,16 @@ function applyPermissions() {
     }
     
     // Team Management Link for Super Admin
-    if (isSuperAdmin) {
-        document.getElementById('teamManagementLink').style.display = 'block';
+    var teamManagementLink = document.getElementById('teamManagementLink');
+    if (teamManagementLink) {
+        if (isSuperAdmin) {
+            teamManagementLink.style.display = 'block';
+        } else {
+            teamManagementLink.style.display = 'none';
+        }
     }
 }
+
 // Build sidebar menu
 function buildSidebarMenu() {
     var menuHtml = '';
@@ -1135,7 +1141,7 @@ function buildSidebarMenu() {
     if (hasPermission('categories', 'create') || hasPermission('categories', 'edit') || hasPermission('categories', 'delete')) {
         menuHtml += '<div class="menu-item" data-panel="categories"><i class="fas fa-tags"></i> Categories</div>';
     }
-    // Work Panel - Super Admin can assign, Team Member can view their tasks
+    // Work Panel - Shows to everyone (tasks view), but assign form hidden based on role
     menuHtml += '<div class="menu-item" data-panel="work"><i class="fas fa-tasks"></i> Work</div>';
     
     document.getElementById('sidebarMenu').innerHTML = menuHtml;
@@ -1230,7 +1236,7 @@ async function loadDashboard() {
 async function loadEvents() {
     var tbody = document.getElementById('eventsTableBody');
     if (!tbody) return;
-    tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading events...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading events...<\/td><\/tr>';
     try {
         var response = await fetch(API_BASE_ADMIN + '/events', { headers: { 'Authorization': 'Bearer ' + adminToken } });
         if (!response.ok) throw new Error('Events API failed');
@@ -1238,7 +1244,7 @@ async function loadEvents() {
         var eventsArray = Array.isArray(events) ? events : (events.events || []);
         
         if (eventsArray.length === 0) { 
-            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No events found</td></tr>'; 
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No events found<\/td><\/tr>'; 
             return; 
         }
         
@@ -1265,7 +1271,7 @@ async function loadEvents() {
         tbody.innerHTML = html;
     } catch (error) { 
         console.error('Events error:', error);
-        tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load events</td></tr>'; 
+        tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load events<\/td><\/tr>'; 
     }
 }
 
@@ -1327,7 +1333,7 @@ window.toggleEventStatus = async function (id, status) {
 async function loadMembers() {
     var tbody = document.getElementById('membersTableBody');
     if (!tbody) return;
-    tbody.innerHTML = '<tr><td colspan="7" class="loading">Loading members...</td></tr>';
+    tbody.innerHTML = '<td><td colspan="7" class="loading">Loading members...<\/td><\/tr>';
     try {
         var response = await fetch(API_BASE_ADMIN + '/users', { headers: { 'Authorization': 'Bearer ' + adminToken } });
         
@@ -1342,7 +1348,7 @@ async function loadMembers() {
         var usersArray = Array.isArray(users) ? users : (users.users || users.members || []);
         
         if (usersArray.length === 0) { 
-            tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No users found. Users will appear here after signup.</td></tr>'; 
+            tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No users found. Users will appear here after signup.<\/td><\/tr>'; 
             return; 
         }
         
@@ -1368,7 +1374,7 @@ async function loadMembers() {
         tbody.innerHTML = html;
     } catch (error) { 
         console.error('Error loading users:', error);
-        tbody.innerHTML = '<tr><td colspan="7" class="loading">Failed to load users. Make sure /users endpoint exists.</td></tr>'; 
+        tbody.innerHTML = '<tr><td colspan="7" class="loading">Failed to load users. Make sure /users endpoint exists.<\/td><\/tr>'; 
     }
 }
 
@@ -1429,7 +1435,7 @@ if (searchMemberInput) {
 async function loadNotifications() {
     var tbody = document.getElementById('notificationsTableBody');
     if (!tbody) return;
-    tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading notifications...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading notifications...<\/td><\/tr>';
     try {
         var response = await fetch(API_BASE_ADMIN + '/notifications', { headers: { 'Authorization': 'Bearer ' + adminToken } });
         if (!response.ok) throw new Error('Notifications API failed');
@@ -1437,7 +1443,7 @@ async function loadNotifications() {
         var notifArray = Array.isArray(notifications) ? notifications : (notifications.notifications || []);
         
         if (notifArray.length === 0) { 
-            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No notifications found</td></tr>'; 
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No notifications found<\/td><\/tr>'; 
             return; 
         }
         
@@ -1456,17 +1462,17 @@ async function loadNotifications() {
             
             html += '<tr>' +
                 '<td><strong>' + escapeHtml(n.title) + '</strong></td>' +
-                '<td>' + escapeHtml(n.message.substring(0, 50)) + '...</td>' +
-                '<td>' + priorityBadge + '</td>' +
-                '<td>' + badgeHtml + '</td>' +
-                '<td>' + new Date(n.date).toLocaleDateString() + '</td>' +
-                '<td class="action-buttons">' + actions + '</td>' +
-                '</tr>';
+                '<td>' + escapeHtml(n.message.substring(0, 50)) + '...<\/td>' +
+                '<td>' + priorityBadge + '<\/td>' +
+                '<td>' + badgeHtml + '<\/td>' +
+                '<td>' + new Date(n.date).toLocaleDateString() + '<\/td>' +
+                '<td class="action-buttons">' + actions + '<\/td>' +
+                '<\/tr>';
         }
         tbody.innerHTML = html;
     } catch (error) { 
         console.error('Notifications error:', error);
-        tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load notifications</td></tr>'; 
+        tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load notifications<\/td><\/tr>'; 
     }
 }
 
@@ -1512,7 +1518,7 @@ window.deleteNotification = async function (id) {
 async function loadNavItems() {
     var tbody = document.getElementById('navItemsTableBody');
     if (!tbody) return;
-    tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading nav items...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading nav items...<\/td><\/tr>';
     try {
         var response = await fetch(API_BASE_ADMIN + '/nav-items', { headers: { 'Authorization': 'Bearer ' + adminToken } });
         if (!response.ok) throw new Error('Nav items API failed');
@@ -1520,7 +1526,7 @@ async function loadNavItems() {
         var itemsArray = Array.isArray(items) ? items : (items.items || []);
         
         if (itemsArray.length === 0) { 
-            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No custom nav items added yet</td></tr>'; 
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No custom nav items added yet<\/td><\/tr>'; 
             return; 
         }
         
@@ -1540,18 +1546,18 @@ async function loadNavItems() {
             if (!actions) actions = '<span style="opacity:0.5;">Read only</span>';
             
             html += '<tr>' +
-                '<td><i class="fas ' + it.icon + '"></i></td>' +
-                '<td><strong>' + escapeHtml(it.name) + '</strong></td>' +
-                '<td><a href="' + it.link + '" target="_blank">' + escapeHtml(it.link.substring(0, 40)) + (it.link.length > 40 ? '...' : '') + '</a></td>' +
-                '<td>' + badgeHtml + '</td>' +
-                '<td>' + (it.target === '_blank' ? '🔗 New Tab' : '📄 Same Tab') + '</td>' +
-                '<td class="action-buttons">' + actions + '</td>' +
-                '</tr>';
+                '<td><i class="fas ' + it.icon + '"><\/i></td>' +
+                '<td><strong>' + escapeHtml(it.name) + '<\/strong></td>' +
+                '<td><a href="' + it.link + '" target="_blank">' + escapeHtml(it.link.substring(0, 40)) + (it.link.length > 40 ? '...' : '') + '<\/a></td>' +
+                '<td>' + badgeHtml + '<\/td>' +
+                '<td>' + (it.target === '_blank' ? '🔗 New Tab' : '📄 Same Tab') + '<\/td>' +
+                '<td class="action-buttons">' + actions + '<\/td>' +
+                '<\/tr>';
         }
         tbody.innerHTML = html;
     } catch (error) { 
         console.error('Nav items error:', error);
-        tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load nav items</td></tr>'; 
+        tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load nav items<\/td><\/tr>'; 
     }
 }
 
@@ -1937,7 +1943,7 @@ window.deleteCategory = async function (id) {
     }
 };
 
-// ========== WORK ASSIGNMENT FUNCTIONS (NEW) ==========
+// ========== WORK ASSIGNMENT FUNCTIONS ==========
 
 // Load team members for assign dropdown
 async function loadTeamMembersForAssign() {
