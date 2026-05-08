@@ -959,7 +959,7 @@
             <!-- ========== WORK ASSIGN PANEL (NEW) ========== -->
             <div id="workPanel" class="panel">
                 <!-- Assign Work Form -->
-                <div class="form-card" id="assignWorkCard">
+                <div class="form-card" id="assignWorkCard" style="display: none;">
                     <h3 class="form-title"><i class="fas fa-tasks"></i> Assign New Work</h3>
                     <form id="assignWorkForm">
                         <div class="form-grid">
@@ -1072,6 +1072,7 @@ function hasPermission(module, action) {
 }
 
 // Show/hide UI elements based on permissions
+// Show/hide UI elements based on permissions
 function applyPermissions() {
     if (!hasPermission('events', 'create')) {
         var createEventCard = document.getElementById('createEventCard');
@@ -1096,11 +1097,22 @@ function applyPermissions() {
     if (!hasPermission('members', 'view') && !isSuperAdmin) {
         document.getElementById('membersPanel').style.display = 'none';
     }
+    
+    // ✅ WORK ASSIGN - Only Super Admin can assign work
+    var assignWorkCard = document.getElementById('assignWorkCard');
+    if (assignWorkCard) {
+        if (isSuperAdmin) {
+            assignWorkCard.style.display = 'block';
+        } else {
+            assignWorkCard.style.display = 'none';
+        }
+    }
+    
+    // Team Management Link for Super Admin
     if (isSuperAdmin) {
         document.getElementById('teamManagementLink').style.display = 'block';
     }
 }
-
 // Build sidebar menu
 function buildSidebarMenu() {
     var menuHtml = '';
