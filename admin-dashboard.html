@@ -116,27 +116,8 @@
             border-left-color: var(--primary);
         }
 
-        .menu-item.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .menu-item.disabled:hover {
-            background: none;
-            color: var(--text-secondary);
-        }
-
         .menu-item i {
             width: 20px;
-        }
-
-        .sub-menu {
-            padding-left: 48px;
-            font-size: 13px;
-        }
-
-        .sub-menu .menu-item {
-            padding: 8px 24px;
         }
 
         .mobile-menu-toggle {
@@ -240,6 +221,7 @@
             align-items: center;
             justify-content: space-between;
             border: 1px solid var(--border);
+            transition: transform 0.3s;
         }
 
         .stat-card:hover {
@@ -513,7 +495,6 @@
             border-left: 3px solid var(--primary);
         }
 
-        /* Gallery Grid */
         .gallery-grid-admin {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -616,19 +597,6 @@
             vertical-align: middle;
         }
 
-        /* Permission denied message */
-        .permission-denied {
-            text-align: center;
-            padding: 60px;
-            color: var(--text-secondary);
-        }
-
-        .permission-denied i {
-            font-size: 48px;
-            margin-bottom: 20px;
-            color: var(--danger);
-        }
-
         @media (max-width: 768px) {
             .mobile-menu-toggle {
                 display: flex;
@@ -680,7 +648,8 @@
     <div class="admin-container">
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <img src="assets/img/logowithoutname.png" alt="Logo" onerror="this.src='https://c3community.netlify.app/assets/img/logowithoutname.png'">
+                <img src="assets/img/logowithoutname.png" alt="Logo"
+                    onerror="this.src='https://c3community.netlify.app/assets/img/logowithoutname.png'">
                 <h3>C3 Admin Panel</h3>
                 <p id="userRoleBadge">Loading...</p>
             </div>
@@ -730,15 +699,13 @@
                         <div class="stat-icon"><i class="fas fa-play-circle"></i></div>
                     </div>
                 </div>
-                
-                <!-- Team Management Link for Super Admin -->
                 <div id="teamManagementLink" style="display: none;">
-                    <div class="form-card" style="background: linear-gradient(135deg, rgba(0,240,255,0.1), rgba(255,45,117,0.05));">
+                    <div class="form-card"
+                        style="background: linear-gradient(135deg, rgba(0,240,255,0.1), rgba(255,45,117,0.05));">
                         <h3 class="form-title"><i class="fas fa-users-cog"></i> Team Management</h3>
                         <p>Manage team members, roles, and permissions.</p>
-                        <button class="btn btn-primary" onclick="window.location.href='admin-team-management.html'">
-                            <i class="fas fa-arrow-right"></i> Go to Team Management
-                        </button>
+                        <button class="btn btn-primary" onclick="window.location.href='admin-team-management.html'"><i
+                                class="fas fa-arrow-right"></i> Go to Team Management</button>
                     </div>
                 </div>
             </div>
@@ -749,18 +716,25 @@
                     <h3 class="form-title">Create New Event</h3>
                     <form id="createEventForm">
                         <div class="form-grid">
-                            <div class="form-group"><label>Event Name *</label><input type="text" id="eventName" required></div>
-                            <div class="form-group"><label>Image URL *</label><input type="text" id="eventImage" required></div>
-                            <div class="form-group"><label>Date *</label><input type="date" id="eventDate" required></div>
-                            <div class="form-group"><label>Location *</label><input type="text" id="eventLocation" required></div>
-                            <div class="form-group"><label>Prize *</label><input type="text" id="eventPrize" required></div>
-                            <div class="form-group"><label>PDF Link *</label><input type="text" id="eventPdfLink" required></div>
+                            <div class="form-group"><label>Event Name *</label><input type="text" id="eventName"
+                                    required></div>
+                            <div class="form-group"><label>Image URL *</label><input type="text" id="eventImage"
+                                    required></div>
+                            <div class="form-group"><label>Date *</label><input type="date" id="eventDate" required>
+                            </div>
+                            <div class="form-group"><label>Location *</label><input type="text" id="eventLocation"
+                                    required></div>
+                            <div class="form-group"><label>Prize *</label><input type="text" id="eventPrize" required>
+                            </div>
+                            <div class="form-group"><label>PDF Link *</label><input type="text" id="eventPdfLink"
+                                    required></div>
                             <div class="form-group"><label>Status</label><select id="eventIsOpen">
                                     <option value="true">Open</option>
                                     <option value="false">Closed</option>
                                 </select></div>
                         </div>
-                        <div class="form-group"><label>Description *</label><textarea id="eventDescription" rows="4" required></textarea></div>
+                        <div class="form-group"><label>Description *</label><textarea id="eventDescription" rows="4"
+                                required></textarea></div>
                         <button type="submit" class="btn btn-primary" id="createEventBtn">Create Event</button>
                     </form>
                 </div>
@@ -778,7 +752,7 @@
                         </thead>
                         <tbody id="eventsTableBody">
                             <tr>
-                                <td colspan="6" class="loading">Loading events...<\/td>
+                                <td colspan="6" class="loading">Loading events...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -787,9 +761,12 @@
 
             <!-- Members Panel -->
             <div id="membersPanel" class="panel">
-                <div class="form-card"><input type="text" id="searchMember" placeholder="🔍 Search by name, email or registration number..." style="width:100%;padding:12px;border-radius:8px;background:var(--bg);border:1px solid var(--border);color:var(--text);"></div>
+                <div class="form-card"><input type="text" id="searchMember"
+                        placeholder="🔍 Search by name, email or registration number..."
+                        style="width:100%;padding:12px;border-radius:8px;background:var(--bg);border:1px solid var(--border);color:var(--text);">
+                </div>
                 <div class="table-container">
-                    <td>
+                    <table>
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -803,7 +780,7 @@
                         </thead>
                         <tbody id="membersTableBody">
                             <tr>
-                                <td colspan="7" class="loading">Loading members...<\/td>
+                                <td colspan="7" class="loading">Loading members...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -814,8 +791,10 @@
             <div id="notificationsPanel" class="panel">
                 <div class="form-card" id="createNotificationCard">
                     <h3 class="form-title">Send Notification</h3>
-                    <div class="form-group"><label>Title</label><input type="text" id="notifTitle" placeholder="Notification title"></div>
-                    <div class="form-group"><label>Message</label><textarea id="notifMessage" rows="3" placeholder="Notification message"></textarea></div>
+                    <div class="form-group"><label>Title</label><input type="text" id="notifTitle"
+                            placeholder="Notification title"></div>
+                    <div class="form-group"><label>Message</label><textarea id="notifMessage" rows="3"
+                            placeholder="Notification message"></textarea></div>
                     <div class="form-group"><label>Priority Notice</label><select id="notifPriority">
                             <option value="false">Normal</option>
                             <option value="true">🔴 Priority</option>
@@ -826,11 +805,16 @@
                             <option value="new">🟢 NEW</option>
                             <option value="upcoming">🟡 UPCOMING</option>
                         </select></div>
-                    <div class="form-group"><label>Button 1 Text</label><input type="text" id="notifBtn1Text" placeholder="e.g., Apply Now"></div>
-                    <div class="form-group"><label>Button 1 Link</label><input type="text" id="notifBtn1Link" placeholder="https://..."></div>
-                    <div class="form-group"><label>Button 2 Text</label><input type="text" id="notifBtn2Text" placeholder="e.g., Rule Book"></div>
-                    <div class="form-group"><label>Button 2 Link</label><input type="text" id="notifBtn2Link" placeholder="https://..."></div>
-                    <button class="btn btn-primary" id="sendNotifBtn" onclick="sendNotification()">Send Notification</button>
+                    <div class="form-group"><label>Button 1 Text</label><input type="text" id="notifBtn1Text"
+                            placeholder="e.g., Apply Now"></div>
+                    <div class="form-group"><label>Button 1 Link</label><input type="text" id="notifBtn1Link"
+                            placeholder="https://..."></div>
+                    <div class="form-group"><label>Button 2 Text</label><input type="text" id="notifBtn2Text"
+                            placeholder="e.g., Rule Book"></div>
+                    <div class="form-group"><label>Button 2 Link</label><input type="text" id="notifBtn2Link"
+                            placeholder="https://..."></div>
+                    <button class="btn btn-primary" id="sendNotifBtn" onclick="sendNotification()">Send
+                        Notification</button>
                 </div>
                 <div class="table-container">
                     <h3 style="padding: 16px;">📋 All Notifications</h3>
@@ -847,7 +831,7 @@
                         </thead>
                         <tbody id="notificationsTableBody">
                             <tr>
-                                <td colspan="6" class="loading">Loading notifications...<\/td>
+                                <td colspan="6" class="loading">Loading notifications...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -859,19 +843,21 @@
                 <div class="form-card" id="uploadImageCard">
                     <h3 class="form-title">📸 Upload New Image</h3>
                     <form id="uploadImageForm" enctype="multipart/form-data">
-                        <div class="form-group"><label>Image Title</label><input type="text" id="imageTitle" placeholder="Enter image title" required></div>
-                        <div class="form-group"><label>📁 Category</label>
-                            <select id="imageCategory">
+                        <div class="form-group"><label>Image Title</label><input type="text" id="imageTitle"
+                                placeholder="Enter image title" required></div>
+                        <div class="form-group"><label>📁 Category</label><select id="imageCategory">
                                 <option value="events">🎯 Events</option>
                                 <option value="workshops">💻 Workshops</option>
                                 <option value="competitions">🏆 Competitions</option>
                                 <option value="recruitment">📢 Recruitment</option>
                                 <option value="other">📸 Other</option>
-                            </select>
-                        </div>
-                        <div class="form-group"><label>Choose Image (Max 10MB)</label><input type="file" id="imageFile" accept="image/*" required></div>
-                        <div id="uploadPreview" style="margin: 15px 0; display: none;"><img id="previewImg" style="max-width: 200px; border-radius: 8px; border: 2px solid var(--primary);"></div>
-                        <button type="submit" class="btn btn-primary" id="uploadImageBtn"><i class="fas fa-cloud-upload-alt"></i> Upload to Cloudinary</button>
+                            </select></div>
+                        <div class="form-group"><label>Choose Image (Max 10MB)</label><input type="file" id="imageFile"
+                                accept="image/*" required></div>
+                        <div id="uploadPreview" style="margin: 15px 0; display: none;"><img id="previewImg"
+                                style="max-width: 200px; border-radius: 8px; border: 2px solid var(--primary);"></div>
+                        <button type="submit" class="btn btn-primary" id="uploadImageBtn"><i
+                                class="fas fa-cloud-upload-alt"></i> Upload to Cloudinary</button>
                     </form>
                 </div>
                 <div class="table-container">
@@ -887,11 +873,15 @@
                 <div class="form-card" id="createCategoryCard">
                     <h3 class="form-title">🏷️ Add New Category</h3>
                     <div class="form-grid">
-                        <div class="form-group"><label>Category Name</label><input type="text" id="catName" placeholder="e.g., Hackathon, Seminar" required></div>
-                        <div class="form-group"><label>Icon (Emoji)</label><input type="text" id="catIcon" placeholder="e.g., 🎯, 💻, 🏆" value="📸"></div>
-                        <div class="form-group"><label>Color</label><input type="color" id="catColor" value="#00f0ff"></div>
+                        <div class="form-group"><label>Category Name</label><input type="text" id="catName"
+                                placeholder="e.g., Hackathon, Seminar" required></div>
+                        <div class="form-group"><label>Icon (Emoji)</label><input type="text" id="catIcon"
+                                placeholder="e.g., 🎯, 💻, 🏆" value="📸"></div>
+                        <div class="form-group"><label>Color</label><input type="color" id="catColor" value="#00f0ff">
+                        </div>
                     </div>
-                    <button class="btn btn-primary" id="createCategoryBtn" onclick="createCategory()">➕ Add Category</button>
+                    <button class="btn btn-primary" id="createCategoryBtn" onclick="createCategory()">➕ Add
+                        Category</button>
                 </div>
                 <div class="table-container">
                     <h3 style="padding: 16px;">📋 All Categories</h3>
@@ -906,8 +896,10 @@
                 <div class="form-card" id="createNavCard">
                     <h3 class="form-title">➕ Add Custom Navigation Item</h3>
                     <div class="form-grid">
-                        <div class="form-group"><label>Item Name *</label><input type="text" id="navName" placeholder="e.g., Exam, Resources"></div>
-                        <div class="form-group"><label>Link URL *</label><input type="text" id="navLink" placeholder="https://... or /page.html"></div>
+                        <div class="form-group"><label>Item Name *</label><input type="text" id="navName"
+                                placeholder="e.g., Exam, Resources"></div>
+                        <div class="form-group"><label>Link URL *</label><input type="text" id="navLink"
+                                placeholder="https://... or /page.html"></div>
                         <div class="form-group"><label>Icon</label><select id="navIcon">
                                 <option value="fa-link">🔗 Link</option>
                                 <option value="fa-book">📖 Book</option>
@@ -945,7 +937,7 @@
                         </thead>
                         <tbody id="navItemsTableBody">
                             <tr>
-                                <td colspan="6" class="loading">Loading nav items...<\/td>
+                                <td colspan="6" class="loading">Loading nav items...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -956,45 +948,31 @@
                 </div>
             </div>
 
-            <!-- ========== WORK ASSIGN PANEL ========== -->
+            <!-- Work Panel -->
             <div id="workPanel" class="panel">
-                <!-- Assign Work Form - Only Super Admin will see this -->
                 <div class="form-card" id="assignWorkCard" style="display: none;">
                     <h3 class="form-title"><i class="fas fa-tasks"></i> Assign New Work</h3>
                     <form id="assignWorkForm">
                         <div class="form-grid">
-                            <div class="form-group">
-                                <label>Task Title *</label>
-                                <input type="text" id="workTitle" required placeholder="e.g., Update Event Page">
-                            </div>
-                            <div class="form-group">
-                                <label>Assign To *</label>
-                                <select id="workAssignedTo" required>
+                            <div class="form-group"><label>Task Title *</label><input type="text" id="workTitle"
+                                    required placeholder="e.g., Update Event Page"></div>
+                            <div class="form-group"><label>Assign To *</label><select id="workAssignedTo" required>
                                     <option value="">Select Team Member</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Priority</label>
-                                <select id="workPriority">
+                                </select></div>
+                            <div class="form-group"><label>Priority</label><select id="workPriority">
                                     <option value="low">🟢 Low</option>
                                     <option value="medium">🟡 Medium</option>
                                     <option value="high">🔴 High</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Due Date (Optional)</label>
-                                <input type="date" id="workDueDate">
-                            </div>
+                                </select></div>
+                            <div class="form-group"><label>Due Date (Optional)</label><input type="date"
+                                    id="workDueDate"></div>
                         </div>
-                        <div class="form-group">
-                            <label>Description *</label>
-                            <textarea id="workDescription" rows="4" required placeholder="Detailed description of the task..."></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Assign Work</button>
+                        <div class="form-group"><label>Description *</label><textarea id="workDescription" rows="4"
+                                required placeholder="Detailed description of the task..."></textarea></div>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Assign
+                            Work</button>
                     </form>
                 </div>
-
-                <!-- All Tasks / My Tasks -->
                 <div class="table-container">
                     <h3 style="padding: 16px;" id="tasksTitle">📋 All Tasks</h3>
                     <div style="overflow-x: auto;">
@@ -1011,7 +989,7 @@
                             </thead>
                             <tbody id="tasksTableBody">
                                 <tr>
-                                    <td colspan="6" class="loading">Loading tasks...<\/td>
+                                    <td colspan="6" class="loading">Loading tasks...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1021,1121 +999,695 @@
         </div>
     </div>
 
-<script>
-var API_BASE_URL = 'https://backend-glo6.onrender.com';
-var adminToken = localStorage.getItem('adminToken');
-var loginMethod = localStorage.getItem('loginMethod');
-var teamMemberData = localStorage.getItem('teamMember');
+    <script>
+        var API_BASE_URL = 'https://backend-glo6.onrender.com';
+        var adminToken = localStorage.getItem('adminToken');
+        var teamMemberData = localStorage.getItem('teamMember');
 
-// ========== DETECT LOGIN TYPE ==========
-var isTeamLogin = !!teamMemberData;
-var API_BASE_ADMIN = API_BASE_URL + '/api/team'; 
+        var isTeamLogin = !!teamMemberData;
+        var API_BASE_ADMIN = API_BASE_URL + '/api/team';
 
-console.log('Login type:', isTeamLogin ? 'Team (OTP)' : 'Old Admin');
-console.log('Using API base:', API_BASE_ADMIN);
+        console.log('Login type:', isTeamLogin ? 'Team (OTP)' : 'Old Admin');
 
-// User permissions
-var userPermissions = null;
-var userRole = null;
-var isSuperAdmin = false;
-var userId = null;
+        var userPermissions = null;
+        var userRole = null;
+        var isSuperAdmin = false;
+        var userId = null;
 
-if (!adminToken) window.location.href = 'admin-login.html';
+        if (!adminToken) window.location.href = 'admin-login.html';
 
-// Parse team member data if exists
-if (teamMemberData) {
-    try {
-        var member = JSON.parse(teamMemberData);
-        userPermissions = member.permissions;
-        userRole = member.role;
-        isSuperAdmin = (userRole === 'super_admin');
-        userId = member.id;
-        document.getElementById('userNameDisplay').innerHTML = member.name + ' <span style="font-size:10px">(' + (isSuperAdmin ? 'Super Admin' : userRole) + ')</span>';
-        document.getElementById('userRoleBadge').innerHTML = isSuperAdmin ? '👑 Super Admin' : (userRole ? userRole.replace('_', ' ') : 'Team Member');
-    } catch(e) {
-        isSuperAdmin = true;
-        document.getElementById('userNameDisplay').innerHTML = 'Admin';
-        document.getElementById('userRoleBadge').innerHTML = '👑 Full Admin';
-    }
-} else {
-    isSuperAdmin = true;
-    document.getElementById('userNameDisplay').innerHTML = 'Admin';
-    document.getElementById('userRoleBadge').innerHTML = '👑 Full Admin';
-}
-
-// Check permission helper
-function hasPermission(module, action) {
-    if (isSuperAdmin) return true;
-    if (!userPermissions) return false;
-    if (userPermissions[module] && userPermissions[module][action] === true) return true;
-    return false;
-}
-
-// Show/hide UI elements based on permissions
-function applyPermissions() {
-    if (!hasPermission('events', 'create')) {
-        var createEventCard = document.getElementById('createEventCard');
-        if (createEventCard) createEventCard.style.display = 'none';
-    }
-    if (!hasPermission('notifications', 'create')) {
-        var createNotifCard = document.getElementById('createNotificationCard');
-        if (createNotifCard) createNotifCard.style.display = 'none';
-    }
-    if (!hasPermission('gallery', 'upload')) {
-        var uploadCard = document.getElementById('uploadImageCard');
-        if (uploadCard) uploadCard.style.display = 'none';
-    }
-    if (!hasPermission('categories', 'create')) {
-        var createCatCard = document.getElementById('createCategoryCard');
-        if (createCatCard) createCatCard.style.display = 'none';
-    }
-    if (!hasPermission('navItems', 'create')) {
-        var createNavCard = document.getElementById('createNavCard');
-        if (createNavCard) createNavCard.style.display = 'none';
-    }
-    if (!hasPermission('members', 'view') && !isSuperAdmin) {
-        var membersPanel = document.getElementById('membersPanel');
-        if (membersPanel) membersPanel.style.display = 'none';
-    }
-    
-    // ✅ WORK ASSIGN - Only Super Admin can assign work
-    var assignWorkCard = document.getElementById('assignWorkCard');
-    if (assignWorkCard) {
-        if (isSuperAdmin) {
-            assignWorkCard.style.display = 'block';
+        if (teamMemberData) {
+            try {
+                var member = JSON.parse(teamMemberData);
+                userPermissions = member.permissions;
+                userRole = member.role;
+                isSuperAdmin = (userRole === 'super_admin');
+                userId = member.id;
+                document.getElementById('userNameDisplay').innerHTML = member.name + ' <span style="font-size:10px">(' + (isSuperAdmin ? 'Super Admin' : userRole) + ')</span>';
+                document.getElementById('userRoleBadge').innerHTML = isSuperAdmin ? '👑 Super Admin' : (userRole ? userRole.replace('_', ' ') : 'Team Member');
+            } catch (e) {
+                isSuperAdmin = true;
+                document.getElementById('userNameDisplay').innerHTML = 'Admin';
+                document.getElementById('userRoleBadge').innerHTML = '👑 Full Admin';
+            }
         } else {
-            assignWorkCard.style.display = 'none';
+            isSuperAdmin = true;
+            document.getElementById('userNameDisplay').innerHTML = 'Admin';
+            document.getElementById('userRoleBadge').innerHTML = '👑 Full Admin';
         }
-    }
-    
-    // Team Management Link for Super Admin
-    var teamManagementLink = document.getElementById('teamManagementLink');
-    if (teamManagementLink) {
-        if (isSuperAdmin) {
-            teamManagementLink.style.display = 'block';
-        } else {
-            teamManagementLink.style.display = 'none';
+
+        function hasPermission(module, action) {
+            if (isSuperAdmin) return true;
+            if (!userPermissions) return false;
+            if (userPermissions[module] && userPermissions[module][action] === true) return true;
+            return false;
         }
-    }
-}
 
-// Build sidebar menu
-function buildSidebarMenu() {
-    var menuHtml = '';
-    menuHtml += '<div class="menu-item active" data-panel="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</div>';
-    if (hasPermission('events', 'create') || hasPermission('events', 'edit') || hasPermission('events', 'delete')) {
-        menuHtml += '<div class="menu-item" data-panel="events"><i class="fas fa-calendar-alt"></i> Events</div>';
-    }
-    if (hasPermission('members', 'view') || isSuperAdmin) {
-        menuHtml += '<div class="menu-item" data-panel="members"><i class="fas fa-users"></i> Members</div>';
-    }
-    if (hasPermission('notifications', 'create') || hasPermission('notifications', 'delete')) {
-        menuHtml += '<div class="menu-item" data-panel="notifications"><i class="fas fa-bell"></i> Notifications</div>';
-    }
-    if (hasPermission('navItems', 'create') || hasPermission('navItems', 'edit') || hasPermission('navItems', 'delete')) {
-        menuHtml += '<div class="menu-item" data-panel="nav-manager"><i class="fas fa-bars"></i> Nav Manager</div>';
-    }
-    if (hasPermission('gallery', 'upload') || hasPermission('gallery', 'delete')) {
-        menuHtml += '<div class="menu-item" data-panel="gallery"><i class="fas fa-images"></i> Gallery</div>';
-    }
-    if (hasPermission('categories', 'create') || hasPermission('categories', 'edit') || hasPermission('categories', 'delete')) {
-        menuHtml += '<div class="menu-item" data-panel="categories"><i class="fas fa-tags"></i> Categories</div>';
-    }
-    // Work Panel - Shows to everyone (tasks view), but assign form hidden based on role
-    menuHtml += '<div class="menu-item" data-panel="work"><i class="fas fa-tasks"></i> Work</div>';
-    
-    document.getElementById('sidebarMenu').innerHTML = menuHtml;
-    document.querySelectorAll('.menu-item').forEach(item => {
-        item.addEventListener('click', function() {
-            var panelId = this.dataset.panel;
-            var panelName = this.textContent.trim();
-            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-            this.classList.add('active');
-            switchPanel(panelId, panelName);
-            if (panelId === 'events') loadEvents();
-            if (panelId === 'members') loadMembers();
-            if (panelId === 'notifications') loadNotifications();
-            if (panelId === 'nav-manager') loadNavItems();
-            if (panelId === 'gallery') { loadGalleryImages(); loadCategoryDropdown(); }
-            if (panelId === 'categories') loadCategories();
-            if (panelId === 'work') { loadTeamMembersForAssign(); loadTasks(); }
-            if (panelId === 'dashboard') loadDashboard();
-        });
-    });
-}
-
-var savedTheme = localStorage.getItem('theme') || 'dark';
-document.documentElement.setAttribute('data-theme', savedTheme);
-
-var categoriesCache = null;
-var isLoadingCategories = false;
-
-// Mobile Sidebar Toggle
-var mobileMenuToggle = document.getElementById('mobileMenuToggle');
-var sidebar = document.getElementById('sidebar');
-var sidebarOverlay = document.getElementById('sidebarOverlay');
-
-function closeSidebar() { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; }
-function openSidebar() { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
-
-if (mobileMenuToggle) {
-    mobileMenuToggle.addEventListener('click', function (e) {
-        e.stopPropagation();
-        if (sidebar.classList.contains('open')) closeSidebar(); else openSidebar();
-    });
-}
-if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
-
-var panels = {
-    dashboard: document.getElementById('dashboardPanel'),
-    events: document.getElementById('eventsPanel'),
-    members: document.getElementById('membersPanel'),
-    notifications: document.getElementById('notificationsPanel'),
-    'nav-manager': document.getElementById('navManagerPanel'),
-    gallery: document.getElementById('galleryPanel'),
-    categories: document.getElementById('categoriesPanel'),
-    work: document.getElementById('workPanel')
-};
-var pageTitle = document.getElementById('pageTitle');
-
-function switchPanel(panelId, panelName) {
-    for (var key in panels) { if (panels[key]) panels[key].classList.remove('active'); }
-    if (panels[panelId]) panels[panelId].classList.add('active');
-    if (pageTitle) pageTitle.textContent = panelName;
-}
-
-// ========== DASHBOARD ==========
-async function loadDashboard() {
-    try {
-        var membersRes = await fetch(API_BASE_ADMIN + '/users', { headers: { 'Authorization': 'Bearer ' + adminToken } });
-        var eventsRes = await fetch(API_BASE_ADMIN + '/events', { headers: { 'Authorization': 'Bearer ' + adminToken } });
-        
-        if (!membersRes.ok) throw new Error('Members API failed');
-        if (!eventsRes.ok) throw new Error('Events API failed');
-        
-        var members = await membersRes.json();
-        var events = await eventsRes.json();
-        
-        var membersArray = Array.isArray(members) ? members : (members.members || []);
-        var eventsArray = Array.isArray(events) ? events : (events.events || []);
-        
-        document.getElementById('totalMembers').textContent = membersArray.length;
-        document.getElementById('totalEvents').textContent = eventsArray.length;
-        
-        var verifiedCount = membersArray.filter(m => m.isverified === true).length;
-        document.getElementById('verifiedMembers').textContent = verifiedCount;
-        
-        var activeCount = eventsArray.filter(e => e.isOpen === true).length;
-        document.getElementById('activeEvents').textContent = activeCount;
-    } catch (error) { 
-        console.error('Dashboard error:', error);
-    }
-}
-
-// ========== EVENTS ==========
-async function loadEvents() {
-    var tbody = document.getElementById('eventsTableBody');
-    if (!tbody) return;
-    tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading events...<\/td><\/tr>';
-    try {
-        var response = await fetch(API_BASE_ADMIN + '/events', { headers: { 'Authorization': 'Bearer ' + adminToken } });
-        if (!response.ok) throw new Error('Events API failed');
-        var events = await response.json();
-        var eventsArray = Array.isArray(events) ? events : (events.events || []);
-        
-        if (eventsArray.length === 0) { 
-            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No events found<\/td><\/tr>'; 
-            return; 
+        function applyPermissions() {
+            // Events - Create form
+            if (!hasPermission('events', 'create')) {
+                var createEventCard = document.getElementById('createEventCard');
+                if (createEventCard) createEventCard.style.display = 'none';
+            }
+            // Notifications - Create form
+            if (!hasPermission('notifications', 'create')) {
+                var createNotifCard = document.getElementById('createNotificationCard');
+                if (createNotifCard) createNotifCard.style.display = 'none';
+            }
+            // Gallery - Upload form
+            if (!hasPermission('gallery', 'upload')) {
+                var uploadCard = document.getElementById('uploadImageCard');
+                if (uploadCard) uploadCard.style.display = 'none';
+            }
+            // Categories - Create form
+            if (!hasPermission('categories', 'create')) {
+                var createCatCard = document.getElementById('createCategoryCard');
+                if (createCatCard) createCatCard.style.display = 'none';
+            }
+            // Nav Items - Create form
+            if (!hasPermission('navItems', 'create')) {
+                var createNavCard = document.getElementById('createNavCard');
+                if (createNavCard) createNavCard.style.display = 'none';
+            }
+            // Members - View panel
+            if (!hasPermission('members', 'view') && !isSuperAdmin) {
+                var membersPanel = document.getElementById('membersPanel');
+                if (membersPanel) membersPanel.style.display = 'none';
+            }
+            // Work Assign - Only Super Admin
+            var assignWorkCard = document.getElementById('assignWorkCard');
+            if (assignWorkCard) assignWorkCard.style.display = isSuperAdmin ? 'block' : 'none';
+            // Team Management Link - Only Super Admin
+            var teamManagementLink = document.getElementById('teamManagementLink');
+            if (teamManagementLink) teamManagementLink.style.display = isSuperAdmin ? 'block' : 'none';
         }
-        
-        var html = '';
-        var canEdit = hasPermission('events', 'edit');
-        var canDelete = hasPermission('events', 'delete');
-        
-        for (var i = 0; i < eventsArray.length; i++) {
-            var e = eventsArray[i];
-            var actions = '';
-            if (canEdit) actions += '<button class="btn btn-warning btn-sm" onclick="toggleEventStatus(\'' + e._id + '\', ' + e.isOpen + ')">' + (e.isOpen ? 'Close' : 'Open') + '</button>';
-            if (canDelete) actions += '<button class="btn btn-danger btn-sm" onclick="deleteEvent(\'' + e._id + '\')">Delete</button>';
-            if (!actions) actions = '<span style="opacity:0.5;">No actions</span>';
-            
-            html += '<tr>' +
-                '<td>' + escapeHtml(e.name) + '</td>' +
-                '<td>' + new Date(e.date).toLocaleDateString() + '</td>' +
-                '<td>' + escapeHtml(e.location) + '</td>' +
-                '<td><span class="status-badge ' + (e.isOpen ? 'status-open' : 'status-closed') + '">' + (e.isOpen ? 'Open' : 'Closed') + '</span></td>' +
-                '<td>' + (e.participantsCount || 0) + '</td>' +
-                '<td class="action-buttons">' + actions + '</td>' +
-                '</tr>';
-        }
-        tbody.innerHTML = html;
-    } catch (error) { 
-        console.error('Events error:', error);
-        tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load events<\/td><\/tr>'; 
-    }
-}
 
-var createEventForm = document.getElementById('createEventForm');
-if (createEventForm) {
-    createEventForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        if (!hasPermission('events', 'create')) { alert('You do not have permission to create events'); return; }
-        var eventData = {
-            name: document.getElementById('eventName').value,
-            imagelink: document.getElementById('eventImage').value,
-            date: document.getElementById('eventDate').value,
-            location: document.getElementById('eventLocation').value,
-            prize: document.getElementById('eventPrize').value,
-            pdflink: document.getElementById('eventPdfLink').value,
-            description: document.getElementById('eventDescription').value,
-            isOpen: document.getElementById('eventIsOpen').value === 'true'
+        function buildSidebarMenu() {
+            var menuHtml = '';
+            menuHtml += '<div class="menu-item active" data-panel="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</div>';
+
+            // Events - show if any event permission (create/edit/delete)
+            if (hasPermission('events', 'create') || hasPermission('events', 'edit') || hasPermission('events', 'delete')) {
+                menuHtml += '<div class="menu-item" data-panel="events"><i class="fas fa-calendar-alt"></i> Events</div>';
+            }
+
+            // Members - show if view permission
+            if (hasPermission('members', 'view') || isSuperAdmin) {
+                menuHtml += '<div class="menu-item" data-panel="members"><i class="fas fa-users"></i> Members</div>';
+            }
+
+            // Notifications - show if create/delete permission
+            if (hasPermission('notifications', 'create') || hasPermission('notifications', 'delete')) {
+                menuHtml += '<div class="menu-item" data-panel="notifications"><i class="fas fa-bell"></i> Notifications</div>';
+            }
+
+            // Nav Manager - show if any nav permission
+            if (hasPermission('navItems', 'create') || hasPermission('navItems', 'edit') || hasPermission('navItems', 'delete')) {
+                menuHtml += '<div class="menu-item" data-panel="nav-manager"><i class="fas fa-bars"></i> Nav Manager</div>';
+            }
+
+            // Gallery - show if upload/delete permission
+            if (hasPermission('gallery', 'upload') || hasPermission('gallery', 'delete')) {
+                menuHtml += '<div class="menu-item" data-panel="gallery"><i class="fas fa-images"></i> Gallery</div>';
+            }
+
+            // Categories - show if any category permission
+            if (hasPermission('categories', 'create') || hasPermission('categories', 'edit') || hasPermission('categories', 'delete')) {
+                menuHtml += '<div class="menu-item" data-panel="categories"><i class="fas fa-tags"></i> Categories</div>';
+            }
+
+            // Work Panel - ALWAYS show to everyone (tasks view)
+            menuHtml += '<div class="menu-item" data-panel="work"><i class="fas fa-tasks"></i> Work</div>';
+
+            document.getElementById('sidebarMenu').innerHTML = menuHtml;
+
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function () {
+                    var panelId = this.dataset.panel;
+                    var panelName = this.textContent.trim();
+                    document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+                    this.classList.add('active');
+                    switchPanel(panelId, panelName);
+                    if (panelId === 'events') loadEvents();
+                    if (panelId === 'members') loadMembers();
+                    if (panelId === 'notifications') loadNotifications();
+                    if (panelId === 'nav-manager') loadNavItems();
+                    if (panelId === 'gallery') { loadGalleryImages(); loadCategoryDropdown(); }
+                    if (panelId === 'categories') loadCategories();
+                    if (panelId === 'work') { loadTeamMembersForAssign(); loadTasks(); }
+                    if (panelId === 'dashboard') loadDashboard();
+                });
+            });
+        }
+
+        var savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        var categoriesCache = null;
+        var isLoadingCategories = false;
+
+        var mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        var sidebar = document.getElementById('sidebar');
+        var sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function closeSidebar() { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; }
+        function openSidebar() { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
+
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', function (e) {
+                e.stopPropagation();
+                if (sidebar.classList.contains('open')) closeSidebar(); else openSidebar();
+            });
+        }
+        if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
+
+        var panels = {
+            dashboard: document.getElementById('dashboardPanel'),
+            events: document.getElementById('eventsPanel'),
+            members: document.getElementById('membersPanel'),
+            notifications: document.getElementById('notificationsPanel'),
+            'nav-manager': document.getElementById('navManagerPanel'),
+            gallery: document.getElementById('galleryPanel'),
+            categories: document.getElementById('categoriesPanel'),
+            work: document.getElementById('workPanel')
         };
-        try {
-            var response = await fetch(API_BASE_ADMIN + '/events/create', { 
-                method: 'POST', 
-                headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, 
-                body: JSON.stringify(eventData) 
+        var pageTitle = document.getElementById('pageTitle');
+
+        function switchPanel(panelId, panelName) {
+            for (var key in panels) { if (panels[key]) panels[key].classList.remove('active'); }
+            if (panels[panelId]) panels[panelId].classList.add('active');
+            if (pageTitle) pageTitle.textContent = panelName;
+        }
+
+        // ========== DASHBOARD ==========
+        async function loadDashboard() {
+            try {
+                var membersRes = await fetch(API_BASE_ADMIN + '/users', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                var eventsRes = await fetch(API_BASE_ADMIN + '/events', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                if (!membersRes.ok) throw new Error('Members API failed');
+                if (!eventsRes.ok) throw new Error('Events API failed');
+                var members = await membersRes.json();
+                var events = await eventsRes.json();
+                var membersArray = Array.isArray(members) ? members : (members.members || []);
+                var eventsArray = Array.isArray(events) ? events : (events.events || []);
+                document.getElementById('totalMembers').textContent = membersArray.length;
+                document.getElementById('totalEvents').textContent = eventsArray.length;
+                var verifiedCount = membersArray.filter(m => m.isverified === true).length;
+                document.getElementById('verifiedMembers').textContent = verifiedCount;
+                var activeCount = eventsArray.filter(e => e.isOpen === true).length;
+                document.getElementById('activeEvents').textContent = activeCount;
+            } catch (error) { console.error('Dashboard error:', error); }
+        }
+
+        // ========== EVENTS ==========
+        async function loadEvents() {
+            var tbody = document.getElementById('eventsTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading events...<\/td><\/tr>';
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/events', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                if (!response.ok) throw new Error('Events API failed');
+                var events = await response.json();
+                var eventsArray = Array.isArray(events) ? events : (events.events || []);
+                if (eventsArray.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No events found<\/td><\/tr>'; return; }
+                var html = '';
+                var canEdit = hasPermission('events', 'edit');
+                var canDelete = hasPermission('events', 'delete');
+                for (var i = 0; i < eventsArray.length; i++) {
+                    var e = eventsArray[i];
+                    var actions = '';
+                    if (canEdit) actions += '<button class="btn btn-warning btn-sm" onclick="toggleEventStatus(\'' + e._id + '\', ' + e.isOpen + ')">' + (e.isOpen ? 'Close' : 'Open') + '</button>';
+                    if (canDelete) actions += '<button class="btn btn-danger btn-sm" onclick="deleteEvent(\'' + e._id + '\')">Delete</button>';
+                    if (!actions) actions = '<span style="opacity:0.5;">No actions</span>';
+                    html += '<tr><td>' + escapeHtml(e.name) + '</td><td>' + new Date(e.date).toLocaleDateString() + '</td><td>' + escapeHtml(e.location) + '</td><td><span class="status-badge ' + (e.isOpen ? 'status-open' : 'status-closed') + '">' + (e.isOpen ? 'Open' : 'Closed') + '</span></td><td>' + (e.participantsCount || 0) + '</td><td class="action-buttons">' + actions + '</td></tr>';
+                }
+                tbody.innerHTML = html;
+            } catch (error) { tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load events<\/td><\/tr>'; }
+        }
+
+        var createEventForm = document.getElementById('createEventForm');
+        if (createEventForm) {
+            createEventForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                if (!hasPermission('events', 'create')) { alert('No permission to create events'); return; }
+                var eventData = {
+                    name: document.getElementById('eventName').value,
+                    imagelink: document.getElementById('eventImage').value,
+                    date: document.getElementById('eventDate').value,
+                    location: document.getElementById('eventLocation').value,
+                    prize: document.getElementById('eventPrize').value,
+                    pdflink: document.getElementById('eventPdfLink').value,
+                    description: document.getElementById('eventDescription').value,
+                    isOpen: document.getElementById('eventIsOpen').value === 'true'
+                };
+                try {
+                    var response = await fetch(API_BASE_ADMIN + '/events/create', { method: 'POST', headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, body: JSON.stringify(eventData) });
+                    if (response.ok) { alert('Event created'); createEventForm.reset(); loadEvents(); loadDashboard(); }
+                    else { var err = await response.json(); alert(err.message || 'Failed'); }
+                } catch (error) { alert('Error'); }
             });
-            if (response.ok) { 
-                alert('Event created'); 
-                createEventForm.reset(); 
-                loadEvents(); 
-                loadDashboard(); 
-            } else {
-                var err = await response.json();
-                alert(err.message || 'Failed');
-            }
-        } catch (error) { alert('Error'); }
-    });
-}
-
-window.deleteEvent = async function (id) { 
-    if (!hasPermission('events', 'delete')) { alert('No permission'); return; } 
-    if (confirm('Delete this event?')) { 
-        await fetch(API_BASE_ADMIN + '/events/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); 
-        loadEvents(); 
-        loadDashboard(); 
-    } 
-};
-
-window.toggleEventStatus = async function (id, status) { 
-    if (!hasPermission('events', 'edit')) { alert('No permission'); return; } 
-    await fetch(API_BASE_ADMIN + '/events/' + id, { 
-        method: 'PUT', 
-        headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ isOpen: !status }) 
-    }); 
-    loadEvents(); 
-    loadDashboard(); 
-};
-
-// ========== MEMBERS ==========
-async function loadMembers() {
-    var tbody = document.getElementById('membersTableBody');
-    if (!tbody) return;
-    tbody.innerHTML = '<td><td colspan="7" class="loading">Loading members...<\/td><\/tr>';
-    try {
-        var response = await fetch(API_BASE_ADMIN + '/users', { headers: { 'Authorization': 'Bearer ' + adminToken } });
-        
-        if (!response.ok) {
-            console.error('Users API response:', response.status);
-            throw new Error('Users API failed');
         }
-        
-        var users = await response.json();
-        console.log('Users from /users endpoint:', users);
-        
-        var usersArray = Array.isArray(users) ? users : (users.users || users.members || []);
-        
-        if (usersArray.length === 0) { 
-            tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No users found. Users will appear here after signup.<\/td><\/tr>'; 
-            return; 
-        }
-        
-        var html = '';
-        var canDelete = hasPermission('members', 'delete');
-        
-        for (var i = 0; i < usersArray.length; i++) {
-            var u = usersArray[i];
-            var actions = '';
-            if (canDelete) actions = '<button class="btn btn-danger btn-sm" onclick="deleteUser(\'' + u._id + '\')">Delete</button>';
-            else actions = '<span style="opacity:0.5;">Read only</span>';
-            
-            html += '<tr>' +
-                '<td>' + escapeHtml(u.name || '') + '</td>' +
-                '<td>' + escapeHtml(u.email || '') + '</td>' +
-                '<td>' + escapeHtml(u.branch || '-') + '</td>' +
-                '<td>' + (u.batch || '-') + '</td>' +
-                '<td>' + (u.regno || '-') + '</td>' +
-                '<td>' + (u.isverified ? '✅' : '❌') + '</td>' +
-                '<td class="action-buttons">' + actions + '</td>' +
-                '</tr>';
-        }
-        tbody.innerHTML = html;
-    } catch (error) { 
-        console.error('Error loading users:', error);
-        tbody.innerHTML = '<tr><td colspan="7" class="loading">Failed to load users. Make sure /users endpoint exists.<\/td><\/tr>'; 
-    }
-}
 
-window.deleteUser = async function (id) { 
-    if (!hasPermission('members', 'delete')) { alert('No permission'); return; } 
-    if (confirm('Delete this user? This action cannot be undone.')) { 
-        try {
-            var response = await fetch(API_BASE_ADMIN + '/users/' + id, { 
-                method: 'DELETE', 
-                headers: { 'Authorization': 'Bearer ' + adminToken } 
+        window.deleteEvent = async function (id) { if (!hasPermission('events', 'delete')) { alert('No permission'); return; } if (confirm('Delete this event?')) { await fetch(API_BASE_ADMIN + '/events/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); loadEvents(); loadDashboard(); } };
+        window.toggleEventStatus = async function (id, status) { if (!hasPermission('events', 'edit')) { alert('No permission'); return; } await fetch(API_BASE_ADMIN + '/events/' + id, { method: 'PUT', headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, body: JSON.stringify({ isOpen: !status }) }); loadEvents(); loadDashboard(); };
+
+        // ========== MEMBERS ==========
+        async function loadMembers() {
+            var tbody = document.getElementById('membersTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '<tr><td colspan="7" class="loading">Loading members...<\/td><\/tr>';
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/users', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                if (!response.ok) throw new Error('Users API failed');
+                var users = await response.json();
+                var usersArray = Array.isArray(users) ? users : (users.users || users.members || []);
+                if (usersArray.length === 0) { tbody.innerHTML = '<td><td colspan="7" class="empty-state">No users found.<\/td><\/tr>'; return; }
+                var html = '';
+                var canDelete = hasPermission('members', 'delete');
+                for (var i = 0; i < usersArray.length; i++) {
+                    var u = usersArray[i];
+                    var actions = canDelete ? '<button class="btn btn-danger btn-sm" onclick="deleteUser(\'' + u._id + '\')">Delete</button>' : '<span style="opacity:0.5;">Read only</span>';
+                    html += '<tr><td>' + escapeHtml(u.name || '') + '</td><td>' + escapeHtml(u.email || '') + '</td><td>' + escapeHtml(u.branch || '-') + '</td><td>' + (u.batch || '-') + '</td><td>' + (u.regno || '-') + '</td><td>' + (u.isverified ? '✅' : '❌') + '</td><td class="action-buttons">' + actions + '</td></tr>';
+                }
+                tbody.innerHTML = html;
+            } catch (error) { tbody.innerHTML = '<tr><td colspan="7" class="loading">Failed to load users.<\/td><\/tr>'; }
+        }
+
+        window.deleteUser = async function (id) { if (!hasPermission('members', 'delete')) { alert('No permission'); return; } if (confirm('Delete this user?')) { await fetch(API_BASE_ADMIN + '/users/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); loadMembers(); loadDashboard(); } };
+
+        var searchMemberInput = document.getElementById('searchMember');
+        if (searchMemberInput) {
+            searchMemberInput.addEventListener('input', async function (e) {
+                var search = e.target.value;
+                var response = await fetch(API_BASE_ADMIN + '/users?search=' + search, { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                if (!response.ok) return;
+                var users = await response.json();
+                var usersArray = Array.isArray(users) ? users : (users.users || users.members || []);
+                var tbody = document.getElementById('membersTableBody');
+                if (tbody) {
+                    var html = '';
+                    var canDelete = hasPermission('members', 'delete');
+                    for (var i = 0; i < usersArray.length; i++) {
+                        var u = usersArray[i];
+                        var actions = canDelete ? '<button class="btn btn-danger btn-sm" onclick="deleteUser(\'' + u._id + '\')">Delete</button>' : '<span style="opacity:0.5;">Read only</span>';
+                        html += '<tr><td>' + escapeHtml(u.name) + '</td><td>' + escapeHtml(u.email) + '</td><td>' + escapeHtml(u.branch) + '</td><td>' + u.batch + '</td><td>' + u.regno + '</td><td>' + (u.isverified ? '✅' : '❌') + '</td><td class="action-buttons">' + actions + '</td></tr>';
+                    }
+                    tbody.innerHTML = html;
+                }
             });
-            if (response.ok) { 
-                alert('User deleted successfully'); 
-                loadMembers(); 
-                loadDashboard(); 
-            } else {
-                alert('Failed to delete user');
-            }
-        } catch(error) {
-            alert('Error deleting user');
         }
-    } 
-};
 
-var searchMemberInput = document.getElementById('searchMember');
-if (searchMemberInput) {
-    searchMemberInput.addEventListener('input', async function (e) {
-        var search = e.target.value;
-        var response = await fetch(API_BASE_ADMIN + '/users?search=' + search, { headers: { 'Authorization': 'Bearer ' + adminToken } });
-        if (!response.ok) return;
-        var members = await response.json();
-        var membersArray = Array.isArray(members) ? members : (members.members || []);
-        var tbody = document.getElementById('membersTableBody');
-        if (tbody) {
+        // ========== NOTIFICATIONS ==========
+        async function loadNotifications() {
+            var tbody = document.getElementById('notificationsTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading notifications...<\/td><\/tr>';
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/notifications', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                if (!response.ok) throw new Error('Notifications API failed');
+                var notifications = await response.json();
+                var notifArray = Array.isArray(notifications) ? notifications : (notifications.notifications || []);
+                if (notifArray.length === 0) { tbody.innerHTML = '<td><td colspan="6" class="empty-state">No notifications found<\/td><\/tr>'; return; }
+                var html = '';
+                var canDelete = hasPermission('notifications', 'delete');
+                for (var i = 0; i < notifArray.length; i++) {
+                    var n = notifArray[i];
+                    var priorityBadge = n.isPriority ? '<span style="background:#ff44441a;color:#ff4444;padding:4px 8px;border-radius:12px;">🔴 Priority</span>' : '<span>Normal</span>';
+                    var badgeHtml = n.badge === 'live' ? '<span class="badge-live">LIVE</span>' : (n.badge === 'new' ? '<span class="badge-new">NEW</span>' : (n.badge === 'upcoming' ? '<span class="badge-upcoming">UPCOMING</span>' : '<span style="opacity:0.5;">None</span>'));
+                    var actions = canDelete ? '<button class="btn btn-danger btn-sm" onclick="deleteNotification(\'' + n._id + '\')">Delete</button>' : '';
+                    html += '<tr><td><strong>' + escapeHtml(n.title) + '</strong></td><td>' + escapeHtml(n.message.substring(0, 50)) + '...<\/td><td>' + priorityBadge + '</td><td>' + badgeHtml + '</td><td>' + new Date(n.date).toLocaleDateString() + '</td><td class="action-buttons">' + actions + '</td></tr>';
+                }
+                tbody.innerHTML = html;
+            } catch (error) { tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load notifications<\/td><\/tr>'; }
+        }
+
+        window.sendNotification = async function () {
+            if (!hasPermission('notifications', 'create')) { alert('No permission'); return; }
+            var title = document.getElementById('notifTitle')?.value;
+            var message = document.getElementById('notifMessage')?.value;
+            var isPriority = document.getElementById('notifPriority')?.value === 'true';
+            var badge = document.getElementById('notifBadge')?.value;
+            var b1t = document.getElementById('notifBtn1Text')?.value, b1l = document.getElementById('notifBtn1Link')?.value;
+            var b2t = document.getElementById('notifBtn2Text')?.value, b2l = document.getElementById('notifBtn2Link')?.value;
+            if (!title || !message) { alert('Please fill title and message'); return; }
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/notifications/create', { method: 'POST', headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, body: JSON.stringify({ title, message, isPriority, badge, button1Text: b1t, button1Link: b1l, button2Text: b2t, button2Link: b2l }) });
+                if (response.ok) {
+                    alert('✅ Notification sent!');
+                    document.getElementById('notifTitle').value = '';
+                    document.getElementById('notifMessage').value = '';
+                    document.getElementById('notifPriority').value = 'false';
+                    document.getElementById('notifBadge').value = 'none';
+                    if (document.getElementById('notifBtn1Text')) document.getElementById('notifBtn1Text').value = '';
+                    if (document.getElementById('notifBtn1Link')) document.getElementById('notifBtn1Link').value = '';
+                    if (document.getElementById('notifBtn2Text')) document.getElementById('notifBtn2Text').value = '';
+                    if (document.getElementById('notifBtn2Link')) document.getElementById('notifBtn2Link').value = '';
+                    loadNotifications();
+                } else { alert('❌ Failed'); }
+            } catch (error) { alert('Error'); }
+        };
+
+        window.deleteNotification = async function (id) { if (!hasPermission('notifications', 'delete')) { alert('No permission'); return; } if (confirm('Delete this notification?')) { await fetch(API_BASE_ADMIN + '/notifications/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); loadNotifications(); } };
+
+        // ========== NAV MANAGER ==========
+        async function loadNavItems() {
+            var tbody = document.getElementById('navItemsTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading nav items...<\/td><\/tr>';
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/nav-items', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                if (!response.ok) throw new Error('Nav items API failed');
+                var items = await response.json();
+                var itemsArray = Array.isArray(items) ? items : (items.items || []);
+                if (itemsArray.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No custom nav items added yet<\/td><\/tr>'; return; }
+                var html = '';
+                var canEdit = hasPermission('navItems', 'edit');
+                var canDelete = hasPermission('navItems', 'delete');
+                for (var i = 0; i < itemsArray.length; i++) {
+                    var it = itemsArray[i];
+                    var badgeHtml = it.badge === 'live' ? '<span class="badge-live">LIVE</span>' : (it.badge === 'new' ? '<span class="badge-new">NEW</span>' : (it.badge === 'upcoming' ? '<span class="badge-upcoming">UPCOMING</span>' : '<span style="opacity:0.5;">None</span>'));
+                    var actions = '';
+                    if (canEdit) actions += '<button class="btn btn-warning btn-sm" onclick="editNavItem(\'' + it._id + '\')">Edit</button>';
+                    if (canDelete) actions += '<button class="btn btn-danger btn-sm" onclick="deleteNavItem(\'' + it._id + '\')">Delete</button>';
+                    if (!actions) actions = '<span style="opacity:0.5;">Read only</span>';
+                    html += '<tr><td><i class="fas ' + it.icon + '"><\/i><\/td><td><strong>' + escapeHtml(it.name) + '<\/strong><\/td><td><a href="' + it.link + '" target="_blank">' + escapeHtml(it.link.substring(0, 40)) + (it.link.length > 40 ? '...' : '') + '<\/a><\/td><td>' + badgeHtml + '<\/td><td>' + (it.target === '_blank' ? '🔗 New Tab' : '📄 Same Tab') + '<\/td><td class="action-buttons">' + actions + '<\/td><\/tr>';
+                }
+                tbody.innerHTML = html;
+            } catch (error) { tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load nav items<\/td><\/tr>'; }
+        }
+
+        window.createNavItem = async function () {
+            if (!hasPermission('navItems', 'create')) { alert('No permission'); return; }
+            var name = document.getElementById('navName')?.value;
+            var link = document.getElementById('navLink')?.value;
+            var icon = document.getElementById('navIcon')?.value;
+            var badge = document.getElementById('navBadge')?.value;
+            var target = document.getElementById('navTarget')?.value;
+            if (!name || !link) { alert('Please fill Name and Link'); return; }
+            if (!link.startsWith('http://') && !link.startsWith('https://') && !link.startsWith('/') && !link.startsWith('#')) link = 'https://' + link;
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/nav-items', { method: 'POST', headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, body: JSON.stringify({ name, link, icon, badge, target }) });
+                if (response.ok) { alert('Nav item added!'); document.getElementById('navName').value = ''; document.getElementById('navLink').value = ''; loadNavItems(); }
+                else alert('Failed');
+            } catch (error) { alert('Error'); }
+        };
+
+        window.editNavItem = async function (id) { if (!hasPermission('navItems', 'edit')) { alert('No permission'); return; } var newName = prompt('Edit Item Name:'); if (!newName) return; var newLink = prompt('Edit Link URL:'); if (!newLink) return; if (!newLink.startsWith('http://') && !newLink.startsWith('https://') && !newLink.startsWith('/') && !newLink.startsWith('#')) newLink = 'https://' + newLink; var newIcon = prompt('Edit Icon (fa-xxx):') || 'fa-link'; var newBadge = prompt('Edit Badge (live/new/upcoming/none):') || 'none'; var newTarget = prompt('Open in (_self/_blank):') || '_self'; await fetch(API_BASE_ADMIN + '/nav-items/' + id, { method: 'PUT', headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, body: JSON.stringify({ name: newName, link: newLink, icon: newIcon, badge: newBadge, target: newTarget }) }); alert('Updated'); loadNavItems(); };
+
+        window.deleteNavItem = async function (id) { if (!hasPermission('navItems', 'delete')) { alert('No permission'); return; } if (confirm('Delete this nav item?')) { await fetch(API_BASE_ADMIN + '/nav-items/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); loadNavItems(); } };
+
+        // ========== GALLERY ==========
+        async function loadGalleryImages() {
+            var container = document.getElementById('galleryGridAdmin');
+            if (!container) return;
+            container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading images...</div>';
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/gallery', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                if (!response.ok) throw new Error('Gallery API failed');
+                var images = await response.json();
+                var imagesArray = Array.isArray(images) ? images : (images.images || []);
+                displayGalleryImages(imagesArray);
+            } catch (error) { container.innerHTML = '<div class="empty-state">Failed to load images</div>'; }
+        }
+
+        function displayGalleryImages(images) {
+            var container = document.getElementById('galleryGridAdmin');
+            if (!images || images.length === 0) { container.innerHTML = '<div class="empty-state">No images uploaded yet</div>'; return; }
             var html = '';
-            var canDelete = hasPermission('members', 'delete');
-            for (var i = 0; i < membersArray.length; i++) {
-                var m = membersArray[i];
+            var canUpload = hasPermission('gallery', 'upload');
+            var canDelete = hasPermission('gallery', 'delete');
+            for (var i = 0; i < images.length; i++) {
+                var img = images[i];
+                var categoryBadge = '<span class="category-badge" style="background:#00f0ff20; color:#00f0ff;">🎯 ' + escapeHtml(img.category) + '</span>';
                 var actions = '';
-                if (canDelete) actions = '<button class="btn btn-danger btn-sm" onclick="deleteMember(\'' + m._id + '\')">Delete</button>';
-                else actions = '<span style="opacity:0.5;">Read only</span>';
-                html += '<tr>' +
-                    '<td>' + escapeHtml(m.name) + '</td>' +
-                    '<td>' + escapeHtml(m.email) + '</td>' +
-                    '<td>' + escapeHtml(m.branch) + '</td>' +
-                    '<td>' + m.batch + '</td>' +
-                    '<td>' + m.regno + '</td>' +
-                    '<td>' + (m.isverified ? '✅' : '❌') + '</td>' +
-                    '<td class="action-buttons">' + actions + '</td>' +
-                    '</tr>';
+                if (canUpload) actions += '<input type="text" id="edit-title-' + img._id + '" class="edit-title" placeholder="New title" value="' + escapeHtml(img.title) + '"><select id="edit-category-' + img._id + '" class="edit-category"></select><button class="update-image-btn" onclick="updateImage(\'' + img._id + '\')"><i class="fas fa-save"></i> Update</button>';
+                if (canDelete) actions += '<button class="delete-image-btn" onclick="deleteGalleryImage(\'' + img._id + '\')"><i class="fas fa-trash-alt"></i> Delete</button>';
+                if (!actions) actions = '<div style="text-align:center;padding:10px;opacity:0.5;">Read only</div>';
+                html += '<div class="gallery-item-admin" data-id="' + img._id + '"><img src="' + img.cloudinaryUrl + '" alt="' + escapeHtml(img.title) + '" loading="lazy"><div class="info"><div class="title">' + escapeHtml(img.title) + '</div><div class="date">📅 ' + new Date(img.uploadDate).toLocaleDateString() + '</div>' + categoryBadge + actions + '</div></div>';
             }
-            tbody.innerHTML = html;
+            container.innerHTML = html;
+            for (var i = 0; i < images.length; i++) { populateCategoryDropdown(images[i]._id, images[i].category); }
         }
-    });
-}
 
-// ========== NOTIFICATIONS ==========
-async function loadNotifications() {
-    var tbody = document.getElementById('notificationsTableBody');
-    if (!tbody) return;
-    tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading notifications...<\/td><\/tr>';
-    try {
-        var response = await fetch(API_BASE_ADMIN + '/notifications', { headers: { 'Authorization': 'Bearer ' + adminToken } });
-        if (!response.ok) throw new Error('Notifications API failed');
-        var notifications = await response.json();
-        var notifArray = Array.isArray(notifications) ? notifications : (notifications.notifications || []);
-        
-        if (notifArray.length === 0) { 
-            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No notifications found<\/td><\/tr>'; 
-            return; 
-        }
-        
-        var html = '';
-        var canDelete = hasPermission('notifications', 'delete');
-        for (var i = 0; i < notifArray.length; i++) {
-            var n = notifArray[i];
-            var priorityBadge = n.isPriority ? '<span style="background:#ff44441a;color:#ff4444;padding:4px 8px;border-radius:12px;">🔴 Priority</span>' : '<span>Normal</span>';
-            var badgeHtml = '';
-            if (n.badge === 'live') badgeHtml = '<span class="badge-live">LIVE</span>';
-            else if (n.badge === 'new') badgeHtml = '<span class="badge-new">NEW</span>';
-            else if (n.badge === 'upcoming') badgeHtml = '<span class="badge-upcoming">UPCOMING</span>';
-            else badgeHtml = '<span style="opacity:0.5;">None</span>';
-            var actions = '';
-            if (canDelete) actions = '<button class="btn btn-danger btn-sm" onclick="deleteNotification(\'' + n._id + '\')">Delete</button>';
-            
-            html += '<tr>' +
-                '<td><strong>' + escapeHtml(n.title) + '</strong></td>' +
-                '<td>' + escapeHtml(n.message.substring(0, 50)) + '...<\/td>' +
-                '<td>' + priorityBadge + '<\/td>' +
-                '<td>' + badgeHtml + '<\/td>' +
-                '<td>' + new Date(n.date).toLocaleDateString() + '<\/td>' +
-                '<td class="action-buttons">' + actions + '<\/td>' +
-                '<\/tr>';
-        }
-        tbody.innerHTML = html;
-    } catch (error) { 
-        console.error('Notifications error:', error);
-        tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load notifications<\/td><\/tr>'; 
-    }
-}
-
-window.sendNotification = async function () {
-    if (!hasPermission('notifications', 'create')) { alert('You do not have permission to create notifications'); return; }
-    var title = document.getElementById('notifTitle')?.value;
-    var message = document.getElementById('notifMessage')?.value;
-    var isPriority = document.getElementById('notifPriority')?.value === 'true';
-    var badge = document.getElementById('notifBadge')?.value;
-    var b1t = document.getElementById('notifBtn1Text')?.value, b1l = document.getElementById('notifBtn1Link')?.value;
-    var b2t = document.getElementById('notifBtn2Text')?.value, b2l = document.getElementById('notifBtn2Link')?.value;
-    if (!title || !message) { alert('Please fill title and message'); return; }
-    try {
-        var response = await fetch(API_BASE_ADMIN + '/notifications/create', { 
-            method: 'POST', 
-            headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, 
-            body: JSON.stringify({ title: title, message: message, isPriority: isPriority, badge: badge, button1Text: b1t, button1Link: b1l, button2Text: b2t, button2Link: b2l }) 
-        });
-        if (response.ok) {
-            alert('✅ Notification sent!');
-            document.getElementById('notifTitle').value = '';
-            document.getElementById('notifMessage').value = '';
-            document.getElementById('notifPriority').value = 'false';
-            document.getElementById('notifBadge').value = 'none';
-            if (document.getElementById('notifBtn1Text')) document.getElementById('notifBtn1Text').value = '';
-            if (document.getElementById('notifBtn1Link')) document.getElementById('notifBtn1Link').value = '';
-            if (document.getElementById('notifBtn2Text')) document.getElementById('notifBtn2Text').value = '';
-            if (document.getElementById('notifBtn2Link')) document.getElementById('notifBtn2Link').value = '';
-            loadNotifications();
-        } else { alert('❌ Failed'); }
-    } catch (error) { alert('Error'); }
-};
-
-window.deleteNotification = async function (id) { 
-    if (!hasPermission('notifications', 'delete')) { alert('No permission'); return; } 
-    if (confirm('Delete this notification?')) { 
-        await fetch(API_BASE_ADMIN + '/notifications/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); 
-        loadNotifications(); 
-    } 
-};
-
-// ========== NAV MANAGER ==========
-async function loadNavItems() {
-    var tbody = document.getElementById('navItemsTableBody');
-    if (!tbody) return;
-    tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading nav items...<\/td><\/tr>';
-    try {
-        var response = await fetch(API_BASE_ADMIN + '/nav-items', { headers: { 'Authorization': 'Bearer ' + adminToken } });
-        if (!response.ok) throw new Error('Nav items API failed');
-        var items = await response.json();
-        var itemsArray = Array.isArray(items) ? items : (items.items || []);
-        
-        if (itemsArray.length === 0) { 
-            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No custom nav items added yet<\/td><\/tr>'; 
-            return; 
-        }
-        
-        var html = '';
-        var canEdit = hasPermission('navItems', 'edit');
-        var canDelete = hasPermission('navItems', 'delete');
-        for (var i = 0; i < itemsArray.length; i++) {
-            var it = itemsArray[i];
-            var badgeHtml = '';
-            if (it.badge === 'live') badgeHtml = '<span class="badge-live">LIVE</span>';
-            else if (it.badge === 'new') badgeHtml = '<span class="badge-new">NEW</span>';
-            else if (it.badge === 'upcoming') badgeHtml = '<span class="badge-upcoming">UPCOMING</span>';
-            else badgeHtml = '<span style="opacity:0.5;">None</span>';
-            var actions = '';
-            if (canEdit) actions += '<button class="btn btn-warning btn-sm" onclick="editNavItem(\'' + it._id + '\')">Edit</button>';
-            if (canDelete) actions += '<button class="btn btn-danger btn-sm" onclick="deleteNavItem(\'' + it._id + '\')">Delete</button>';
-            if (!actions) actions = '<span style="opacity:0.5;">Read only</span>';
-            
-            html += '<tr>' +
-                '<td><i class="fas ' + it.icon + '"><\/i></td>' +
-                '<td><strong>' + escapeHtml(it.name) + '<\/strong></td>' +
-                '<td><a href="' + it.link + '" target="_blank">' + escapeHtml(it.link.substring(0, 40)) + (it.link.length > 40 ? '...' : '') + '<\/a></td>' +
-                '<td>' + badgeHtml + '<\/td>' +
-                '<td>' + (it.target === '_blank' ? '🔗 New Tab' : '📄 Same Tab') + '<\/td>' +
-                '<td class="action-buttons">' + actions + '<\/td>' +
-                '<\/tr>';
-        }
-        tbody.innerHTML = html;
-    } catch (error) { 
-        console.error('Nav items error:', error);
-        tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load nav items<\/td><\/tr>'; 
-    }
-}
-
-window.createNavItem = async function () {
-    if (!hasPermission('navItems', 'create')) { alert('No permission to create nav items'); return; }
-    var name = document.getElementById('navName')?.value;
-    var link = document.getElementById('navLink')?.value;
-    var icon = document.getElementById('navIcon')?.value;
-    var badge = document.getElementById('navBadge')?.value;
-    var target = document.getElementById('navTarget')?.value;
-    if (!name || !link) { alert('Please fill Name and Link'); return; }
-    if (!link.startsWith('http://') && !link.startsWith('https://') && !link.startsWith('/') && !link.startsWith('#')) link = 'https://' + link;
-    try {
-        var response = await fetch(API_BASE_ADMIN + '/nav-items', { 
-            method: 'POST', 
-            headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, 
-            body: JSON.stringify({ name: name, link: link, icon: icon, badge: badge, target: target }) 
-        });
-        if (response.ok) { 
-            alert('Nav item added!'); 
-            document.getElementById('navName').value = ''; 
-            document.getElementById('navLink').value = ''; 
-            loadNavItems(); 
-        } else alert('Failed');
-    } catch (error) { alert('Error'); }
-};
-
-window.editNavItem = async function (id) { 
-    if (!hasPermission('navItems', 'edit')) { alert('No permission'); return; } 
-    var newName = prompt('Edit Item Name:'); if (!newName) return; 
-    var newLink = prompt('Edit Link URL:'); if (!newLink) return; 
-    if (!newLink.startsWith('http://') && !newLink.startsWith('https://') && !newLink.startsWith('/') && !newLink.startsWith('#')) newLink = 'https://' + newLink; 
-    var newIcon = prompt('Edit Icon (fa-xxx):') || 'fa-link'; 
-    var newBadge = prompt('Edit Badge (live/new/upcoming/none):') || 'none'; 
-    var newTarget = prompt('Open in (_self/_blank):') || '_self'; 
-    await fetch(API_BASE_ADMIN + '/nav-items/' + id, { 
-        method: 'PUT', 
-        headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ name: newName, link: newLink, icon: newIcon, badge: newBadge, target: newTarget }) 
-    }); 
-    alert('Updated'); 
-    loadNavItems(); 
-};
-
-window.deleteNavItem = async function (id) { 
-    if (!hasPermission('navItems', 'delete')) { alert('No permission'); return; } 
-    if (confirm('Delete this nav item?')) { 
-        await fetch(API_BASE_ADMIN + '/nav-items/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); 
-        loadNavItems(); 
-    } 
-};
-
-// ========== GALLERY ==========
-async function loadGalleryImages() {
-    var container = document.getElementById('galleryGridAdmin');
-    if (!container) return;
-    container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading images...</div>';
-    try {
-        var response = await fetch(API_BASE_ADMIN + '/gallery', { headers: { 'Authorization': 'Bearer ' + adminToken } });
-        if (!response.ok) throw new Error('Gallery API failed');
-        var images = await response.json();
-        var imagesArray = Array.isArray(images) ? images : (images.images || []);
-        displayGalleryImages(imagesArray);
-    } catch (error) { 
-        console.error('Gallery error:', error);
-        container.innerHTML = '<div class="empty-state">Failed to load images</div>'; 
-    }
-}
-
-function displayGalleryImages(images) {
-    var container = document.getElementById('galleryGridAdmin');
-    if (!images || images.length === 0) { 
-        container.innerHTML = '<div class="empty-state">No images uploaded yet</div>'; 
-        return; 
-    }
-    var html = '';
-    var canUpload = hasPermission('gallery', 'upload');
-    var canDelete = hasPermission('gallery', 'delete');
-    for (var i = 0; i < images.length; i++) {
-        var img = images[i];
-        var categoryBadge = '<span class="category-badge" style="background:#00f0ff20; color:#00f0ff;">🎯 ' + escapeHtml(img.category) + '</span>';
-        var actions = '';
-        if (canUpload) actions += '<input type="text" id="edit-title-' + img._id + '" class="edit-title" placeholder="New title" value="' + escapeHtml(img.title) + '">' +
-            '<select id="edit-category-' + img._id + '" class="edit-category"></select>' +
-            '<button class="update-image-btn" onclick="updateImage(\'' + img._id + '\')"><i class="fas fa-save"></i> Update</button>';
-        if (canDelete) actions += '<button class="delete-image-btn" onclick="deleteGalleryImage(\'' + img._id + '\')"><i class="fas fa-trash-alt"></i> Delete</button>';
-        if (!actions) actions = '<div style="text-align:center;padding:10px;opacity:0.5;">Read only</div>';
-        
-        html += '<div class="gallery-item-admin" data-id="' + img._id + '">' +
-            '<img src="' + img.cloudinaryUrl + '" alt="' + escapeHtml(img.title) + '" loading="lazy">' +
-            '<div class="info">' +
-            '<div class="title">' + escapeHtml(img.title) + '</div>' +
-            '<div class="date">📅 ' + new Date(img.uploadDate).toLocaleDateString() + '</div>' +
-            categoryBadge +
-            actions +
-            '</div>' +
-            '</div>';
-    }
-    container.innerHTML = html;
-    for (var i = 0; i < images.length; i++) {
-        populateCategoryDropdown(images[i]._id, images[i].category);
-    }
-}
-
-async function populateCategoryDropdown(imageId, selectedCategory) {
-    var select = document.getElementById('edit-category-' + imageId);
-    if (!select) return;
-    var categories = categoriesCache;
-    if (categories === null) {
-        try {
-            var response = await fetch(API_BASE_ADMIN + '/categories', { headers: { 'Authorization': 'Bearer ' + adminToken } });
-            categories = await response.json();
-            categoriesCache = categories;
-        } catch (error) { return; }
-    }
-    var options = '';
-    var staticCats = [
-        { name: 'events', icon: '🎯' },
-        { name: 'workshops', icon: '💻' },
-        { name: 'competitions', icon: '🏆' },
-        { name: 'recruitment', icon: '📢' },
-        { name: 'other', icon: '📸' }
-    ];
-    for (var i = 0; i < staticCats.length; i++) {
-        var cat = staticCats[i];
-        var selected = (cat.name === selectedCategory) ? 'selected' : '';
-        options += '<option value="' + cat.name + '" ' + selected + '>' + cat.icon + ' ' + cat.name + '</option>';
-    }
-    if (categories && Array.isArray(categories)) {
-        for (var i = 0; i < categories.length; i++) {
-            var cat = categories[i];
-            var isStatic = false;
-            for (var j = 0; j < staticCats.length; j++) {
-                if (staticCats[j].name === cat.name) { isStatic = true; break; }
+        async function populateCategoryDropdown(imageId, selectedCategory) {
+            var select = document.getElementById('edit-category-' + imageId);
+            if (!select) return;
+            var categories = categoriesCache;
+            if (categories === null) {
+                try { var response = await fetch(API_BASE_ADMIN + '/categories', { headers: { 'Authorization': 'Bearer ' + adminToken } }); categories = await response.json(); categoriesCache = categories; } catch (error) { return; }
             }
-            if (!isStatic && cat.name) {
-                var selected = (cat.name === selectedCategory) ? 'selected' : '';
-                options += '<option value="' + cat.name + '" ' + selected + '>' + cat.icon + ' ' + cat.name + '</option>';
-            }
-        }
-    }
-    select.innerHTML = options;
-}
-
-async function loadCategoryDropdown() {
-    var categorySelect = document.getElementById('imageCategory');
-    if (!categorySelect) return;
-    if (categoriesCache !== null) {
-        populateCategorySelect(categorySelect, categoriesCache);
-        return;
-    }
-    if (isLoadingCategories) {
-        setTimeout(function () { loadCategoryDropdown(); }, 100);
-        return;
-    }
-    isLoadingCategories = true;
-    try {
-        var response = await fetch(API_BASE_ADMIN + '/categories', { headers: { 'Authorization': 'Bearer ' + adminToken } });
-        if (response.ok) {
-            var categories = await response.json();
-            categoriesCache = categories;
-            populateCategorySelect(categorySelect, categories);
-        }
-    } catch (error) { console.error('Error loading dropdown:', error); }
-    finally { isLoadingCategories = false; }
-}
-
-function populateCategorySelect(categorySelect, categories) {
-    if (!categorySelect) return;
-    var staticValues = ['events', 'workshops', 'competitions', 'recruitment', 'other'];
-    var optionsToRemove = [];
-    for (var i = 0; i < categorySelect.options.length; i++) {
-        if (!staticValues.includes(categorySelect.options[i].value)) {
-            optionsToRemove.push(i);
-        }
-    }
-    for (var i = optionsToRemove.length - 1; i >= 0; i--) {
-        categorySelect.remove(optionsToRemove[i]);
-    }
-    if (categories && Array.isArray(categories)) {
-        for (var i = 0; i < categories.length; i++) {
-            var cat = categories[i];
-            if (!staticValues.includes(cat.name)) {
-                var option = document.createElement('option');
-                option.value = cat.name;
-                option.textContent = cat.icon + ' ' + cat.name;
-                categorySelect.appendChild(option);
-            }
-        }
-    }
-}
-
-var uploadForm = document.getElementById('uploadImageForm');
-if (uploadForm) {
-    uploadForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        if (!hasPermission('gallery', 'upload')) { alert('You do not have permission to upload images'); return; }
-        var title = document.getElementById('imageTitle').value;
-        var category = document.getElementById('imageCategory').value;
-        var file = document.getElementById('imageFile').files[0];
-        if (!title || !file) { alert('Please fill title and select an image'); return; }
-        var formData = new FormData();
-        formData.append('title', title);
-        formData.append('category', category);
-        formData.append('image', file);
-        var uploadBtn = uploadForm.querySelector('button');
-        uploadBtn.disabled = true;
-        uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
-        try {
-            var response = await fetch(API_BASE_ADMIN + '/gallery/upload', { 
-                method: 'POST', 
-                headers: { 'Authorization': 'Bearer ' + adminToken }, 
-                body: formData 
-            });
-            if (response.ok) { 
-                alert('✅ Image uploaded!'); 
-                uploadForm.reset(); 
-                document.getElementById('uploadPreview').style.display = 'none'; 
-                loadGalleryImages(); 
-            } else { 
-                var err = await response.json();
-                alert(err.message || '❌ Upload failed'); 
-            }
-        } catch (error) { alert('❌ Error uploading'); }
-        finally { uploadBtn.disabled = false; uploadBtn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload to Cloudinary'; }
-    });
-}
-
-var imageFileInput = document.getElementById('imageFile');
-if (imageFileInput) {
-    imageFileInput.addEventListener('change', function () {
-        var preview = document.getElementById('uploadPreview');
-        var previewImg = document.getElementById('previewImg');
-        if (this.files && this.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function (event) { previewImg.src = event.target.result; preview.style.display = 'block'; };
-            reader.readAsDataURL(this.files[0]);
-        }
-    });
-}
-
-window.updateImage = async function (id) {
-    if (!hasPermission('gallery', 'upload')) { alert('No permission to update'); return; }
-    var newTitle = document.getElementById('edit-title-' + id).value;
-    var newCategory = document.getElementById('edit-category-' + id).value;
-    if (!newTitle) { alert('Please enter a title'); return; }
-    try {
-        var response = await fetch(API_BASE_ADMIN + '/gallery/' + id, {
-            method: 'PUT',
-            headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title: newTitle, category: newCategory })
-        });
-        if (response.ok) { alert('Image updated'); loadGalleryImages(); }
-        else { alert('Failed to update'); }
-    } catch (error) { alert('Error updating'); }
-};
-
-window.deleteGalleryImage = async function (id) {
-    if (!hasPermission('gallery', 'delete')) { alert('No permission to delete'); return; }
-    if (confirm('Delete this image?')) {
-        try {
-            var response = await fetch(API_BASE_ADMIN + '/gallery/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } });
-            if (response.ok) { alert('Image deleted'); loadGalleryImages(); }
-            else { alert('Failed to delete'); }
-        } catch (error) { alert('Error deleting'); }
-    }
-};
-
-// ========== CATEGORIES ==========
-async function loadCategories() {
-    var container = document.getElementById('categoriesList');
-    if (!container) return;
-    container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading categories...</div>';
-    try {
-        var response = await fetch(API_BASE_ADMIN + '/categories', { headers: { 'Authorization': 'Bearer ' + adminToken } });
-        if (!response.ok) throw new Error('Categories API failed');
-        var categories = await response.json();
-        var categoriesArray = Array.isArray(categories) ? categories : (categories.categories || []);
-        displayCategories(categoriesArray);
-    } catch (error) { 
-        console.error('Categories error:', error);
-        container.innerHTML = '<div class="empty-state">Failed to load categories</div>'; 
-    }
-}
-
-function displayCategories(categories) {
-    var container = document.getElementById('categoriesList');
-    if (!categories || categories.length === 0) { 
-        container.innerHTML = '<div class="empty-state">No categories added yet</div>'; 
-        return; 
-    }
-    var html = '';
-    var canEdit = hasPermission('categories', 'edit');
-    var canDelete = hasPermission('categories', 'delete');
-    for (var i = 0; i < categories.length; i++) {
-        var cat = categories[i];
-        var actions = '';
-        if (canEdit) actions += '<input type="text" id="edit-cat-name-' + cat._id + '" class="edit-title" placeholder="Name" value="' + escapeHtml(cat.name) + '">' +
-            '<input type="text" id="edit-cat-icon-' + cat._id + '" class="edit-title" placeholder="Icon" value="' + cat.icon + '">' +
-            '<input type="color" id="edit-cat-color-' + cat._id + '" class="edit-title" value="' + cat.color + '">' +
-            '<button class="update-image-btn" onclick="updateCategory(\'' + cat._id + '\')"><i class="fas fa-save"></i> Update</button>';
-        if (canDelete) actions += '<button class="delete-image-btn" onclick="deleteCategory(\'' + cat._id + '\')"><i class="fas fa-trash-alt"></i> Delete</button>';
-        if (!actions) actions = '<div style="text-align:center;padding:10px;opacity:0.5;">Read only</div>';
-        
-        html += '<div class="gallery-item-admin" data-id="' + cat._id + '">' +
-            '<div class="info">' +
-            '<div class="title" style="font-size: 32px; text-align: center;">' + cat.icon + '</div>' +
-            '<div class="title"><strong>' + escapeHtml(cat.name) + '</strong></div>' +
-            '<div class="date">Created: ' + new Date(cat.createdAt).toLocaleDateString() + '</div>' +
-            '<div style="width: 40px; height: 4px; background: ' + cat.color + '; margin: 8px auto; border-radius: 2px;"></div>' +
-            actions +
-            '</div>' +
-            '</div>';
-    }
-    container.innerHTML = html;
-}
-
-window.createCategory = async function () {
-    if (!hasPermission('categories', 'create')) { alert('No permission to create categories'); return; }
-    var name = document.getElementById('catName')?.value;
-    var icon = document.getElementById('catIcon')?.value || '📸';
-    var color = document.getElementById('catColor')?.value || '#00f0ff';
-    if (!name) { alert('Please enter category name'); return; }
-    try {
-        var response = await fetch(API_BASE_ADMIN + '/categories', {
-            method: 'POST',
-            headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: name, icon: icon, color: color })
-        });
-        if (response.ok) {
-            alert('Category created!');
-            document.getElementById('catName').value = '';
-            categoriesCache = null;
-            loadCategories();
-            loadCategoryDropdown();
-        } else {
-            var data = await response.json();
-            alert(data.message || 'Failed to create');
-        }
-    } catch (error) { alert('Error creating category'); }
-};
-
-window.updateCategory = async function (id) {
-    if (!hasPermission('categories', 'edit')) { alert('No permission'); return; }
-    var name = document.getElementById('edit-cat-name-' + id).value;
-    var icon = document.getElementById('edit-cat-icon-' + id).value;
-    var color = document.getElementById('edit-cat-color-' + id).value;
-    if (!name) { alert('Category name required'); return; }
-    try {
-        var response = await fetch(API_BASE_ADMIN + '/categories/' + id, {
-            method: 'PUT',
-            headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: name, icon: icon, color: color })
-        });
-        if (response.ok) {
-            alert('Category updated!');
-            categoriesCache = null;
-            loadCategories();
-            loadCategoryDropdown();
-        } else { alert('Failed to update'); }
-    } catch (error) { alert('Error updating'); }
-};
-
-window.deleteCategory = async function (id) {
-    if (!hasPermission('categories', 'delete')) { alert('No permission'); return; }
-    if (confirm('Delete this category?')) {
-        try {
-            var response = await fetch(API_BASE_ADMIN + '/categories/' + id, {
-                method: 'DELETE',
-                headers: { 'Authorization': 'Bearer ' + adminToken }
-            });
-            if (response.ok) {
-                alert('Category deleted');
-                categoriesCache = null;
-                loadCategories();
-                loadCategoryDropdown();
-                loadGalleryImages();
-            } else {
-                var data = await response.json();
-                alert(data.message || 'Failed to delete');
-            }
-        } catch (error) { alert('Error deleting'); }
-    }
-};
-
-// ========== WORK ASSIGNMENT FUNCTIONS ==========
-
-// Load team members for assign dropdown
-async function loadTeamMembersForAssign() {
-    try {
-        var response = await fetch(API_BASE_ADMIN + '/team-members', { headers: { 'Authorization': 'Bearer ' + adminToken } });
-        if (!response.ok) throw new Error('Failed to load team members');
-        var data = await response.json();
-        var members = data.members || [];
-        
-        var select = document.getElementById('workAssignedTo');
-        if (!select) return;
-        
-        select.innerHTML = '<option value="">Select Team Member</option>';
-        for (var i = 0; i < members.length; i++) {
-            select.innerHTML += '<option value="' + members[i]._id + '">' + escapeHtml(members[i].name) + ' (' + escapeHtml(members[i].role) + ')</option>';
-        }
-    } catch (error) {
-        console.error('Error loading team members:', error);
-    }
-}
-
-// Load tasks (all for super admin, my tasks for team member)
-async function loadTasks() {
-    var tbody = document.getElementById('tasksTableBody');
-    if (!tbody) return;
-    tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading tasks...<\/td><\/tr>';
-    
-    try {
-        var url = isSuperAdmin ? API_BASE_ADMIN + '/work/all' : API_BASE_ADMIN + '/work/my';
-        var response = await fetch(url, { headers: { 'Authorization': 'Bearer ' + adminToken } });
-        if (!response.ok) throw new Error('Failed to load tasks');
-        var data = await response.json();
-        var tasks = data.works || [];
-        
-        if (tasks.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No tasks found<\/td><\/tr>';
-            return;
-        }
-        
-        var tasksTitle = document.getElementById('tasksTitle');
-        if (tasksTitle) {
-            tasksTitle.innerHTML = isSuperAdmin ? '📋 All Tasks' : '📋 My Tasks';
-        }
-        
-        var html = '';
-        for (var i = 0; i < tasks.length; i++) {
-            var task = tasks[i];
-            var priorityClass = task.priority === 'high' ? 'priority-high' : (task.priority === 'medium' ? 'priority-medium' : 'priority-low');
-            var statusClass = '';
-            if (task.status === 'pending') statusClass = 'status-pending';
-            else if (task.status === 'in_progress') statusClass = 'status-in_progress';
-            else if (task.status === 'completed') statusClass = 'status-completed';
-            
-            var assignedToName = task.assignedTo ? (task.assignedTo.name || task.assignedTo.email || 'Unknown') : 'Unknown';
-            var dueDateHtml = task.dueDate ? new Date(task.dueDate).toLocaleDateString() : '-';
-            
-            var actions = '';
-            if (task.status !== 'completed') {
-                if (task.status === 'pending') {
-                    actions += '<button class="btn btn-warning btn-sm" onclick="updateTaskStatus(\'' + task._id + '\', \'in_progress\')">Start</button>';
-                } else if (task.status === 'in_progress') {
-                    actions += '<button class="btn btn-success btn-sm" onclick="updateTaskStatus(\'' + task._id + '\', \'completed\')">Complete</button>';
+            var options = '';
+            var staticCats = [{ name: 'events', icon: '🎯' }, { name: 'workshops', icon: '💻' }, { name: 'competitions', icon: '🏆' }, { name: 'recruitment', icon: '📢' }, { name: 'other', icon: '📸' }];
+            for (var i = 0; i < staticCats.length; i++) { var cat = staticCats[i]; options += '<option value="' + cat.name + '" ' + (cat.name === selectedCategory ? 'selected' : '') + '>' + cat.icon + ' ' + cat.name + '</option>'; }
+            if (categories && Array.isArray(categories)) {
+                for (var i = 0; i < categories.length; i++) {
+                    var cat = categories[i];
+                    var isStatic = staticCats.some(s => s.name === cat.name);
+                    if (!isStatic && cat.name) { options += '<option value="' + cat.name + '" ' + (cat.name === selectedCategory ? 'selected' : '') + '>' + cat.icon + ' ' + cat.name + '</option>'; }
                 }
             }
-            if (isSuperAdmin && task.status !== 'completed') {
-                actions += '<button class="btn btn-danger btn-sm" onclick="deleteTask(\'' + task._id + '\')">Delete</button>';
-            }
-            if (!actions) actions = '<span style="opacity:0.5;">-</span>';
-            
-            html += '<tr>' +
-                '<td>' + escapeHtml(task.title) + '</td>' +
-                '<td>' + escapeHtml(assignedToName) + '</td>' +
-                '<td class="' + priorityClass + '">' + (task.priority === 'high' ? '🔴 High' : task.priority === 'medium' ? '🟡 Medium' : '🟢 Low') + '<\/td>' +
-                '<td class="' + statusClass + '">' + (task.status === 'pending' ? '⏳ Pending' : task.status === 'in_progress' ? '🔄 In Progress' : '✅ Completed') + '<\/td>' +
-                '<td>' + dueDateHtml + '<\/td>' +
-                '<td class="action-buttons">' + actions + '<\/td>' +
-                '</tr>';
+            select.innerHTML = options;
         }
-        tbody.innerHTML = html;
-    } catch (error) {
-        console.error('Error loading tasks:', error);
-        tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load tasks<\/td><\/tr>';
-    }
-}
 
-// Assign work form submit
-var assignWorkForm = document.getElementById('assignWorkForm');
-if (assignWorkForm) {
-    assignWorkForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        if (!isSuperAdmin) {
-            alert('Only Super Admin can assign work');
-            return;
+        async function loadCategoryDropdown() {
+            var categorySelect = document.getElementById('imageCategory');
+            if (!categorySelect) return;
+            if (categoriesCache !== null) { populateCategorySelect(categorySelect, categoriesCache); return; }
+            if (isLoadingCategories) { setTimeout(() => loadCategoryDropdown(), 100); return; }
+            isLoadingCategories = true;
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/categories', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                if (response.ok) { var categories = await response.json(); categoriesCache = categories; populateCategorySelect(categorySelect, categories); }
+            } catch (error) { console.error('Error loading dropdown:', error); }
+            finally { isLoadingCategories = false; }
         }
-        
-        var workData = {
-            title: document.getElementById('workTitle').value,
-            description: document.getElementById('workDescription').value,
-            assignedTo: document.getElementById('workAssignedTo').value,
-            priority: document.getElementById('workPriority').value,
-            dueDate: document.getElementById('workDueDate').value || null
-        };
-        
-        if (!workData.title || !workData.description || !workData.assignedTo) {
-            alert('Please fill all required fields');
-            return;
+
+        function populateCategorySelect(categorySelect, categories) {
+            if (!categorySelect) return;
+            var staticValues = ['events', 'workshops', 'competitions', 'recruitment', 'other'];
+            for (var i = categorySelect.options.length - 1; i >= 0; i--) { if (!staticValues.includes(categorySelect.options[i].value)) { categorySelect.remove(i); } }
+            if (categories && Array.isArray(categories)) {
+                for (var i = 0; i < categories.length; i++) { var cat = categories[i]; if (!staticValues.includes(cat.name)) { var option = document.createElement('option'); option.value = cat.name; option.textContent = cat.icon + ' ' + cat.name; categorySelect.appendChild(option); } }
+            }
         }
-        
-        var submitBtn = assignWorkForm.querySelector('button[type="submit"]');
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Assigning...';
-        
-        try {
-            var response = await fetch(API_BASE_ADMIN + '/work/assign', {
-                method: 'POST',
-                headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' },
-                body: JSON.stringify(workData)
+
+        var uploadForm = document.getElementById('uploadImageForm');
+        if (uploadForm) {
+            uploadForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                if (!hasPermission('gallery', 'upload')) { alert('No permission to upload images'); return; }
+                var title = document.getElementById('imageTitle').value;
+                var category = document.getElementById('imageCategory').value;
+                var file = document.getElementById('imageFile').files[0];
+                if (!title || !file) { alert('Please fill title and select an image'); return; }
+                var formData = new FormData();
+                formData.append('title', title);
+                formData.append('category', category);
+                formData.append('image', file);
+                var uploadBtn = uploadForm.querySelector('button');
+                uploadBtn.disabled = true;
+                uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+                try {
+                    var response = await fetch(API_BASE_ADMIN + '/gallery/upload', { method: 'POST', headers: { 'Authorization': 'Bearer ' + adminToken }, body: formData });
+                    if (response.ok) { alert('✅ Image uploaded!'); uploadForm.reset(); document.getElementById('uploadPreview').style.display = 'none'; loadGalleryImages(); }
+                    else { var err = await response.json(); alert(err.message || '❌ Upload failed'); }
+                } catch (error) { alert('❌ Error uploading'); }
+                finally { uploadBtn.disabled = false; uploadBtn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload to Cloudinary'; }
             });
-            
-            if (response.ok) {
-                alert('✅ Work assigned successfully! Email notification sent.');
-                assignWorkForm.reset();
-                loadTasks();
-                loadTeamMembersForAssign();
-            } else {
-                var err = await response.json();
-                alert('❌ Failed: ' + (err.message || 'Unknown error'));
+        }
+
+        var imageFileInput = document.getElementById('imageFile');
+        if (imageFileInput) {
+            imageFileInput.addEventListener('change', function () {
+                var preview = document.getElementById('uploadPreview');
+                var previewImg = document.getElementById('previewImg');
+                if (this.files && this.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (event) { previewImg.src = event.target.result; preview.style.display = 'block'; };
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        }
+
+        window.updateImage = async function (id) {
+            if (!hasPermission('gallery', 'upload')) { alert('No permission to update'); return; }
+            var newTitle = document.getElementById('edit-title-' + id).value;
+            var newCategory = document.getElementById('edit-category-' + id).value;
+            if (!newTitle) { alert('Please enter a title'); return; }
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/gallery/' + id, { method: 'PUT', headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, body: JSON.stringify({ title: newTitle, category: newCategory }) });
+                if (response.ok) { alert('Image updated'); loadGalleryImages(); }
+                else { alert('Failed to update'); }
+            } catch (error) { alert('Error updating'); }
+        };
+
+        window.deleteGalleryImage = async function (id) {
+            if (!hasPermission('gallery', 'delete')) { alert('No permission to delete'); return; }
+            if (confirm('Delete this image?')) {
+                try { var response = await fetch(API_BASE_ADMIN + '/gallery/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } }); if (response.ok) { alert('Image deleted'); loadGalleryImages(); } else { alert('Failed to delete'); } }
+                catch (error) { alert('Error deleting'); }
             }
-        } catch (error) {
-            alert('❌ Error: ' + error.message);
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Assign Work';
+        };
+
+        // ========== CATEGORIES ==========
+        async function loadCategories() {
+            var container = document.getElementById('categoriesList');
+            if (!container) return;
+            container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading categories...</div>';
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/categories', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                if (!response.ok) throw new Error('Categories API failed');
+                var categories = await response.json();
+                var categoriesArray = Array.isArray(categories) ? categories : (categories.categories || []);
+                displayCategories(categoriesArray);
+            } catch (error) { container.innerHTML = '<div class="empty-state">Failed to load categories</div>'; }
         }
-    });
-}
 
-// Update task status
-window.updateTaskStatus = async function(taskId, newStatus) {
-    try {
-        var response = await fetch(API_BASE_ADMIN + '/work/' + taskId + '/status', {
-            method: 'PUT',
-            headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: newStatus })
-        });
-        
-        if (response.ok) {
-            alert('✅ Task status updated!');
-            loadTasks();
-        } else {
-            alert('❌ Failed to update status');
+        function displayCategories(categories) {
+            var container = document.getElementById('categoriesList');
+            if (!categories || categories.length === 0) { container.innerHTML = '<div class="empty-state">No categories added yet</div>'; return; }
+            var html = '';
+            var canEdit = hasPermission('categories', 'edit');
+            var canDelete = hasPermission('categories', 'delete');
+            for (var i = 0; i < categories.length; i++) {
+                var cat = categories[i];
+                var actions = '';
+                if (canEdit) actions += '<input type="text" id="edit-cat-name-' + cat._id + '" class="edit-title" placeholder="Name" value="' + escapeHtml(cat.name) + '"><input type="text" id="edit-cat-icon-' + cat._id + '" class="edit-title" placeholder="Icon" value="' + cat.icon + '"><input type="color" id="edit-cat-color-' + cat._id + '" class="edit-title" value="' + cat.color + '"><button class="update-image-btn" onclick="updateCategory(\'' + cat._id + '\')"><i class="fas fa-save"></i> Update</button>';
+                if (canDelete) actions += '<button class="delete-image-btn" onclick="deleteCategory(\'' + cat._id + '\')"><i class="fas fa-trash-alt"></i> Delete</button>';
+                if (!actions) actions = '<div style="text-align:center;padding:10px;opacity:0.5;">Read only</div>';
+                html += '<div class="gallery-item-admin" data-id="' + cat._id + '"><div class="info"><div class="title" style="font-size:32px;text-align:center;">' + cat.icon + '</div><div class="title"><strong>' + escapeHtml(cat.name) + '</strong></div><div class="date">Created: ' + new Date(cat.createdAt).toLocaleDateString() + '</div><div style="width:40px;height:4px;background:' + cat.color + ';margin:8px auto;border-radius:2px;"></div>' + actions + '</div></div>';
+            }
+            container.innerHTML = html;
         }
-    } catch (error) {
-        alert('❌ Error: ' + error.message);
-    }
-};
 
-// Delete task (Super Admin only)
-window.deleteTask = async function(taskId) {
-    if (!confirm('Delete this task? This action cannot be undone.')) return;
-    try {
-        var response = await fetch(API_BASE_ADMIN + '/work/' + taskId, {
-            method: 'DELETE',
-            headers: { 'Authorization': 'Bearer ' + adminToken }
-        });
-        
-        if (response.ok) {
-            alert('✅ Task deleted successfully');
-            loadTasks();
-        } else {
-            alert('❌ Failed to delete task');
+        window.createCategory = async function () {
+            if (!hasPermission('categories', 'create')) { alert('No permission to create categories'); return; }
+            var name = document.getElementById('catName')?.value;
+            var icon = document.getElementById('catIcon')?.value || '📸';
+            var color = document.getElementById('catColor')?.value || '#00f0ff';
+            if (!name) { alert('Please enter category name'); return; }
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/categories', { method: 'POST', headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, body: JSON.stringify({ name, icon, color }) });
+                if (response.ok) { alert('Category created!'); document.getElementById('catName').value = ''; categoriesCache = null; loadCategories(); loadCategoryDropdown(); }
+                else { var data = await response.json(); alert(data.message || 'Failed to create'); }
+            } catch (error) { alert('Error creating category'); }
+        };
+
+        window.updateCategory = async function (id) {
+            if (!hasPermission('categories', 'edit')) { alert('No permission'); return; }
+            var name = document.getElementById('edit-cat-name-' + id).value;
+            var icon = document.getElementById('edit-cat-icon-' + id).value;
+            var color = document.getElementById('edit-cat-color-' + id).value;
+            if (!name) { alert('Category name required'); return; }
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/categories/' + id, { method: 'PUT', headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, body: JSON.stringify({ name, icon, color }) });
+                if (response.ok) { alert('Category updated!'); categoriesCache = null; loadCategories(); loadCategoryDropdown(); }
+                else { alert('Failed to update'); }
+            } catch (error) { alert('Error updating'); }
+        };
+
+        window.deleteCategory = async function (id) {
+            if (!hasPermission('categories', 'delete')) { alert('No permission'); return; }
+            if (confirm('Delete this category?')) {
+                try {
+                    var response = await fetch(API_BASE_ADMIN + '/categories/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } });
+                    if (response.ok) { alert('Category deleted'); categoriesCache = null; loadCategories(); loadCategoryDropdown(); loadGalleryImages(); }
+                    else { var data = await response.json(); alert(data.message || 'Failed to delete'); }
+                } catch (error) { alert('Error deleting'); }
+            }
+        };
+
+        // ========== WORK ASSIGNMENT FUNCTIONS ==========
+        async function loadTeamMembersForAssign() {
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/team-members', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                if (!response.ok) throw new Error('Failed to load team members');
+                var data = await response.json();
+                var members = data.members || [];
+                var select = document.getElementById('workAssignedTo');
+                if (!select) return;
+                select.innerHTML = '<option value="">Select Team Member</option>';
+                for (var i = 0; i < members.length; i++) { select.innerHTML += '<option value="' + members[i]._id + '">' + escapeHtml(members[i].name) + ' (' + escapeHtml(members[i].role) + ')</option>'; }
+            } catch (error) { console.error('Error loading team members:', error); }
         }
-    } catch (error) {
-        alert('❌ Error: ' + error.message);
-    }
-};
 
-function escapeHtml(text) { if (!text) return ''; var div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
+        async function loadTasks() {
+            var tbody = document.getElementById('tasksTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading tasks...<\/td><\/tr>';
+            try {
+                var url = isSuperAdmin ? API_BASE_ADMIN + '/work/all' : API_BASE_ADMIN + '/work/my';
+                var response = await fetch(url, { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                if (!response.ok) throw new Error('Failed to load tasks');
+                var data = await response.json();
+                var tasks = data.works || [];
+                if (tasks.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No tasks found<\/td><\/tr>'; return; }
+                var tasksTitle = document.getElementById('tasksTitle');
+                if (tasksTitle) tasksTitle.innerHTML = isSuperAdmin ? '📋 All Tasks' : '📋 My Tasks';
+                var html = '';
+                for (var i = 0; i < tasks.length; i++) {
+                    var task = tasks[i];
+                    var priorityClass = task.priority === 'high' ? 'priority-high' : (task.priority === 'medium' ? 'priority-medium' : 'priority-low');
+                    var statusClass = task.status === 'pending' ? 'status-pending' : (task.status === 'in_progress' ? 'status-in_progress' : 'status-completed');
+                    var assignedToName = task.assignedTo ? (task.assignedTo.name || task.assignedTo.email || 'Unknown') : 'Unknown';
+                    var dueDateHtml = task.dueDate ? new Date(task.dueDate).toLocaleDateString() : '-';
+                    var actions = '';
+                    if (task.status !== 'completed') {
+                        if (task.status === 'pending') actions += '<button class="btn btn-warning btn-sm" onclick="updateTaskStatus(\'' + task._id + '\', \'in_progress\')">Start</button>';
+                        else if (task.status === 'in_progress') actions += '<button class="btn btn-success btn-sm" onclick="updateTaskStatus(\'' + task._id + '\', \'completed\')">Complete</button>';
+                    }
+                    if (isSuperAdmin && task.status !== 'completed') actions += '<button class="btn btn-danger btn-sm" onclick="deleteTask(\'' + task._id + '\')">Delete</button>';
+                    if (!actions) actions = '<span style="opacity:0.5;">-</span>';
+                    html += '<td>' + escapeHtml(task.title) + '</td><td>' + escapeHtml(assignedToName) + '</td><td class="' + priorityClass + '">' + (task.priority === 'high' ? '🔴 High' : task.priority === 'medium' ? '🟡 Medium' : '🟢 Low') + '<\/td><td class="' + statusClass + '">' + (task.status === 'pending' ? '⏳ Pending' : task.status === 'in_progress' ? '🔄 In Progress' : '✅ Completed') + '<\/td><td>' + dueDateHtml + '<\/td><td class="action-buttons">' + actions + '<\/td><\/tr>';
+                }
+                tbody.innerHTML = html;
+            } catch (error) { tbody.innerHTML = '<td><td colspan="6" class="loading">Failed to load tasks<\/td><\/tr>'; }
+        }
 
-window.logout = function () { 
-    localStorage.removeItem('adminToken'); 
-    localStorage.removeItem('adminData');
-    localStorage.removeItem('teamMember');
-    localStorage.removeItem('loginMethod');
-    window.location.href = 'admin-login.html'; 
-};
+        var assignWorkForm = document.getElementById('assignWorkForm');
+        if (assignWorkForm) {
+            assignWorkForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                if (!isSuperAdmin) { alert('Only Super Admin can assign work'); return; }
+                var workData = { title: document.getElementById('workTitle').value, description: document.getElementById('workDescription').value, assignedTo: document.getElementById('workAssignedTo').value, priority: document.getElementById('workPriority').value, dueDate: document.getElementById('workDueDate').value || null };
+                if (!workData.title || !workData.description || !workData.assignedTo) { alert('Please fill all required fields'); return; }
+                var submitBtn = assignWorkForm.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Assigning...';
+                try {
+                    var response = await fetch(API_BASE_ADMIN + '/work/assign', { method: 'POST', headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, body: JSON.stringify(workData) });
+                    if (response.ok) { alert('✅ Work assigned successfully! Email notification sent.'); assignWorkForm.reset(); loadTasks(); loadTeamMembersForAssign(); }
+                    else { var err = await response.json(); alert('❌ Failed: ' + (err.message || 'Unknown error')); }
+                } catch (error) { alert('❌ Error: ' + error.message); }
+                finally { submitBtn.disabled = false; submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Assign Work'; }
+            });
+        }
 
-// Initialize
-applyPermissions();
-buildSidebarMenu();
-loadDashboard();
-</script>
+        window.updateTaskStatus = async function (taskId, newStatus) {
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/work/' + taskId + '/status', { method: 'PUT', headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }, body: JSON.stringify({ status: newStatus }) });
+                if (response.ok) { alert('✅ Task status updated!'); loadTasks(); }
+                else { alert('❌ Failed to update status'); }
+            } catch (error) { alert('❌ Error: ' + error.message); }
+        };
+
+        window.deleteTask = async function (taskId) {
+            if (!confirm('Delete this task?')) return;
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/work/' + taskId, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } });
+                if (response.ok) { alert('✅ Task deleted successfully'); loadTasks(); }
+                else { alert('❌ Failed to delete task'); }
+            } catch (error) { alert('❌ Error: ' + error.message); }
+        };
+
+        function escapeHtml(text) { if (!text) return ''; var div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
+
+        window.logout = function () { localStorage.removeItem('adminToken'); localStorage.removeItem('adminData'); localStorage.removeItem('teamMember'); localStorage.removeItem('loginMethod'); window.location.href = 'admin-login.html'; };
+
+        applyPermissions();
+        buildSidebarMenu();
+        loadDashboard();
+    </script>
 </body>
 
 </html>
