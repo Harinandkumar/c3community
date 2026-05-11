@@ -517,143 +517,155 @@
         </div>
     </div>
 
-    <script>
-        const API_BASE_URL = 'https://backend-glo6.onrender.com';
-        let currentEventId = null;
+ <script>
+    const API_BASE_URL = 'https://backend-glo6.onrender.com';
+    let currentEventId = null;
 
-        const token = localStorage.getItem('jwtToken');
-        if (!token) {
-            window.location.href = '/';
+    const token = localStorage.getItem('jwtToken');
+    if (!token) {
+        window.location.href = '/';
+    }
+
+    function openTab(tabName) {
+        document.querySelectorAll('.tabcontent').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tablink').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.getElementById(tabName).classList.add('active');
+        
+        const buttons = document.querySelectorAll('.tablink');
+        for (let i = 0; i < buttons.length; i++) {
+            if (buttons[i].textContent.trim().toLowerCase().includes(tabName.toLowerCase())) {
+                buttons[i].classList.add('active');
+                break;
+            }
         }
+        
+        if (tabName === 'certificates') {
+            fetchCertificates();
+        }
+    }
 
-        function openTab(tabName) {
-            document.querySelectorAll('.tabcontent').forEach(tab => {
-                tab.classList.remove('active');
+    async function fetchCertificates() {
+        const container = document.getElementById('certificates-list');
+        if (!container) return;
+        
+        container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading certificates...</div>';
+        
+        try {
+            const userResponse = await fetch(`${API_BASE_URL}/api/user/profile`, {
+                headers: { 'Authorization': `Bearer ${token}` }
             });
-            document.querySelectorAll('.tablink').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.getElementById(tabName).classList.add('active');
-
-            const buttons = document.querySelectorAll('.tablink');
-            for (let i = 0; i < buttons.length; i++) {
-                if (buttons[i].textContent.trim().toLowerCase().includes(tabName.toLowerCase())) {
-                    buttons[i].classList.add('active');
-                    break;
-                }
-            }
-
-            if (tabName === 'certificates') {
-                fetchCertificates();
-            }
-        }
-
-        async function fetchCertificates() {
-            const container = document.getElementById('certificates-list');
-            if (!container) return;
-
-            container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading certificates...</div>';
-
-            try {
-                const userResponse = await fetch(`${API_BASE_URL}/api/user/profile`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (!userResponse.ok) throw new Error('Failed to fetch user profile');
-                const user = await userResponse.json();
-
-                const identifier = user.rollno || user.regno;
-
-                if (!identifier) {
-                    container.innerHTML = '<div class="no-data">No roll number or registration number found in your profile</div>';
-                    return;
-                }
-
-                const response = await fetch(`${API_BASE_URL}/api/certificates/user/${identifier}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (!response.ok) throw new Error('Failed to fetch certificates');
-
-                const certificates = await response.json();
-                displayCertificates(certificates);
-            } catch (error) {
-                console.error('Error fetching certificates:', error);
-                container.innerHTML = '<div class="no-data">Failed to load certificates</div>';
-            }
-        }
-
-        function displayCertificates(certificates) {
-            const container = document.getElementById('certificates-list');
-            if (!certificates || certificates.length === 0) {
-                container.innerHTML = '<div class="no-data">No certificates found</div>';
+            if (!userResponse.ok) throw new Error('Failed to fetch user profile');
+            const user = await userResponse.json();
+            
+            const identifier = user.rollno || user.regno;
+            
+            if (!identifier) {
+                container.innerHTML = '<div class="no-data">No roll number or registration number found in your profile</div>';
                 return;
             }
-
-            container.innerHTML = certificates.map(cert => {
-                let downloadUrl = cert.pdfUrl;
-                if (downloadUrl && !downloadUrl.includes('fl_attachment')) {
-                    downloadUrl = downloadUrl.replace('/upload/', '/upload/fl_attachment/');
-                }
-
-                return `
-                    <div class="certificate-card">
-                        <div class="certificate-icon"><i class="fas fa-certificate"></i></div>
-                        <h3>${escapeHtml(cert.title)}</h3>
-                        ${cert.eventName ? `<p><i class="fas fa-calendar-alt"></i> ${escapeHtml(cert.eventName)}</p>` : ''}
-                        ${cert.description ? `<p>${escapeHtml(cert.description)}</p>` : ''}
-                        <p><small><i class="far fa-calendar-alt"></i> Issued: ${new Date(cert.issuedDate).toLocaleDateString()}</small></p>
-                        <a href="${downloadUrl}" download target="_blank" class="btn btn-primary"><i class="fas fa-download"></i> Download Certificate</a>
-                    </div>
-                `;
-            }).join('');
+            
+            const response = await fetch(`${API_BASE_URL}/api/certificates/user/${identifier}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            if (!response.ok) throw new Error('Failed to fetch certificates');
+            
+            const certificates = await response.json();
+            displayCertificates(certificates);
+        } catch (error) {
+            console.error('Error fetching certificates:', error);
+            container.innerHTML = '<div class="no-data">Failed to load certificates</div>';
         }
+    }
 
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+    function displayCertificates(certificates) {
+        const container = document.getElementById('certificates-list');
+        if (!certificates || certificates.length === 0) {
+            container.innerHTML = '<div class="no-data">No certificates found</div>';
+            return;
         }
-
-        async function fetchAllEvents() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/allevents`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (!response.ok) throw new Error('Failed to fetch events');
-                const events = await response.json();
-                displayEvents(events, 'all-events-grid');
-                return events;
-            } catch (error) {
-                console.error(error);
-                document.getElementById('all-events-grid').innerHTML = '<div class="no-data">Failed to load events</div>';
-                return [];
+        
+        let html = '';
+        for (let i = 0; i < certificates.length; i++) {
+            const cert = certificates[i];
+            let originalUrl = cert.pdfUrl;
+            let downloadUrl = originalUrl;
+            
+            // ✅ SAHI TARIKA: fl_attachment flag lagao
+            if (originalUrl && originalUrl.includes('/upload/')) {
+                downloadUrl = originalUrl.replace('/upload/', '/upload/fl_attachment/');
             }
+            
+            let cleanFileName = cert.title.toLowerCase().replace(/[^a-z0-9]/g, '_') + '.pdf';
+            
+            html += `
+                <div class="certificate-card">
+                    <div class="certificate-icon"><i class="fas fa-certificate"></i></div>
+                    <h3>${escapeHtml(cert.title)}</h3>
+                    ${cert.eventName ? `<p><i class="fas fa-calendar-alt"></i> ${escapeHtml(cert.eventName)}</p>` : ''}
+                    ${cert.description ? `<p>${escapeHtml(cert.description)}</p>` : ''}
+                    <p><small><i class="far fa-calendar-alt"></i> Issued: ${new Date(cert.issuedDate).toLocaleDateString()}</small></p>
+                    <a href="${downloadUrl}" download="${cleanFileName}" target="_blank" class="btn btn-primary"><i class="fas fa-download"></i> Download Certificate</a>
+                </div>
+            `;
         }
+        container.innerHTML = html;
+    }
 
-        async function fetchJoinedEvents() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/user/events`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (!response.ok) throw new Error('Failed to fetch joined events');
-                const events = await response.json();
-                displayJoinedEvents(events);
-                return events;
-            } catch (error) {
-                console.error(error);
-                document.getElementById('joined-events-grid').innerHTML = '<div class="no-data">No joined events yet</div>';
-                return [];
-            }
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Rest of the functions (fetchAllEvents, fetchJoinedEvents, etc.) remain same
+    async function fetchAllEvents() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/allevents`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Failed to fetch events');
+            const events = await response.json();
+            displayEvents(events, 'all-events-grid');
+            return events;
+        } catch (error) {
+            console.error(error);
+            document.getElementById('all-events-grid').innerHTML = '<div class="no-data">Failed to load events</div>';
+            return [];
         }
+    }
 
-        function displayEvents(events, containerId) {
-            const container = document.getElementById(containerId);
-            if (!events || events.length === 0) {
-                container.innerHTML = '<div class="no-data">No events available</div>';
-                return;
-            }
-            container.innerHTML = events.map(event => `
+    async function fetchJoinedEvents() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/user/events`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Failed to fetch joined events');
+            const events = await response.json();
+            displayJoinedEvents(events);
+            return events;
+        } catch (error) {
+            console.error(error);
+            document.getElementById('joined-events-grid').innerHTML = '<div class="no-data">No joined events yet</div>';
+            return [];
+        }
+    }
+
+    function displayEvents(events, containerId) {
+        const container = document.getElementById(containerId);
+        if (!events || events.length === 0) {
+            container.innerHTML = '<div class="no-data">No events available</div>';
+            return;
+        }
+        let html = '';
+        for (let i = 0; i < events.length; i++) {
+            const event = events[i];
+            html += `
                 <div class="event-card" onclick="showEventDetails('${event._id}')">
                     <img src="${event.imagelink || 'https://via.placeholder.com/300x180'}" alt="${event.name}" loading="lazy">
                     <div class="event-info">
@@ -662,156 +674,170 @@
                         <div class="event-location"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(event.location || 'TBA')}</div>
                     </div>
                 </div>
-            `).join('');
+            `;
         }
+        container.innerHTML = html;
+    }
 
-        function displayJoinedEvents(events) {
-            const container = document.getElementById('joined-events-grid');
-            if (!events || events.length === 0) {
-                container.innerHTML = '<div class="no-data">You haven\'t joined any events yet</div>';
-                return;
-            }
-            container.innerHTML = events.map(event => `
-                <div class="event-card" onclick="showEventDetails('${event.eventId?._id || event.eventId}')">
-                    <img src="${event.eventImage || event.eventId?.imagelink || 'https://via.placeholder.com/300x180'}" alt="${event.eventName}" loading="lazy">
+    function displayJoinedEvents(events) {
+        const container = document.getElementById('joined-events-grid');
+        if (!events || events.length === 0) {
+            container.innerHTML = '<div class="no-data">You haven\'t joined any events yet</div>';
+            return;
+        }
+        let html = '';
+        for (let i = 0; i < events.length; i++) {
+            const event = events[i];
+            const eventId = event.eventId?._id || event.eventId;
+            const eventImage = event.eventImage || event.eventId?.imagelink || 'https://via.placeholder.com/300x180';
+            html += `
+                <div class="event-card" onclick="showEventDetails('${eventId}')">
+                    <img src="${eventImage}" alt="${event.eventName}" loading="lazy">
                     <div class="event-info">
                         <h3 class="event-title">${escapeHtml(event.eventName)}</h3>
                         <div class="event-date"><i class="far fa-calendar-alt"></i> ${new Date(event.joinedAt).toLocaleDateString()}</div>
                     </div>
                 </div>
-            `).join('');
+            `;
         }
+        container.innerHTML = html;
+    }
 
-        async function fetchNotifications() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/notifications`);
-                if (!response.ok) throw new Error('Failed to fetch notifications');
-                const notifications = await response.json();
-                displayNotifications(notifications);
-            } catch (error) {
-                console.error(error);
-                document.getElementById('notifications-list').innerHTML = '<div class="no-data">No notifications</div>';
-            }
+    async function fetchNotifications() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/notifications`);
+            if (!response.ok) throw new Error('Failed to fetch notifications');
+            const notifications = await response.json();
+            displayNotifications(notifications);
+        } catch (error) {
+            console.error(error);
+            document.getElementById('notifications-list').innerHTML = '<div class="no-data">No notifications</div>';
         }
+    }
 
-        function displayNotifications(notifications) {
-            const container = document.getElementById('notifications-list');
-            if (!notifications || notifications.length === 0) {
-                container.innerHTML = '<div class="no-data">No notifications yet</div>';
-                return;
-            }
-            container.innerHTML = notifications.map(notif => `
+    function displayNotifications(notifications) {
+        const container = document.getElementById('notifications-list');
+        if (!notifications || notifications.length === 0) {
+            container.innerHTML = '<div class="no-data">No notifications yet</div>';
+            return;
+        }
+        let html = '';
+        for (let i = 0; i < notifications.length; i++) {
+            const notif = notifications[i];
+            html += `
                 <div class="notification-card">
                     <div class="notification-title">${escapeHtml(notif.title)}</div>
                     <div class="notification-date">${new Date(notif.date).toLocaleDateString()}</div>
                     <div class="notification-message">${escapeHtml(notif.message)}</div>
                 </div>
-            `).join('');
-        }
-
-        async function fetchProfile() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/user/profile`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (!response.ok) throw new Error('Failed to fetch profile');
-                const user = await response.json();
-                displayProfile(user);
-            } catch (error) {
-                console.error(error);
-                document.getElementById('profile-content').innerHTML = '<div class="no-data">Failed to load profile</div>';
-            }
-        }
-
-        function displayProfile(user) {
-            const joinedEventsCount = user.events?.length || 0;
-            document.getElementById('profile-content').innerHTML = `
-                <div class="profile-header">
-                    <div class="profile-avatar"><i class="fas fa-user"></i></div>
-                    <h2>${escapeHtml(user.name)}</h2>
-                    <p>${escapeHtml(user.email)}</p>
-                </div>
-                <div class="profile-stats">
-                    <div class="stat-card">
-                        <div class="stat-value">${joinedEventsCount}</div>
-                        <div>Events Joined</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${user.isverified ? '✓' : 'Pending'}</div>
-                        <div>Verification Status</div>
-                    </div>
-                </div>
-                <div class="profile-details">
-                    <div class="profile-field"><div class="field-label">Branch</div><div>${escapeHtml(user.branch)}</div></div>
-                    <div class="profile-field"><div class="field-label">Batch</div><div>${escapeHtml(user.batch)}</div></div>
-                    <div class="profile-field"><div class="field-label">Roll Number</div><div>${escapeHtml(user.rollno || '-')}</div></div>
-                    <div class="profile-field"><div class="field-label">Registration No</div><div>${escapeHtml(user.regno || '-')}</div></div>
-                    <div class="profile-field"><div class="field-label">Mobile</div><div>${escapeHtml(user.mobileno)}</div></div>
-                    <div class="profile-field"><div class="field-label">Member Since</div><div>${new Date(user.createdAt).toLocaleDateString()}</div></div>
-                </div>
             `;
         }
+        container.innerHTML = html;
+    }
 
-        async function showEventDetails(eventId) {
-            currentEventId = eventId;
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/events/${eventId}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (!response.ok) throw new Error('Failed to fetch event details');
-                const event = await response.json();
-                document.getElementById('modalTitle').textContent = escapeHtml(event.name);
-                document.getElementById('modalImage').src = event.imagelink || 'https://via.placeholder.com/400x200';
-                document.getElementById('modalDate').innerHTML = `<i class="far fa-calendar-alt"></i> ${new Date(event.date).toLocaleDateString()}`;
-                document.getElementById('modalLocation').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${escapeHtml(event.location || 'TBA')}`;
-                document.getElementById('modalDescription').textContent = event.description || 'No description available';
-                document.getElementById('eventModal').classList.add('active');
-            } catch (error) {
-                alert('Failed to load event details');
-            }
+    async function fetchProfile() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/user/profile`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Failed to fetch profile');
+            const user = await response.json();
+            displayProfile(user);
+        } catch (error) {
+            console.error(error);
+            document.getElementById('profile-content').innerHTML = '<div class="no-data">Failed to load profile</div>';
         }
+    }
 
-        async function joinCurrentEvent() {
-            if (!currentEventId) return;
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/events/${currentEventId}/join`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    alert('Successfully joined the event!');
-                    closeModal();
-                    fetchJoinedEvents();
-                } else {
-                    alert(data.message || 'Failed to join event');
+    function displayProfile(user) {
+        const joinedEventsCount = user.events?.length || 0;
+        document.getElementById('profile-content').innerHTML = `
+            <div class="profile-header">
+                <div class="profile-avatar"><i class="fas fa-user"></i></div>
+                <h2>${escapeHtml(user.name)}</h2>
+                <p>${escapeHtml(user.email)}</p>
+            </div>
+            <div class="profile-stats">
+                <div class="stat-card">
+                    <div class="stat-value">${joinedEventsCount}</div>
+                    <div>Events Joined</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${user.isverified ? '✓' : 'Pending'}</div>
+                    <div>Verification Status</div>
+                </div>
+            </div>
+            <div class="profile-details">
+                <div class="profile-field"><div class="field-label">Branch</div><div>${escapeHtml(user.branch)}</div></div>
+                <div class="profile-field"><div class="field-label">Batch</div><div>${escapeHtml(user.batch)}</div></div>
+                <div class="profile-field"><div class="field-label">Roll Number</div><div>${escapeHtml(user.rollno || '-')}</div></div>
+                <div class="profile-field"><div class="field-label">Registration No</div><div>${escapeHtml(user.regno || '-')}</div></div>
+                <div class="profile-field"><div class="field-label">Mobile</div><div>${escapeHtml(user.mobileno)}</div></div>
+                <div class="profile-field"><div class="field-label">Member Since</div><div>${new Date(user.createdAt).toLocaleDateString()}</div></div>
+            </div>
+        `;
+    }
+
+    async function showEventDetails(eventId) {
+        currentEventId = eventId;
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/events/${eventId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Failed to fetch event details');
+            const event = await response.json();
+            document.getElementById('modalTitle').textContent = escapeHtml(event.name);
+            document.getElementById('modalImage').src = event.imagelink || 'https://via.placeholder.com/400x200';
+            document.getElementById('modalDate').innerHTML = `<i class="far fa-calendar-alt"></i> ${new Date(event.date).toLocaleDateString()}`;
+            document.getElementById('modalLocation').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${escapeHtml(event.location || 'TBA')}`;
+            document.getElementById('modalDescription').textContent = event.description || 'No description available';
+            document.getElementById('eventModal').classList.add('active');
+        } catch (error) {
+            alert('Failed to load event details');
+        }
+    }
+
+    async function joinCurrentEvent() {
+        if (!currentEventId) return;
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/events/${currentEventId}/join`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
-            } catch (error) {
-                alert('Error joining event');
+            });
+            const data = await response.json();
+            if (response.ok) {
+                alert('Successfully joined the event!');
+                closeModal();
+                fetchJoinedEvents();
+            } else {
+                alert(data.message || 'Failed to join event');
             }
+        } catch (error) {
+            alert('Error joining event');
         }
+    }
 
-        function closeModal() {
-            document.getElementById('eventModal').classList.remove('active');
-            currentEventId = null;
-        }
+    function closeModal() {
+        document.getElementById('eventModal').classList.remove('active');
+        currentEventId = null;
+    }
 
-        function logout() {
-            localStorage.removeItem('jwtToken');
-            localStorage.removeItem('user');
-            window.location.href = '/';
-        }
+    function logout() {
+        localStorage.removeItem('jwtToken');
+        localStorage.removeItem('user');
+        window.location.href = '/';
+    }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchAllEvents();
-            fetchJoinedEvents();
-            fetchNotifications();
-            fetchProfile();
-        });
-    </script>
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchAllEvents();
+        fetchJoinedEvents();
+        fetchNotifications();
+        fetchProfile();
+    });
+</script>
 </body>
 
 </html>
