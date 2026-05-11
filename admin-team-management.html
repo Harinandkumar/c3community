@@ -395,6 +395,12 @@
                     <div class="permission-item"><input type="checkbox" id="permNavEdit"> <label>Edit</label></div>
                     <div class="permission-item"><input type="checkbox" id="permNavDelete"> <label>Delete</label></div>
                 </div>
+                <!-- ✅ NEW: Certificates Permission -->
+                <div class="permission-group">
+                    <h4>📜 Certificates</h4>
+                    <div class="permission-item"><input type="checkbox" id="permCertUpload"> <label>Upload Certificate</label></div>
+                    <div class="permission-item"><input type="checkbox" id="permCertDelete"> <label>Delete Certificate</label></div>
+                </div>
                 <hr>
                 <button class="btn btn-primary" onclick="savePermissions()"><i class="fas fa-save"></i> Save Permissions</button>
             </div>
@@ -418,7 +424,7 @@
         // Load team members
         async function loadMembers() {
             const tbody = document.getElementById('membersTableBody');
-            tbody.innerHTML = '<tr><td colspan="7" class="loading"><i class="fas fa-spinner fa-spin"></i> Loading team members...<\/td><\/tr>';
+            tbody.innerHTML = '<td><td colspan="7" class="loading"><i class="fas fa-spinner fa-spin"></i> Loading team members...<\/td><\/tr>';
             
             try {
                 const response = await fetch(`${API_BASE_URL}/api/team/team-members`, {
@@ -454,7 +460,8 @@
                 const lastLogin = member.lastLogin ? new Date(member.lastLogin).toLocaleDateString() : 'Never';
                 
                 html += `
-                    <tr>                        <td><strong>${escapeHtml(member.name)}</strong></td>
+                    <tr>
+                        <td><strong>${escapeHtml(member.name)}</strong></td>
                         <td>${escapeHtml(member.email)}</td>
                         <td><span class="role-badge ${roleClass}">${roleName}</span></td>
                         <td>${escapeHtml(member.position || '-')}</td>
@@ -538,21 +545,36 @@
                 
                 const perms = member.permissions || {};
                 
+                // Events
                 document.getElementById('permEventsCreate').checked = perms.events?.create || false;
                 document.getElementById('permEventsEdit').checked = perms.events?.edit || false;
                 document.getElementById('permEventsDelete').checked = perms.events?.delete || false;
+                
+                // Notifications
                 document.getElementById('permNotifCreate').checked = perms.notifications?.create || false;
                 document.getElementById('permNotifDelete').checked = perms.notifications?.delete || false;
+                
+                // Gallery
                 document.getElementById('permGalleryUpload').checked = perms.gallery?.upload || false;
                 document.getElementById('permGalleryDelete').checked = perms.gallery?.delete || false;
+                
+                // Members
                 document.getElementById('permMembersView').checked = perms.members?.view || false;
                 document.getElementById('permMembersDelete').checked = perms.members?.delete || false;
+                
+                // Categories
                 document.getElementById('permCatsCreate').checked = perms.categories?.create || false;
                 document.getElementById('permCatsEdit').checked = perms.categories?.edit || false;
                 document.getElementById('permCatsDelete').checked = perms.categories?.delete || false;
+                
+                // Nav Items
                 document.getElementById('permNavCreate').checked = perms.navItems?.create || false;
                 document.getElementById('permNavEdit').checked = perms.navItems?.edit || false;
                 document.getElementById('permNavDelete').checked = perms.navItems?.delete || false;
+                
+                // ✅ NEW: Certificates
+                document.getElementById('permCertUpload').checked = perms.certificates?.upload || false;
+                document.getElementById('permCertDelete').checked = perms.certificates?.delete || false;
                 
                 document.getElementById('permissionModal').classList.add('active');
                 
@@ -592,6 +614,10 @@
                     create: document.getElementById('permNavCreate').checked,
                     edit: document.getElementById('permNavEdit').checked,
                     delete: document.getElementById('permNavDelete').checked
+                },
+                certificates: {
+                    upload: document.getElementById('permCertUpload').checked,
+                    delete: document.getElementById('permCertDelete').checked
                 },
                 teamManagement: {
                     view: false,

@@ -638,6 +638,34 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Certificates Grid */
+.certificates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.certificate-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.certificate-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary);
+}
+
+.certificate-icon {
+    font-size: 40px;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
     </style>
 </head>
 
@@ -996,6 +1024,67 @@
                     </div>
                 </div>
             </div>
+                        <!-- Certificates Panel -->
+            <div id="certificatesPanel" class="panel">
+                <div class="form-card" id="uploadCertificateCard" style="display: none;">
+                    <h3 class="form-title"><i class="fas fa-certificate"></i> Upload Certificate</h3>
+                    <form id="uploadCertificateForm" enctype="multipart/form-data">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Certificate Title *</label>
+                                <input type="text" id="certTitle" required placeholder="e.g., Hackathon Winner 2024">
+                            </div>
+                            <div class="form-group">
+                                <label>Event Name (Optional)</label>
+                                <input type="text" id="certEvent" placeholder="e.g., Code Clash 2024">
+                            </div>
+                            <div class="form-group">
+                                <label>Identifier Type *</label>
+                                <select id="certIdentifierType" required>
+                                    <option value="rollno">Roll Number</option>
+                                    <option value="regno">Registration Number</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Identifier Value *</label>
+                                <input type="text" id="certIdentifier" required placeholder="e.g., 22152159005">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Description (Optional)</label>
+                            <textarea id="certDescription" rows="2" placeholder="Additional details..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>PDF File *</label>
+                            <input type="file" id="certFile" accept=".pdf" required>
+                        </div>
+                        <div id="certUploadPreview" style="margin: 15px 0; display: none;">
+                            <p><i class="fas fa-file-pdf"></i> <span id="certFileName"></span></p>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-cloud-upload-alt"></i> Upload Certificate</button>
+                    </form>
+                </div>
+                <div class="table-container">
+                    <h3 style="padding: 16px;"> All Certificates</h3>
+                    <div style="overflow-x: auto;">
+                        <table style="min-width: 700px;">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Identifier</th>
+                                    <th>Type</th>
+                                    <th>Event</th>
+                                    <th>Issued Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="certificatesTableBody">
+                                <tr><td colspan="6" class="loading">Loading certificates...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1113,6 +1202,11 @@ function applyPermissions() {
     // Team Management Link - Only Super Admin
     var teamManagementLink = document.getElementById('teamManagementLink');
     if (teamManagementLink) teamManagementLink.style.display = isSuperAdmin ? 'block' : 'none';
+        // Certificate permissions
+    var uploadCertCard = document.getElementById('uploadCertificateCard');
+    if (uploadCertCard) {
+        uploadCertCard.style.display = hasPermission('certificates', 'upload') ? 'block' : 'none';
+    }
 }
 
 function buildSidebarMenu() {
@@ -1144,7 +1238,10 @@ function buildSidebarMenu() {
     }
 
     menuHtml += '<div class="menu-item" data-panel="work"><i class="fas fa-tasks"></i> Work</div>';
-
+    // Certificates menu item - show if user has any certificate permission
+    if (hasPermission('certificates', 'upload') || hasPermission('certificates', 'delete')) {
+        menuHtml += '<div class="menu-item" data-panel="certificates"><i class="fas fa-certificate"></i> Certificates</div>';
+    }
     document.getElementById('sidebarMenu').innerHTML = menuHtml;
 
     document.querySelectorAll('.menu-item').forEach(item => {
@@ -1160,7 +1257,8 @@ function buildSidebarMenu() {
             if (panelId === 'nav-manager') loadNavItems();
             if (panelId === 'gallery') { loadGalleryImages(); loadCategoryDropdown(); }
             if (panelId === 'categories') loadCategories();
-            if (panelId === 'work') { loadTeamMembersForAssign(); loadTasks(); }
+          if (panelId === 'work') { loadTeamMembersForAssign(); loadTasks(); }
+if (panelId === 'certificates') loadCertificates();
             if (panelId === 'dashboard') loadDashboard();
         });
     });
@@ -1195,7 +1293,8 @@ var panels = {
     'nav-manager': document.getElementById('navManagerPanel'),
     gallery: document.getElementById('galleryPanel'),
     categories: document.getElementById('categoriesPanel'),
-    work: document.getElementById('workPanel')
+    work: document.getElementById('workPanel'),
+    certificates: document.getElementById('certificatesPanel') 
 };
 var pageTitle = document.getElementById('pageTitle');
 
@@ -1745,7 +1844,134 @@ window.deleteTask = async function (taskId) {
 };
 
 function escapeHtml(text) { if (!text) return ''; var div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
+// ========== CERTIFICATE FUNCTIONS ==========
+async function loadCertificates() {
+    var tbody = document.getElementById('certificatesTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading certificates...</td></tr>';
+    try {
+      var response = await fetch(API_BASE_ADMIN + '/certificates/all', {
+            headers: { 'Authorization': 'Bearer ' + adminToken }
+        });
+        if (!response.ok) throw new Error('Failed to load certificates');
+        var certificates = await response.json();
+        displayCertificatesTable(certificates);
+    } catch (error) {
+        console.error('Error loading certificates:', error);
+        tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load certificates</td></tr>';
+    }
+}
 
+function displayCertificatesTable(certificates) {
+    var tbody = document.getElementById('certificatesTableBody');
+    if (!certificates || certificates.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No certificates uploaded yet</td></tr>';
+        return;
+    }
+    var html = '';
+    var canDelete = hasPermission('certificates', 'delete');
+    for (var i = 0; i < certificates.length; i++) {
+        var cert = certificates[i];
+        var actions = canDelete ? '<button class="btn btn-danger btn-sm" onclick="deleteCertificate(\'' + cert._id + '\')">Delete</button>' : '<span style="opacity:0.5;">Read only</span>';
+        html += '<tr>' +
+            '<td>' + escapeHtml(cert.title) + '</td>' +
+            '<td>' + escapeHtml(cert.identifier) + '</td>' +
+            '<td>' + (cert.identifierType === 'rollno' ? 'Roll Number' : 'Registration Number') + '</td>' +
+            '<td>' + escapeHtml(cert.eventName || '-') + '</td>' +
+            '<td>' + new Date(cert.issuedDate).toLocaleDateString() + '</td>' +
+            '<td class="action-buttons">' + actions + '</td>' +
+        '</tr>';
+    }
+    tbody.innerHTML = html;
+}
+
+var uploadCertForm = document.getElementById('uploadCertificateForm');
+if (uploadCertForm) {
+    uploadCertForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        if (!hasPermission('certificates', 'upload')) {
+            alert('You do not have permission to upload certificates');
+            return;
+        }
+        var title = document.getElementById('certTitle').value;
+        var desc = document.getElementById('certDescription').value;
+        var ident = document.getElementById('certIdentifier').value;
+        var identType = document.getElementById('certIdentifierType').value;
+        var eventName = document.getElementById('certEvent').value;
+        var file = document.getElementById('certFile').files[0];
+        if (!title || !ident || !file) {
+            alert('Please fill all required fields');
+            return;
+        }
+        var fd = new FormData();
+        fd.append('title', title);
+        fd.append('description', desc);
+        fd.append('identifier', ident);
+        fd.append('identifierType', identType);
+        fd.append('eventName', eventName);
+        fd.append('pdf', file);
+        var btn = uploadCertForm.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+        try {
+           var response = await fetch(API_BASE_ADMIN + '/certificates/upload', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + adminToken },
+                body: fd
+            });
+            if (response.ok) {
+                alert('Certificate uploaded successfully!');
+                uploadCertForm.reset();
+                document.getElementById('certUploadPreview').style.display = 'none';
+                loadCertificates();
+            } else {
+                var err = await response.json();
+                alert('Upload failed: ' + (err.message || 'Unknown error'));
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload Certificate';
+        }
+    });
+}
+
+var certFileInput = document.getElementById('certFile');
+if (certFileInput) {
+    certFileInput.addEventListener('change', function() {
+        var preview = document.getElementById('certUploadPreview');
+        var fnSpan = document.getElementById('certFileName');
+        if (this.files && this.files[0]) {
+            fnSpan.textContent = this.files[0].name;
+            preview.style.display = 'block';
+        } else {
+            preview.style.display = 'none';
+        }
+    });
+}
+
+window.deleteCertificate = async function(id) {
+    if (!hasPermission('certificates', 'delete')) {
+        alert('You do not have permission to delete certificates');
+        return;
+    }
+    if (!confirm('Delete this certificate? This action cannot be undone.')) return;
+    try {
+       var response = await fetch(API_BASE_ADMIN + '/certificates/' + id, {
+            method: 'DELETE',
+            headers: { 'Authorization': 'Bearer ' + adminToken }
+        });
+        if (response.ok) {
+            alert('Certificate deleted successfully');
+            loadCertificates();
+        } else {
+            alert('Failed to delete certificate');
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+    }
+};
 window.logout = function () { localStorage.removeItem('adminToken'); localStorage.removeItem('adminData'); localStorage.removeItem('teamMember'); localStorage.removeItem('loginMethod'); window.location.href = 'admin-login.html'; };
 
 // ========== INITIALIZE WITH FRESH PERMISSIONS (REAL-TIME UPDATE) ==========
