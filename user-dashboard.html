@@ -336,6 +336,33 @@
             margin-bottom: 0.5rem;
         }
 
+        /* Table styles for login history */
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+        }
+
+        th {
+            background: rgba(0, 240, 255, 0.05);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -450,6 +477,9 @@
             <button class="tablink" onclick="openTab('profile')">
                 <i class="fas fa-id-card"></i> Profile
             </button>
+            <button class="tablink" onclick="openTab('login-history')">
+                <i class="fas fa-history"></i> Login History
+            </button>
             <button class="logout-btn" onclick="logout()">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
@@ -502,9 +532,35 @@
                     </div>
                 </div>
             </div>
+
+            <!-- ✅ Login History Tab - Sahi jagah -->
+            <div id="login-history" class="tabcontent">
+                <div class="section-title">
+                    <h2><i class="fas fa-history"></i> Your Login History</h2>
+                </div>
+                <div class="table-container">
+                    <div style="overflow-x: auto;">
+                        <table style="min-width: 600px;">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Device</th>
+                                    <th>Browser</th>
+                                    <th>OS</th>
+                                    <th>IP Address</th>
+                                </tr>
+                            </thead>
+                            <tbody id="loginHistoryBody">
+                                <tr><td colspan="5" class="loading">Loading login history...<\/td><\/tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Event Modal -->
     <div id="eventModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal()">&times;</span>
@@ -517,7 +573,7 @@
         </div>
     </div>
 
- <script>
+    <script>
     const API_BASE_URL = 'https://backend-glo6.onrender.com';
     let currentEventId = null;
 
@@ -546,102 +602,11 @@
         if (tabName === 'certificates') {
             fetchCertificates();
         }
-    }
-
-    async function fetchCertificates() {
-        const container = document.getElementById('certificates-list');
-        if (!container) return;
-        
-        container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading certificates...</div>';
-        
-        try {
-            const userResponse = await fetch(`${API_BASE_URL}/api/user/profile`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (!userResponse.ok) throw new Error('Failed to fetch user profile');
-            const user = await userResponse.json();
-            
-            const identifier = user.rollno || user.regno;
-            
-            if (!identifier) {
-                container.innerHTML = '<div class="no-data">No roll number or registration number found in your profile</div>';
-                return;
-            }
-            
-            const response = await fetch(`${API_BASE_URL}/api/certificates/user/${identifier}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            
-            if (!response.ok) throw new Error('Failed to fetch certificates');
-            
-            const certificates = await response.json();
-            displayCertificates(certificates);
-        } catch (error) {
-            console.error('Error fetching certificates:', error);
-            container.innerHTML = '<div class="no-data">Failed to load certificates</div>';
+        if (tabName === 'login-history') {
+            fetchLoginHistory();
         }
     }
-function displayCertificates(certificates) {
-    const container = document.getElementById('certificates-list');
-    if (!certificates || certificates.length === 0) {
-        container.innerHTML = '<div class="no-data">No certificates found</div>';
-        return;
-    }
-    
-    let html = '';
-    for (let i = 0; i < certificates.length; i++) {
-        const cert = certificates[i];
-        const title = cert.title || 'Certificate';
-        const cleanFileName = title.toLowerCase().replace(/[^a-z0-9]/g, '_') + '.pdf';
-        const pdfUrl = cert.pdfUrl || '';
-        
-        html += `
-            <div class="certificate-card">
-                <div class="certificate-icon"><i class="fas fa-certificate"></i></div>
-                <h3>${escapeHtml(title)}</h3>
-                ${cert.eventName ? `<p><i class="fas fa-calendar-alt"></i> ${escapeHtml(cert.eventName)}</p>` : ''}
-                ${cert.description ? `<p>${escapeHtml(cert.description)}</p>` : ''}
-                <p><small><i class="far fa-calendar-alt"></i> Issued: ${new Date(cert.issuedDate).toLocaleDateString()}</small></p>
-                <button class="btn btn-primary" onclick="downloadCert('${pdfUrl}', '${cleanFileName}')">
-                    <i class="fas fa-download"></i> Download Certificate
-                </button>
-            </div>
-        `;
-    }
-    container.innerHTML = html;
-}
 
-async function downloadCert(url, filename) {
-    try {
-        const btn = event.currentTarget;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
-        btn.disabled = true;
-
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Failed to fetch PDF');
-        
-        const blob = await response.blob();
-        const blobUrl = URL.createObjectURL(blob);
-        
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(blobUrl);
-
-        btn.innerHTML = '<i class="fas fa-download"></i> Download Certificate';
-        btn.disabled = false;
-    } catch (error) {
-        console.error('Download failed:', error);
-        alert('Download failed. Opening in new tab...');
-        window.open(url, '_blank');
-        
-        btn.innerHTML = '<i class="fas fa-download"></i> Download Certificate';
-        btn.disabled = false;
-    }
-}
     function escapeHtml(text) {
         if (!text) return '';
         const div = document.createElement('div');
@@ -649,7 +614,6 @@ async function downloadCert(url, filename) {
         return div.innerHTML;
     }
 
-    // Rest of the functions (fetchAllEvents, fetchJoinedEvents, etc.) remain same
     async function fetchAllEvents() {
         try {
             const response = await fetch(`${API_BASE_URL}/allevents`, {
@@ -804,6 +768,103 @@ async function downloadCert(url, filename) {
         `;
     }
 
+    async function fetchCertificates() {
+        const container = document.getElementById('certificates-list');
+        if (!container) return;
+        
+        container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading certificates...</div>';
+        
+        try {
+            const userResponse = await fetch(`${API_BASE_URL}/api/user/profile`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!userResponse.ok) throw new Error('Failed to fetch user profile');
+            const user = await userResponse.json();
+            
+            const identifier = user.rollno || user.regno;
+            
+            if (!identifier) {
+                container.innerHTML = '<div class="no-data">No roll number or registration number found in your profile</div>';
+                return;
+            }
+            
+            const response = await fetch(`${API_BASE_URL}/api/certificates/user/${identifier}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            if (!response.ok) throw new Error('Failed to fetch certificates');
+            
+            const certificates = await response.json();
+            displayCertificates(certificates);
+        } catch (error) {
+            console.error('Error fetching certificates:', error);
+            container.innerHTML = '<div class="no-data">Failed to load certificates</div>';
+        }
+    }
+
+    function displayCertificates(certificates) {
+        const container = document.getElementById('certificates-list');
+        if (!certificates || certificates.length === 0) {
+            container.innerHTML = '<div class="no-data">No certificates found</div>';
+            return;
+        }
+        
+        let html = '';
+        for (let i = 0; i < certificates.length; i++) {
+            const cert = certificates[i];
+            const title = cert.title || 'Certificate';
+            const cleanFileName = title.toLowerCase().replace(/[^a-z0-9]/g, '_') + '.pdf';
+            const pdfUrl = cert.pdfUrl || '';
+            
+            html += `
+                <div class="certificate-card">
+                    <div class="certificate-icon"><i class="fas fa-certificate"></i></div>
+                    <h3>${escapeHtml(title)}</h3>
+                    ${cert.eventName ? `<p><i class="fas fa-calendar-alt"></i> ${escapeHtml(cert.eventName)}</p>` : ''}
+                    ${cert.description ? `<p>${escapeHtml(cert.description)}</p>` : ''}
+                    <p><small><i class="far fa-calendar-alt"></i> Issued: ${new Date(cert.issuedDate).toLocaleDateString()}</small></p>
+                    <button class="btn btn-primary" onclick="downloadCert('${pdfUrl}', '${cleanFileName}')">
+                        <i class="fas fa-download"></i> Download Certificate
+                    </button>
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+    }
+
+    async function downloadCert(url, filename) {
+        try {
+            const btn = event.currentTarget;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+            btn.disabled = true;
+
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Failed to fetch PDF');
+            
+            const blob = await response.blob();
+            const blobUrl = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = blobUrl;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(blobUrl);
+
+            btn.innerHTML = '<i class="fas fa-download"></i> Download Certificate';
+            btn.disabled = false;
+        } catch (error) {
+            console.error('Download failed:', error);
+            alert('Download failed. Opening in new tab...');
+            window.open(url, '_blank');
+            
+            const btn = event.currentTarget;
+            btn.innerHTML = '<i class="fas fa-download"></i> Download Certificate';
+            btn.disabled = false;
+        }
+    }
+
     async function showEventDetails(eventId) {
         currentEventId = eventId;
         try {
@@ -846,6 +907,51 @@ async function downloadCert(url, filename) {
         }
     }
 
+    async function fetchLoginHistory() {
+        const tbody = document.getElementById('loginHistoryBody');
+        if (!tbody) return;
+        
+        tbody.innerHTML = '<tr><td colspan="5" class="loading">Loading login history...<\/td><\/tr>';
+        
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/login-history/my`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            if (!response.ok) throw new Error('Failed to fetch login history');
+            
+            const history = await response.json();
+            displayLoginHistory(history);
+        } catch (error) {
+            console.error('Error fetching login history:', error);
+            tbody.innerHTML = '<tr><td colspan="5" class="loading">Failed to load login history<\/td><\/tr>';
+        }
+    }
+
+    function displayLoginHistory(history) {
+        const tbody = document.getElementById('loginHistoryBody');
+        
+        if (!history || history.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No login history found<\/td><\/tr>';
+            return;
+        }
+        
+        let html = '';
+        for (let i = 0; i < history.length; i++) {
+            const log = history[i];
+            const loginDate = new Date(log.loginTime).toLocaleString();
+            
+            html += '<tr>' +
+                '<td>' + loginDate + '<\/td>' +
+                '<td>' + escapeHtml(log.device || 'Unknown') + '<\/td>' +
+                '<td>' + escapeHtml(log.browser || 'Unknown') + '<\/td>' +
+                '<td>' + escapeHtml(log.os || 'Unknown') + '<\/td>' +
+                '<td>' + escapeHtml(log.ipAddress || 'Unknown') + '<\/td>' +
+            '<\/tr>';
+        }
+        tbody.innerHTML = html;
+    }
+
     function closeModal() {
         document.getElementById('eventModal').classList.remove('active');
         currentEventId = null;
@@ -863,7 +969,7 @@ async function downloadCert(url, filename) {
         fetchNotifications();
         fetchProfile();
     });
-</script>
+    </script>
 </body>
 
 </html>
