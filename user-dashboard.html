@@ -1,379 +1,162 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard - C3 Community</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <style>
+        :root {
+            --primary: #00f0ff;
+            --secondary: #ff2d75;
+            --accent: #f0ff00;
+            --text: #ffffff;
+            --bg: #0a0e17;
+            --card-bg: #1a1f2d;
+            --nav-bg: rgba(10, 14, 23, 0.95);
+            --text-secondary: #a0a0b0;
+        }
+
+        [data-theme="light"] {
+            --primary: #0066ff;
+            --secondary: #ff3366;
+            --accent: #ffcc00;
+            --text: #333333;
+            --bg: #f0f5ff;
+            --card-bg: #ffffff;
+            --nav-bg: rgba(240, 245, 255, 0.95);
+            --text-secondary: #666666;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --primary: #00f0ff;
-            --primary-dark: #00cce0;
-            --secondary: #ff2d75;
-            --secondary-dark: #e6005c;
-            --accent: #f0ff00;
-            --text: #ffffff;
-            --text-dark: #1a1a2e;
-            --text-secondary: #a0a0b0;
-            --bg: #0a0e17;
-            --bg-light: #111827;
-            --card-bg: rgba(26, 31, 45, 0.8);
-            --card-bg-solid: #1a1f2d;
-            --glass-bg: rgba(26, 31, 45, 0.6);
-            --glass-border: rgba(0, 240, 255, 0.2);
-            --nav-bg: rgba(10, 14, 23, 0.95);
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --gradient-1: linear-gradient(135deg, #00f0ff 0%, #ff2d75 100%);
-            --gradient-2: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-3: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
-            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.15);
-            --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.2);
-            --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.3);
-            --shadow-glow: 0 0 20px rgba(0, 240, 255, 0.3);
-            --border-radius-sm: 12px;
-            --border-radius-md: 16px;
-            --border-radius-lg: 24px;
-            --border-radius-xl: 32px;
-        }
-
-        [data-theme="light"] {
-            --primary: #0066ff;
-            --primary-dark: #0052cc;
-            --secondary: #ff3366;
-            --secondary-dark: #e6004d;
-            --text: #1a1a2e;
-            --text-dark: #ffffff;
-            --text-secondary: #666666;
-            --bg: #f0f4ff;
-            --bg-light: #e8edf5;
-            --card-bg: rgba(255, 255, 255, 0.9);
-            --card-bg-solid: #ffffff;
-            --glass-bg: rgba(255, 255, 255, 0.7);
-            --glass-border: rgba(0, 102, 255, 0.2);
-            --nav-bg: rgba(255, 255, 255, 0.95);
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.1);
-        }
-
         body {
             font-family: 'Space Grotesk', sans-serif;
-            background: var(--bg);
+            background-color: var(--bg);
             color: var(--text);
             line-height: 1.6;
-            overflow-x: hidden;
         }
 
-        /* Animated Background */
-        .dashboard-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.4;
-            pointer-events: none;
-        }
-
-        .dashboard-bg::before {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
-            top: 10%;
-            left: -100px;
-            border-radius: 50%;
-            filter: blur(80px);
-            animation: float 20s ease-in-out infinite;
-        }
-
-        .dashboard-bg::after {
-            content: '';
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
-            bottom: 10%;
-            right: -100px;
-            border-radius: 50%;
-            filter: blur(100px);
-            animation: float 25s ease-in-out infinite reverse;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0) translateX(0); }
-            50% { transform: translateY(-30px) translateX(20px); }
-        }
-
-        /* Dashboard Container */
         .dashboard-container {
             display: flex;
             min-height: 100vh;
-            position: relative;
         }
 
-        /* Sidebar */
         .sidebar {
             width: 280px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-right: 1px solid var(--glass-border);
+            background: linear-gradient(180deg, rgba(30, 35, 45, 0.98), rgba(15, 20, 30, 0.98));
+            padding: 2rem 0;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
             position: fixed;
             height: 100vh;
             overflow-y: auto;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 100;
         }
 
         .sidebar-header {
-            padding: 2rem 1.5rem 1.5rem;
-            border-bottom: 1px solid var(--glass-border);
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-
-        .sidebar-header .logo {
-            width: 70px;
-            height: 70px;
-            margin: 0 auto 1rem;
-            background: var(--gradient-1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.4); }
-            50% { box-shadow: 0 0 0 15px rgba(0, 240, 255, 0); }
-        }
-
-        .sidebar-header .logo i {
-            font-size: 2rem;
-            color: white;
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 1.5rem;
         }
 
         .sidebar-header h3 {
-            font-size: 1.2rem;
+            color: var(--primary);
             font-family: 'Orbitron', sans-serif;
-            background: var(--gradient-1);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .sidebar-header p {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .tablink {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.8rem;
             width: 100%;
-            padding: 0.9rem 1.5rem;
-            background: transparent;
+            padding: 1rem 1.5rem;
+            background: none;
             border: none;
-            color: var(--text-secondary);
+            color: var(--text);
             cursor: pointer;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .tablink i {
-            width: 24px;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
+            font-size: 1rem;
+            transition: all 0.3s;
         }
 
         .tablink:hover {
+            background: rgba(0, 240, 255, 0.1);
             color: var(--primary);
-            background: rgba(0, 240, 255, 0.08);
-            padding-left: 2rem;
         }
 
         .tablink.active {
+            background: linear-gradient(90deg, rgba(0, 240, 255, 0.2), transparent);
             color: var(--primary);
-            background: linear-gradient(90deg, rgba(0, 240, 255, 0.15), transparent);
-        }
-
-        .tablink.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 3px;
-            height: 60%;
-            background: var(--primary);
-            border-radius: 0 3px 3px 0;
+            border-left: 3px solid var(--primary);
         }
 
         .logout-btn {
-            margin-top: 2rem;
-            border-top: 1px solid var(--glass-border);
-            border-bottom: none;
-            color: var(--danger);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            margin-top: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .logout-btn:hover {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
+            background: rgba(255, 45, 117, 0.1);
+            color: var(--secondary);
         }
 
-        /* Main Content */
         .content {
             flex: 1;
             margin-left: 280px;
             padding: 2rem;
-            transition: all 0.4s ease;
-        }
-
-        /* Welcome Header */
-        .welcome-header {
-            background: var(--gradient-1);
-            border-radius: var(--border-radius-lg);
-            padding: 2rem;
-            margin-bottom: 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .welcome-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
-            border-radius: 50%;
-        }
-
-        .welcome-header h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .welcome-header p {
-            opacity: 0.9;
-            font-size: 0.95rem;
-        }
-
-        .stats-mini {
-            display: flex;
-            gap: 1.5rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .stat-mini {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(255,255,255,0.15);
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            backdrop-filter: blur(10px);
-        }
-
-        .stat-mini i {
-            font-size: 1rem;
-        }
-
-        /* Section Title */
-        .section-title {
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .section-title h2 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            background: var(--gradient-1);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        /* Tab Navigation */
-        .tab-nav {
-            display: flex;
-            gap: 0.5rem;
-            background: var(--card-bg);
-            padding: 0.5rem;
-            border-radius: 60px;
-            flex-wrap: wrap;
-            margin-bottom: 2rem;
-        }
-
-        .tab-btn {
-            padding: 0.7rem 1.5rem;
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            border-radius: 50px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .tab-btn:hover {
-            color: var(--primary);
-        }
-
-        .tab-btn.active {
-            background: var(--gradient-1);
-            color: white;
-            box-shadow: var(--shadow-glow);
         }
 
         .tabcontent {
             display: none;
-            animation: fadeInUp 0.4s ease;
+            animation: fadeIn 0.3s ease;
         }
 
         .tabcontent.active {
             display: block;
         }
 
-        @keyframes fadeInUp {
+        @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        /* Event Cards */
+        .section-title {
+            margin-bottom: 2rem;
+        }
+
+        .section-title h2 {
+            font-size: 2rem;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
         .events-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -381,99 +164,66 @@
         }
 
         .event-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: var(--border-radius-md);
+            background-color: var(--card-bg);
+            border-radius: 15px;
             overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid var(--glass-border);
+            transition: transform 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             cursor: pointer;
         }
 
         .event-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--primary);
-            box-shadow: var(--shadow-xl), var(--shadow-glow);
+            transform: translateY(-5px);
         }
 
-        .event-img {
-            position: relative;
-            height: 200px;
-            overflow: hidden;
-        }
-
-        .event-img img {
+        .event-card img {
             width: 100%;
-            height: 100%;
+            height: 180px;
             object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .event-card:hover .event-img img {
-            transform: scale(1.1);
-        }
-
-        .event-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: var(--gradient-1);
-            padding: 0.3rem 0.8rem;
-            border-radius: 50px;
-            font-size: 0.7rem;
-            font-weight: 600;
         }
 
         .event-info {
-            padding: 1.2rem;
+            padding: 1rem;
         }
 
         .event-title {
-            font-size: 1.1rem;
-            font-weight: 700;
+            font-size: 1.2rem;
             margin-bottom: 0.5rem;
             color: var(--primary);
         }
 
-        .event-date, .event-location {
+        .event-date,
+        .event-location {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin: 0.4rem 0;
+            margin: 0.3rem 0;
+            opacity: 0.8;
         }
 
-        /* Profile Section */
         .profile-container {
             max-width: 800px;
             margin: 0 auto;
         }
 
-        .profile-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: var(--border-radius-lg);
-            overflow: hidden;
-            border: 1px solid var(--glass-border);
-        }
-
-        .profile-cover {
-            height: 120px;
-            background: var(--gradient-1);
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 2rem;
         }
 
         .profile-avatar {
             width: 100px;
             height: 100px;
-            background: var(--card-bg-solid);
+            background: var(--bg);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: -50px auto 1rem;
-            border: 4px solid var(--primary);
-            box-shadow: var(--shadow-lg);
+            margin: 0 auto 1rem;
         }
 
         .profile-avatar i {
@@ -481,60 +231,36 @@
             color: var(--primary);
         }
 
-        .profile-info {
-            text-align: center;
-            padding: 0 1.5rem 1.5rem;
-        }
-
-        .profile-info h2 {
-            font-size: 1.5rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .profile-info .email {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
         .profile-stats {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
-            margin: 1.5rem 0;
+            margin-bottom: 2rem;
         }
 
-        .profile-stat {
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 15px;
             text-align: center;
-            padding: 1rem;
-            background: rgba(0, 240, 255, 0.05);
-            border-radius: var(--border-radius-sm);
         }
 
-        .profile-stat .value {
-            font-size: 1.8rem;
-            font-weight: 700;
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
             color: var(--primary);
         }
 
-        .profile-stat .label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
         .profile-details {
+            background: var(--card-bg);
             padding: 1.5rem;
-            border-top: 1px solid var(--glass-border);
+            border-radius: 15px;
         }
 
         .profile-field {
             display: flex;
             padding: 0.8rem 0;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .profile-field:last-child {
-            border-bottom: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .field-label {
@@ -543,13 +269,78 @@
             color: var(--primary);
         }
 
-        /* Table Styles */
+        .certificates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .certificate-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .certificate-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .certificate-icon {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .certificate-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .certificate-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .certificate-card .btn {
+            margin-top: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        .notifications-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .notification-card {
+            background: var(--card-bg);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .notification-date {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            margin-bottom: 0.5rem;
+        }
+
         .table-container {
             background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: var(--border-radius-md);
+            border-radius: 15px;
             overflow-x: auto;
-            border: 1px solid var(--glass-border);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         table {
@@ -559,68 +350,18 @@
         }
 
         th, td {
-            padding: 1rem;
+            padding: 12px 16px;
             text-align: left;
-            border-bottom: 1px solid var(--glass-border);
-            font-size: 0.85rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
         }
 
         th {
-            background: rgba(0, 240, 255, 0.08);
+            background: rgba(0, 240, 255, 0.05);
             color: var(--primary);
             font-weight: 600;
         }
 
-        /* Certificate Cards */
-        .certificates-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .certificate-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: var(--border-radius-md);
-            padding: 1.5rem;
-            text-align: center;
-            border: 1px solid var(--glass-border);
-            transition: all 0.3s ease;
-        }
-
-        .certificate-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary);
-            box-shadow: var(--shadow-glow);
-        }
-
-        .certificate-icon {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-
-        /* Notification Cards */
-        .notifications-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .notification-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            padding: 1rem;
-            border-radius: var(--border-radius-sm);
-            border-left: 3px solid var(--primary);
-            transition: all 0.3s ease;
-        }
-
-        .notification-card:hover {
-            transform: translateX(5px);
-        }
-
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -629,7 +370,6 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(20px);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -640,170 +380,34 @@
         }
 
         .modal-content {
-            background: var(--card-bg-solid);
-            border-radius: var(--border-radius-lg);
+            background: var(--card-bg);
+            border-radius: 15px;
             padding: 2rem;
-            max-width: 500px;
+            max-width: 600px;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
-            border: 1px solid var(--glass-border);
-            animation: modalIn 0.3s ease;
-        }
-
-        @keyframes modalIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
         }
 
         .close-modal {
             float: right;
             font-size: 1.5rem;
             cursor: pointer;
-            transition: all 0.3s ease;
         }
 
-        .close-modal:hover {
-            color: var(--danger);
-        }
-
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.7rem 1.5rem;
-            background: var(--gradient-1);
-            border: none;
-            border-radius: 50px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-glow);
-        }
-
-        .online-badge {
-            color: var(--success);
-            font-weight: 600;
-        }
-
-        /* Loading States */
-        .loading-spinner {
-            text-align: center;
-            padding: 3rem;
-            color: var(--text-secondary);
-        }
-
-        .no-data {
-            text-align: center;
-            padding: 3rem;
-            color: var(--text-secondary);
-        }
-
-        /* Mobile Menu Toggle */
-        .mobile-menu-toggle {
-            display: none;
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            z-index: 101;
-            background: var(--gradient-1);
-            border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 12px;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-            box-shadow: var(--shadow-md);
-        }
-
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-            z-index: 99;
-        }
-
-        /* Responsive */
-        @media (max-width: 992px) {
-            .mobile-menu-toggle {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
+        @media (max-width: 768px) {
             .sidebar {
-                transform: translateX(-100%);
-                position: fixed;
-                width: 280px;
-                z-index: 102;
-            }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .sidebar-overlay.active {
-                display: block;
+                width: 100%;
+                position: relative;
+                height: auto;
             }
 
             .content {
                 margin-left: 0;
-                padding: 1.5rem;
-                padding-top: 5rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .welcome-header h1 {
-                font-size: 1.3rem;
             }
 
-            .section-title {
+            .dashboard-container {
                 flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .section-title h2 {
-                font-size: 1.3rem;
-            }
-
-            .tab-nav {
-                overflow-x: auto;
-                flex-wrap: nowrap;
-                border-radius: 12px;
-            }
-
-            .tab-btn {
-                white-space: nowrap;
-                padding: 0.5rem 1.2rem;
-                font-size: 0.85rem;
-            }
-
-            .stats-mini {
-                flex-wrap: wrap;
-            }
-
-            .profile-stats {
-                grid-template-columns: 1fr;
-                gap: 0.8rem;
             }
 
             .profile-field {
@@ -815,132 +419,153 @@
                 width: 100%;
             }
 
-            .events-grid, .certificates-grid {
+            .certificates-grid {
                 grid-template-columns: 1fr;
             }
         }
 
-        @media (max-width: 480px) {
-            .content {
-                padding: 1rem;
-                padding-top: 5rem;
-            }
+        .no-data {
+            text-align: center;
+            padding: 2rem;
+            opacity: 0.7;
+        }
 
-            .welcome-header {
-                padding: 1.2rem;
-            }
+        .loading-spinner {
+            text-align: center;
+            padding: 2rem;
+        }
 
-            .welcome-header h1 {
-                font-size: 1.1rem;
-            }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            margin-top: 1rem;
+            text-decoration: none;
+        }
 
-            .stat-mini {
-                font-size: 0.75rem;
-                padding: 0.3rem 0.8rem;
-            }
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+        }
 
-            .modal-content {
-                padding: 1.2rem;
-            }
+        .online-badge {
+            color: #10b981;
+            font-weight: bold;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
         }
     </style>
 </head>
 
 <body>
-    <button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i></button>
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <div class="dashboard-bg"></div>
-
     <div class="dashboard-container">
-        <div class="sidebar" id="sidebar">
+        <div class="sidebar">
             <div class="sidebar-header">
-                <div class="logo">
-                    <i class="fas fa-code"></i>
-                </div>
-                <h3>C3 Dashboard</h3>
-                <p id="userNameDisplay">Welcome, User</p>
+                <h3><i class="fas fa-user-circle"></i> C3 Dashboard</h3>
             </div>
-            <button class="tablink active" data-tab="joined-events">
+            <button class="tablink active" onclick="openTab('joined-events')">
                 <i class="fas fa-check-circle"></i> Joined Events
             </button>
-            <button class="tablink" data-tab="all-events">
+            <button class="tablink" onclick="openTab('all-events')">
                 <i class="fas fa-calendar-alt"></i> All Events
             </button>
-            <button class="tablink" data-tab="notifications">
+            <button class="tablink" onclick="openTab('notifications')">
                 <i class="fas fa-bell"></i> Notifications
             </button>
-            <button class="tablink" data-tab="certificates">
+            <button class="tablink" onclick="openTab('certificates')">
                 <i class="fas fa-certificate"></i> Certificates
             </button>
-            <button class="tablink" data-tab="profile">
-                <i class="fas fa-user-circle"></i> Profile
+            <button class="tablink" onclick="openTab('profile')">
+                <i class="fas fa-id-card"></i> Profile
             </button>
-            <button class="tablink" data-tab="login-history">
+            <button class="tablink" onclick="openTab('login-history')">
                 <i class="fas fa-history"></i> Login History
             </button>
-            <button class="tablink logout-btn" onclick="logout()">
+            <button class="logout-btn" onclick="logout()">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
         </div>
 
         <div class="content">
-            <div class="welcome-header">
-                <h1 id="welcomeMessage">Welcome back!</h1>
-                <p>Track your events, certificates, and activity all in one place</p>
-                <div class="stats-mini" id="miniStats">
-                    <div class="stat-mini"><i class="fas fa-calendar-check"></i> <span id="joinedCount">0</span> Events Joined</div>
-                    <div class="stat-mini"><i class="fas fa-certificate"></i> <span id="certCount">0</span> Certificates</div>
-                </div>
-            </div>
-
-            <div class="tab-nav">
-                <button class="tab-btn active" data-tab="joined-events">📋 Joined Events</button>
-                <button class="tab-btn" data-tab="all-events">📅 All Events</button>
-                <button class="tab-btn" data-tab="notifications">🔔 Notifications</button>
-                <button class="tab-btn" data-tab="certificates">🎓 Certificates</button>
-                <button class="tab-btn" data-tab="profile">👤 Profile</button>
-                <button class="tab-btn" data-tab="login-history">📊 Login History</button>
-            </div>
-
             <div id="joined-events" class="tabcontent active">
+                <div class="section-title">
+                    <h2>Your Joined Events</h2>
+                </div>
                 <div id="joined-events-grid" class="events-grid">
                     <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
                 </div>
             </div>
 
             <div id="all-events" class="tabcontent">
+                <div class="section-title">
+                    <h2>All Events</h2>
+                </div>
                 <div id="all-events-grid" class="events-grid">
                     <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
                 </div>
             </div>
 
             <div id="notifications" class="tabcontent">
+                <div class="section-title">
+                    <h2>Notifications</h2>
+                </div>
                 <div id="notifications-list" class="notifications-container">
                     <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
                 </div>
             </div>
 
             <div id="certificates" class="tabcontent">
+                <div class="section-title">
+                    <h2><i class="fas fa-certificate"></i> My Certificates</h2>
+                </div>
                 <div id="certificates-list" class="certificates-grid">
-                    <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+                    <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading certificates...</div>
                 </div>
             </div>
 
             <div id="profile" class="tabcontent">
-                <div id="profile-content">
-                    <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+                <div class="section-title">
+                    <h2>Your Profile</h2>
+                </div>
+                <div class="profile-container">
+                    <div id="profile-content">
+                        <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading profile...</div>
+                    </div>
                 </div>
             </div>
 
             <div id="login-history" class="tabcontent">
+                <div class="section-title">
+                    <h2><i class="fas fa-history"></i> Your Login History</h2>
+                </div>
                 <div class="table-container">
-                    </table>
-                        <thead>
-                            <tr><th>Login Time</th><th>Logout Time</th><th>Duration</th><th>Device</th><th>Browser</th><th>OS</th><th>IP</th></tr>
-                        </thead>
-                        <tbody id="loginHistoryBody"><tr><td colspan="7" class="loading">Loading...</td></tr></tbody>
-                    </table>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Login Time</th>
+                                    <th>Logout Time</th>
+                                    <th>Session Duration</th>
+                                    <th>Device</th>
+                                    <th>Browser</th>
+                                    <th>OS</th>
+                                    <th>IP Address</th>
+                                </tr>
+                            </thead>
+                            <tbody id="loginHistoryBody">
+                                <tr><td colspan="7" class="loading">Loading login history...<\/td><\/tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -950,7 +575,7 @@
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal()">&times;</span>
             <h2 id="modalTitle"></h2>
-            <img id="modalImage" src="" alt="" style="width:100%; border-radius:12px; margin:1rem 0;">
+            <img id="modalImage" src="" alt="" style="width: 100%; border-radius: 10px; margin: 1rem 0;">
             <p id="modalDate"></p>
             <p id="modalLocation"></p>
             <p id="modalDescription"></p>
@@ -963,54 +588,34 @@
         let currentEventId = null;
 
         const token = localStorage.getItem('jwtToken');
-        if (!token) window.location.href = '/';
-
-        // Mobile menu
-        const mobileToggle = document.getElementById('mobileMenuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-
-        function closeSidebar() {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('active');
+        if (!token) {
+            window.location.href = '/';
         }
 
-        function openSidebar() {
-            sidebar.classList.add('open');
-            overlay.classList.add('active');
-        }
-
-        if (mobileToggle) {
-            mobileToggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (sidebar.classList.contains('open')) closeSidebar();
-                else openSidebar();
+        function openTab(tabName) {
+            document.querySelectorAll('.tabcontent').forEach(tab => {
+                tab.classList.remove('active');
             });
-        }
-        if (overlay) overlay.addEventListener('click', closeSidebar);
-
-        // Tab switching
-        function switchTab(tabName) {
-            document.querySelectorAll('.tabcontent').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tablink').forEach(btn => {
+                btn.classList.remove('active');
+            });
             document.getElementById(tabName).classList.add('active');
-            document.querySelector(`.tab-btn[data-tab="${tabName}"]`).classList.add('active');
-
-            if (tabName === 'certificates') fetchCertificates();
-            if (tabName === 'login-history') fetchLoginHistory();
+            
+            const buttons = document.querySelectorAll('.tablink');
+            for (let i = 0; i < buttons.length; i++) {
+                if (buttons[i].textContent.trim().toLowerCase().includes(tabName.toLowerCase())) {
+                    buttons[i].classList.add('active');
+                    break;
+                }
+            }
+            
+            if (tabName === 'certificates') {
+                fetchCertificates();
+            }
+            if (tabName === 'login-history') {
+                fetchLoginHistory();
+            }
         }
-
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-        });
-
-        document.querySelectorAll('.tablink').forEach(link => {
-            link.addEventListener('click', () => {
-                const tabName = link.dataset.tab;
-                switchTab(tabName);
-                closeSidebar();
-            });
-        });
 
         function escapeHtml(text) {
             if (!text) return '';
@@ -1024,11 +629,14 @@
                 const response = await fetch(`${API_BASE_URL}/allevents`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                if (!response.ok) throw new Error();
+                if (!response.ok) throw new Error('Failed to fetch events');
                 const events = await response.json();
                 displayEvents(events, 'all-events-grid');
+                return events;
             } catch (error) {
+                console.error(error);
                 document.getElementById('all-events-grid').innerHTML = '<div class="no-data">Failed to load events</div>';
+                return [];
             }
         }
 
@@ -1037,13 +645,14 @@
                 const response = await fetch(`${API_BASE_URL}/api/user/events`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                if (!response.ok) throw new Error();
+                if (!response.ok) throw new Error('Failed to fetch joined events');
                 const events = await response.json();
                 displayJoinedEvents(events);
-                document.getElementById('joinedCount').textContent = events.length || 0;
                 return events;
             } catch (error) {
+                console.error(error);
                 document.getElementById('joined-events-grid').innerHTML = '<div class="no-data">No joined events yet</div>';
+                return [];
             }
         }
 
@@ -1053,19 +662,21 @@
                 container.innerHTML = '<div class="no-data">No events available</div>';
                 return;
             }
-            container.innerHTML = events.map(event => `
-                <div class="event-card" onclick="showEventDetails('${event._id}')">
-                    <div class="event-img">
-                        <img src="${event.imagelink || 'https://via.placeholder.com/300x180'}" alt="${escapeHtml(event.name)}">
-                        <span class="event-badge">${event.isOpen ? 'Open' : 'Closed'}</span>
+            let html = '';
+            for (let i = 0; i < events.length; i++) {
+                const event = events[i];
+                html += `
+                    <div class="event-card" onclick="showEventDetails('${event._id}')">
+                        <img src="${event.imagelink || 'https://via.placeholder.com/300x180'}" alt="${event.name}" loading="lazy">
+                        <div class="event-info">
+                            <h3 class="event-title">${escapeHtml(event.name)}</h3>
+                            <div class="event-date"><i class="far fa-calendar-alt"></i> ${new Date(event.date).toLocaleDateString()}</div>
+                            <div class="event-location"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(event.location || 'TBA')}</div>
+                        </div>
                     </div>
-                    <div class="event-info">
-                        <h3 class="event-title">${escapeHtml(event.name)}</h3>
-                        <div class="event-date"><i class="far fa-calendar-alt"></i> ${new Date(event.date).toLocaleDateString()}</div>
-                        <div class="event-location"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(event.location || 'TBA')}</div>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }
+            container.innerHTML = html;
         }
 
         function displayJoinedEvents(events) {
@@ -1074,40 +685,54 @@
                 container.innerHTML = '<div class="no-data">You haven\'t joined any events yet</div>';
                 return;
             }
-            container.innerHTML = events.map(event => `
-                <div class="event-card" onclick="showEventDetails('${event.eventId?._id || event.eventId}')">
-                    <div class="event-img">
-                        <img src="${event.eventImage || event.eventId?.imagelink || 'https://via.placeholder.com/300x180'}" alt="${escapeHtml(event.eventName)}">
-                        <span class="event-badge">Joined</span>
+            let html = '';
+            for (let i = 0; i < events.length; i++) {
+                const event = events[i];
+                const eventId = event.eventId?._id || event.eventId;
+                const eventImage = event.eventImage || event.eventId?.imagelink || 'https://via.placeholder.com/300x180';
+                html += `
+                    <div class="event-card" onclick="showEventDetails('${eventId}')">
+                        <img src="${eventImage}" alt="${event.eventName}" loading="lazy">
+                        <div class="event-info">
+                            <h3 class="event-title">${escapeHtml(event.eventName)}</h3>
+                            <div class="event-date"><i class="far fa-calendar-alt"></i> ${new Date(event.joinedAt).toLocaleDateString()}</div>
+                        </div>
                     </div>
-                    <div class="event-info">
-                        <h3 class="event-title">${escapeHtml(event.eventName)}</h3>
-                        <div class="event-date"><i class="far fa-calendar-alt"></i> Joined on ${new Date(event.joinedAt).toLocaleDateString()}</div>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }
+            container.innerHTML = html;
         }
 
         async function fetchNotifications() {
             try {
                 const response = await fetch(`${API_BASE_URL}/api/notifications`);
-                if (!response.ok) throw new Error();
+                if (!response.ok) throw new Error('Failed to fetch notifications');
                 const notifications = await response.json();
-                const container = document.getElementById('notifications-list');
-                if (!notifications.length) {
-                    container.innerHTML = '<div class="no-data">No notifications yet</div>';
-                    return;
-                }
-                container.innerHTML = notifications.map(n => `
-                    <div class="notification-card">
-                        <div class="notification-title">${escapeHtml(n.title)}</div>
-                        <div class="notification-date">${new Date(n.date).toLocaleDateString()}</div>
-                        <div>${escapeHtml(n.message.substring(0, 150))}${n.message.length > 150 ? '...' : ''}</div>
-                    </div>
-                `).join('');
+                displayNotifications(notifications);
             } catch (error) {
+                console.error(error);
                 document.getElementById('notifications-list').innerHTML = '<div class="no-data">No notifications</div>';
             }
+        }
+
+        function displayNotifications(notifications) {
+            const container = document.getElementById('notifications-list');
+            if (!notifications || notifications.length === 0) {
+                container.innerHTML = '<div class="no-data">No notifications yet</div>';
+                return;
+            }
+            let html = '';
+            for (let i = 0; i < notifications.length; i++) {
+                const notif = notifications[i];
+                html += `
+                    <div class="notification-card">
+                        <div class="notification-title">${escapeHtml(notif.title)}</div>
+                        <div class="notification-date">${new Date(notif.date).toLocaleDateString()}</div>
+                        <div class="notification-message">${escapeHtml(notif.message)}</div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
         }
 
         async function fetchProfile() {
@@ -1115,91 +740,139 @@
                 const response = await fetch(`${API_BASE_URL}/api/user/profile`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                if (!response.ok) throw new Error();
+                if (!response.ok) throw new Error('Failed to fetch profile');
                 const user = await response.json();
-                document.getElementById('userNameDisplay').innerHTML = `Hi, ${user.name.split(' ')[0]}`;
-                document.getElementById('welcomeMessage').innerHTML = `Welcome back, ${user.name}! 👋`;
-                document.getElementById('profile-content').innerHTML = `
-                    <div class="profile-card">
-                        <div class="profile-cover"></div>
-                        <div class="profile-avatar"><i class="fas fa-user"></i></div>
-                        <div class="profile-info">
-                            <h2>${escapeHtml(user.name)}</h2>
-                            <p class="email">${escapeHtml(user.email)}</p>
-                            <div class="profile-stats">
-                                <div class="profile-stat"><div class="value">${user.events?.length || 0}</div><div class="label">Events Joined</div></div>
-                                <div class="profile-stat"><div class="value">${user.isverified ? '✓' : '⏳'}</div><div class="label">Verified</div></div>
-                                <div class="profile-stat"><div class="value">${user.batch || '-'}</div><div class="label">Batch</div></div>
-                            </div>
-                        </div>
-                        <div class="profile-details">
-                            <div class="profile-field"><div class="field-label"><i class="fas fa-graduation-cap"></i> Branch</div><div>${escapeHtml(user.branch)}</div></div>
-                            <div class="profile-field"><div class="field-label"><i class="fas fa-hashtag"></i> Roll No</div><div>${escapeHtml(user.rollno || '-')}</div></div>
-                            <div class="profile-field"><div class="field-label"><i class="fas fa-id-card"></i> Reg No</div><div>${escapeHtml(user.regno || '-')}</div></div>
-                            <div class="profile-field"><div class="field-label"><i class="fas fa-phone"></i> Mobile</div><div>${escapeHtml(user.mobileno)}</div></div>
-                            <div class="profile-field"><div class="field-label"><i class="fas fa-calendar"></i> Member Since</div><div>${new Date(user.createdAt).toLocaleDateString()}</div></div>
-                        </div>
-                    </div>
-                `;
+                displayProfile(user);
             } catch (error) {
+                console.error(error);
                 document.getElementById('profile-content').innerHTML = '<div class="no-data">Failed to load profile</div>';
             }
         }
 
+        function displayProfile(user) {
+            const joinedEventsCount = user.events?.length || 0;
+            document.getElementById('profile-content').innerHTML = `
+                <div class="profile-header">
+                    <div class="profile-avatar"><i class="fas fa-user"></i></div>
+                    <h2>${escapeHtml(user.name)}</h2>
+                    <p>${escapeHtml(user.email)}</p>
+                </div>
+                <div class="profile-stats">
+                    <div class="stat-card">
+                        <div class="stat-value">${joinedEventsCount}</div>
+                        <div>Events Joined</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${user.isverified ? '✓' : 'Pending'}</div>
+                        <div>Verification Status</div>
+                    </div>
+                </div>
+                <div class="profile-details">
+                    <div class="profile-field"><div class="field-label">Branch</div><div>${escapeHtml(user.branch)}</div></div>
+                    <div class="profile-field"><div class="field-label">Batch</div><div>${escapeHtml(user.batch)}</div></div>
+                    <div class="profile-field"><div class="field-label">Roll Number</div><div>${escapeHtml(user.rollno || '-')}</div></div>
+                    <div class="profile-field"><div class="field-label">Registration No</div><div>${escapeHtml(user.regno || '-')}</div></div>
+                    <div class="profile-field"><div class="field-label">Mobile</div><div>${escapeHtml(user.mobileno)}</div></div>
+                    <div class="profile-field"><div class="field-label">Member Since</div><div>${new Date(user.createdAt).toLocaleDateString()}</div></div>
+                </div>
+            `;
+        }
+
         async function fetchCertificates() {
             const container = document.getElementById('certificates-list');
-            container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+            if (!container) return;
+            
+            container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading certificates...</div>';
+            
             try {
-                const userRes = await fetch(`${API_BASE_URL}/api/user/profile`, {
+                const userResponse = await fetch(`${API_BASE_URL}/api/user/profile`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                const user = await userRes.json();
+                if (!userResponse.ok) throw new Error('Failed to fetch user profile');
+                const user = await userResponse.json();
+                
                 const identifier = user.rollno || user.regno;
+                
                 if (!identifier) {
-                    container.innerHTML = '<div class="no-data">No roll number found</div>';
-                    document.getElementById('certCount').textContent = '0';
+                    container.innerHTML = '<div class="no-data">No roll number or registration number found in your profile</div>';
                     return;
                 }
+                
                 const response = await fetch(`${API_BASE_URL}/api/certificates/user/${identifier}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
+                
+                if (!response.ok) throw new Error('Failed to fetch certificates');
+                
                 const certificates = await response.json();
-                document.getElementById('certCount').textContent = certificates.length || 0;
-                if (!certificates.length) {
-                    container.innerHTML = '<div class="no-data">No certificates found</div>';
-                    return;
-                }
-                container.innerHTML = certificates.map(cert => `
-                    <div class="certificate-card">
-                        <div class="certificate-icon"><i class="fas fa-certificate"></i></div>
-                        <h3>${escapeHtml(cert.title)}</h3>
-                        ${cert.eventName ? `<p><i class="fas fa-calendar-alt"></i> ${escapeHtml(cert.eventName)}</p>` : ''}
-                        <p><small>Issued: ${new Date(cert.issuedDate).toLocaleDateString()}</small></p>
-                        <button class="btn" onclick="downloadCert('${cert.pdfUrl}', '${escapeHtml(cert.title)}.pdf')"><i class="fas fa-download"></i> Download</button>
-                    </div>
-                `).join('');
+                displayCertificates(certificates);
             } catch (error) {
+                console.error('Error fetching certificates:', error);
                 container.innerHTML = '<div class="no-data">Failed to load certificates</div>';
             }
         }
 
-        async function downloadCert(url, filename) {
-            const btn = event.currentTarget;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
-            btn.disabled = true;
-            try {
-                const response = await fetch(url);
-                const blob = await response.blob();
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = filename;
-                a.click();
-                URL.revokeObjectURL(a.href);
-            } catch (error) {
-                window.open(url, '_blank');
+        function displayCertificates(certificates) {
+            const container = document.getElementById('certificates-list');
+            if (!certificates || certificates.length === 0) {
+                container.innerHTML = '<div class="no-data">No certificates found</div>';
+                return;
             }
-            btn.innerHTML = '<i class="fas fa-download"></i> Download';
-            btn.disabled = false;
+            
+            let html = '';
+            for (let i = 0; i < certificates.length; i++) {
+                const cert = certificates[i];
+                const title = cert.title || 'Certificate';
+                const cleanFileName = title.toLowerCase().replace(/[^a-z0-9]/g, '_') + '.pdf';
+                const pdfUrl = cert.pdfUrl || '';
+                
+                html += `
+                    <div class="certificate-card">
+                        <div class="certificate-icon"><i class="fas fa-certificate"></i></div>
+                        <h3>${escapeHtml(title)}</h3>
+                        ${cert.eventName ? `<p><i class="fas fa-calendar-alt"></i> ${escapeHtml(cert.eventName)}</p>` : ''}
+                        ${cert.description ? `<p>${escapeHtml(cert.description)}</p>` : ''}
+                        <p><small><i class="far fa-calendar-alt"></i> Issued: ${new Date(cert.issuedDate).toLocaleDateString()}</small></p>
+                        <button class="btn btn-primary" onclick="downloadCert('${pdfUrl}', '${cleanFileName}')">
+                            <i class="fas fa-download"></i> Download Certificate
+                        </button>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        async function downloadCert(url, filename) {
+            try {
+                const btn = event.currentTarget;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+                btn.disabled = true;
+
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Failed to fetch PDF');
+                
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(blobUrl);
+
+                btn.innerHTML = '<i class="fas fa-download"></i> Download Certificate';
+                btn.disabled = false;
+            } catch (error) {
+                console.error('Download failed:', error);
+                alert('Download failed. Opening in new tab...');
+                window.open(url, '_blank');
+                
+                const btn = event.currentTarget;
+                btn.innerHTML = '<i class="fas fa-download"></i> Download Certificate';
+                btn.disabled = false;
+            }
         }
 
         async function showEventDetails(eventId) {
@@ -1208,15 +881,16 @@
                 const response = await fetch(`${API_BASE_URL}/api/events/${eventId}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
+                if (!response.ok) throw new Error('Failed to fetch event details');
                 const event = await response.json();
-                document.getElementById('modalTitle').textContent = event.name;
-                document.getElementById('modalImage').src = event.imagelink;
+                document.getElementById('modalTitle').textContent = escapeHtml(event.name);
+                document.getElementById('modalImage').src = event.imagelink || 'https://via.placeholder.com/400x200';
                 document.getElementById('modalDate').innerHTML = `<i class="far fa-calendar-alt"></i> ${new Date(event.date).toLocaleDateString()}`;
-                document.getElementById('modalLocation').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${event.location}`;
-                document.getElementById('modalDescription').textContent = event.description;
+                document.getElementById('modalLocation').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${escapeHtml(event.location || 'TBA')}`;
+                document.getElementById('modalDescription').textContent = event.description || 'No description available';
                 document.getElementById('eventModal').classList.add('active');
             } catch (error) {
-                alert('Failed to load event');
+                alert('Failed to load event details');
             }
         }
 
@@ -1225,7 +899,10 @@
             try {
                 const response = await fetch(`${API_BASE_URL}/api/events/${currentEventId}/join`, {
                     method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
                 });
                 const data = await response.json();
                 if (response.ok) {
@@ -1233,7 +910,7 @@
                     closeModal();
                     fetchJoinedEvents();
                 } else {
-                    alert(data.message || 'Failed to join');
+                    alert(data.message || 'Failed to join event');
                 }
             } catch (error) {
                 alert('Error joining event');
@@ -1242,30 +919,74 @@
 
         async function fetchLoginHistory() {
             const tbody = document.getElementById('loginHistoryBody');
-            tbody.innerHTML = '<tr><td colspan="7" class="loading">Loading...<\/td><\/tr>';
+            if (!tbody) return;
+            
+            tbody.innerHTML = '<tr><td colspan="7" class="loading">Loading login history...<\/td><\/tr>';
+            
             try {
+                console.log('Fetching login history with token:', token ? 'Present' : 'Missing');
+                
                 const response = await fetch(`${API_BASE_URL}/api/login-history/my`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
                 });
-                const history = await response.json();
-                if (!history.length) {
-                    tbody.innerHTML = '<tr><td colspan="7" class="no-data">No login history found<\/td><\/tr>';
+                
+                console.log('Login history response status:', response.status);
+                
+                if (response.status === 401) {
+                    console.error('Unauthorized - token expired');
+                    localStorage.removeItem('jwtToken');
+                    localStorage.removeItem('user');
+                    alert('Session expired. Please login again.');
+                    window.location.href = '/';
                     return;
                 }
-                tbody.innerHTML = history.map(log => `
-                    <tr>
-                        <td>${new Date(log.loginTime).toLocaleString()}<\/td>
-                        <td>${log.logoutTime ? new Date(log.logoutTime).toLocaleString() : '<span class="online-badge">● Online</span>'}<\/td>
-                        <td>${log.sessionDuration ? Math.floor(log.sessionDuration / 60) + 'm ' + (log.sessionDuration % 60) + 's' : '-'}<\/td>
-                        <td>${escapeHtml(log.device || 'Unknown')}<\/td>
-                        <td>${escapeHtml(log.browser || 'Unknown')}<\/td>
-                        <td>${escapeHtml(log.os || 'Unknown')}<\/td>
-                        <td>${escapeHtml(log.ipAddress || 'Unknown')}<\/td>
-                    </tr>
-                `).join('');
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('API Error:', response.status, errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+                
+                const history = await response.json();
+                console.log('Login history received:', history);
+                console.log('Number of records:', history.length);
+                
+                displayLoginHistory(history);
             } catch (error) {
-                tbody.innerHTML = '</table><td colspan="7" class="loading">Failed to load<\/td><\/tr>';
+                console.error('Error fetching login history:', error);
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Failed to load login history: ' + error.message + '<\/td><\/tr>';
             }
+        }
+
+        function displayLoginHistory(history) {
+            const tbody = document.getElementById('loginHistoryBody');
+            
+            if (!history || history.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No login history found. Login first to see your history.<\/td><\/tr>';
+                return;
+            }
+            
+            let html = '';
+            for (let i = 0; i < history.length; i++) {
+                const log = history[i];
+                const loginDate = new Date(log.loginTime).toLocaleString();
+                const logoutDate = log.logoutTime ? new Date(log.logoutTime).toLocaleString() : '<span class="online-badge">● Online / Active</span>';
+                const duration = log.sessionDuration ? Math.floor(log.sessionDuration / 60) + ' min ' + (log.sessionDuration % 60) + ' sec' : '-';
+                
+                html += '<tr>' +
+                    '<td>' + loginDate + '<\/td>' +
+                    '<td>' + logoutDate + '<\/td>' +
+                    '<td>' + duration + '<\/td>' +
+                    '<td>' + escapeHtml(log.device || 'Unknown') + '<\/td>' +
+                    '<td>' + escapeHtml(log.browser || 'Unknown') + '<\/td>' +
+                    '<td>' + escapeHtml(log.os || 'Unknown') + '<\/td>' +
+                    '<td>' + escapeHtml(log.ipAddress || 'Unknown') + '<\/td>' +
+                '<\/tr>';
+            }
+            tbody.innerHTML = html;
         }
 
         function closeModal() {
@@ -1279,11 +1000,15 @@
             window.location.href = '/';
         }
 
-        // Initialize
-        fetchAllEvents();
-        fetchJoinedEvents();
-        fetchNotifications();
-        fetchProfile();
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, initializing dashboard');
+            console.log('Token exists:', !!token);
+            fetchAllEvents();
+            fetchJoinedEvents();
+            fetchNotifications();
+            fetchProfile();
+        });
     </script>
 </body>
+
 </html>
