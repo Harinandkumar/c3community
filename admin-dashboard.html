@@ -265,7 +265,6 @@
             from {
                 opacity: 0;
             }
-
             to {
                 opacity: 1;
             }
@@ -417,12 +416,10 @@
         }
 
         @keyframes pulse {
-
             0%,
             100% {
                 opacity: 1;
             }
-
             50% {
                 opacity: 0.6;
             }
@@ -597,6 +594,53 @@
             vertical-align: middle;
         }
 
+        /* Team Public Preview Image */
+        .tp-preview-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .toast-success {
+            background: var(--success);
+        }
+
+        .toast-error {
+            background: var(--danger);
+        }
+
+        .toast-info {
+            background: var(--primary);
+            color: var(--bg);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
         @media (max-width: 768px) {
             .mobile-menu-toggle {
                 display: flex;
@@ -694,6 +738,7 @@
                 </div>
             </div>
 
+            <!-- Dashboard Panel -->
             <div id="dashboardPanel" class="panel active">
                 <div class="stats-grid" id="statsGrid">
                     <div class="stat-card">
@@ -736,6 +781,7 @@
                 </div>
             </div>
 
+            <!-- Events Panel -->
             <div id="eventsPanel" class="panel">
                 <div class="form-card" id="createEventCard">
                     <h3 class="form-title">Create New Event</h3>
@@ -784,6 +830,7 @@
                 </div>
             </div>
 
+            <!-- Members Panel -->
             <div id="membersPanel" class="panel">
                 <div class="form-card"><input type="text" id="searchMember"
                         placeholder="🔍 Search by name, email or registration number..."
@@ -811,6 +858,7 @@
                 </div>
             </div>
 
+            <!-- Notifications Panel -->
             <div id="notificationsPanel" class="panel">
                 <div class="form-card" id="createNotificationCard">
                     <h3 class="form-title">Send Notification</h3>
@@ -861,6 +909,7 @@
                 </div>
             </div>
 
+            <!-- Gallery Panel -->
             <div id="galleryPanel" class="panel">
                 <div class="form-card" id="uploadImageCard">
                     <h3 class="form-title">📸 Upload New Image</h3>
@@ -890,6 +939,7 @@
                 </div>
             </div>
 
+            <!-- Categories Panel -->
             <div id="categoriesPanel" class="panel">
                 <div class="form-card" id="createCategoryCard">
                     <h3 class="form-title">🏷️ Add New Category</h3>
@@ -912,6 +962,7 @@
                 </div>
             </div>
 
+            <!-- Nav Manager Panel -->
             <div id="navManagerPanel" class="panel">
                 <div class="form-card" id="createNavCard">
                     <h3 class="form-title">➕ Add Custom Navigation Item</h3>
@@ -968,6 +1019,7 @@
                 </div>
             </div>
 
+            <!-- Work Panel -->
             <div id="workPanel" class="panel">
                 <div class="form-card" id="assignWorkCard" style="display: none;">
                     <h3 class="form-title"><i class="fas fa-tasks"></i> Assign New Work</h3>
@@ -1016,6 +1068,7 @@
                 </div>
             </div>
 
+            <!-- Login History Panel -->
             <div id="loginHistoryPanel" class="panel">
                 <div class="form-card">
                     <h3 class="form-title"><i class="fas fa-chart-line"></i> Login Statistics</h3>
@@ -1092,6 +1145,7 @@
                 </div>
             </div>
 
+            <!-- Certificates Panel -->
             <div id="certificatesPanel" class="panel">
                 <div class="form-card" id="uploadCertificateCard" style="display: none;">
                     <h3 class="form-title"><i class="fas fa-certificate"></i> Upload Certificate</h3>
@@ -1114,6 +1168,68 @@
                         <table style="min-width: 700px;">
                             <thead><tr><th>Title</th><th>Identifier</th><th>Type</th><th>Event</th><th>Issued Date</th><th>Actions</th></tr></thead>
                             <tbody id="certificatesTableBody"><tr><td colspan="6" class="loading">Loading certificates...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== NEW: TEAM PUBLIC PANEL ========== -->
+            <div id="teamPublicPanel" class="panel">
+                <div class="form-card" id="addTeamPublicCard">
+                    <h3 class="form-title"><i class="fas fa-user-plus"></i> Add Team Member (Public Page)</h3>
+                    <form id="addTeamPublicForm" enctype="multipart/form-data">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Full Name *</label>
+                                <input type="text" id="tpName" required placeholder="Enter full name">
+                            </div>
+                            <div class="form-group">
+                                <label>Batch *</label>
+                                <input type="text" id="tpBatch" required placeholder="e.g., 2022-2026">
+                            </div>
+                            <div class="form-group">
+                                <label>Position *</label>
+                                <select id="tpPosition" required>
+                                    <option value="">Select Position</option>
+                                    <option value="Core Member">⭐ Core Member</option>
+                                    <option value="Coordinator">📋 Coordinator</option>
+                                    <option value="Sub-Coordinator">🟢 Sub-Coordinator</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>LinkedIn URL (Optional)</label>
+                                <input type="url" id="tpLinkedin" placeholder="https://linkedin.com/in/username">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Photo * (Max 5MB)</label>
+                            <input type="file" id="tpPhoto" accept="image/*" required>
+                        </div>
+                        <div id="tpPreview" style="margin:15px 0;display:none;">
+                            <img id="tpPreviewImg" style="max-width:150px;border-radius:8px;border:2px solid var(--primary);">
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Add Member</button>
+                    </form>
+                </div>
+
+                <div class="table-container">
+                    <h3 style="padding:16px;">📋 Team Members (Public Page)</h3>
+                    <div style="overflow-x:auto;">
+                        <table style="min-width:800px;">
+                            <thead>
+                                <tr>
+                                    <th>Photo</th>
+                                    <th>Name</th>
+                                    <th>Position</th>
+                                    <th>Batch</th>
+                                    <th>LinkedIn</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teamPublicTableBody">
+                                <tr><td colspan="7" class="loading">Loading...</td></tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -1250,6 +1366,11 @@
                 menuHtml += '<div class="menu-item" data-panel="certificates"><i class="fas fa-certificate"></i> Certificates</div>';
             }
 
+            // ========== NEW: Team Public Menu (Super Admin Only) ==========
+            if (isSuperAdmin) {
+                menuHtml += '<div class="menu-item" data-panel="team-public"><i class="fas fa-user-plus"></i> Team Public</div>';
+            }
+
             document.getElementById('sidebarMenu').innerHTML = menuHtml;
 
             document.querySelectorAll('.menu-item').forEach(function(item) {
@@ -1270,6 +1391,7 @@
                     if (panelId === 'login-history') loadLoginHistory();
                     if (panelId === 'activity-log') loadActivityLog();
                     if (panelId === 'dashboard') loadDashboard();
+                    if (panelId === 'team-public') loadTeamPublic();
                 });
             });
         }
@@ -1306,7 +1428,8 @@
             work: document.getElementById('workPanel'),
             certificates: document.getElementById('certificatesPanel'),
             'login-history': document.getElementById('loginHistoryPanel'),
-            'activity-log': document.getElementById('activityLogPanel')
+            'activity-log': document.getElementById('activityLogPanel'),
+            'team-public': document.getElementById('teamPublicPanel')
         };
         var pageTitle = document.getElementById('pageTitle');
 
@@ -1316,6 +1439,7 @@
             if (pageTitle) pageTitle.textContent = panelName;
         }
 
+        // ========== DASHBOARD ==========
         async function loadDashboard() {
             try {
                 var membersRes = await fetch(API_BASE_ADMIN + '/users', { headers: { 'Authorization': 'Bearer ' + adminToken } });
@@ -1335,6 +1459,7 @@
             } catch (error) { console.error('Dashboard error:', error); }
         }
 
+        // ========== EVENTS ==========
         async function loadEvents() {
             var tbody = document.getElementById('eventsTableBody');
             if (!tbody) return;
@@ -1419,6 +1544,7 @@
             loadDashboard();
         };
 
+        // ========== MEMBERS ==========
         async function loadMembers() {
             var tbody = document.getElementById('membersTableBody');
             if (!tbody) return;
@@ -1487,6 +1613,7 @@
             });
         }
 
+        // ========== NOTIFICATIONS ==========
         async function loadNotifications() {
             var tbody = document.getElementById('notificationsTableBody');
             if (!tbody) return;
@@ -1562,6 +1689,7 @@
             }
         };
 
+        // ========== NAV ITEMS ==========
         async function loadNavItems() {
             var tbody = document.getElementById('navItemsTableBody');
             if (!tbody) return;
@@ -1651,6 +1779,7 @@
             }
         };
 
+        // ========== GALLERY ==========
         async function loadGalleryImages() {
             var container = document.getElementById('galleryGridAdmin');
             if (!container) return;
@@ -1839,6 +1968,7 @@
             }
         };
 
+        // ========== CATEGORIES ==========
         async function loadCategories() {
             var container = document.getElementById('categoriesList');
             if (!container) return;
@@ -1947,6 +2077,7 @@
             }
         };
 
+        // ========== WORK ==========
         async function loadTeamMembersForAssign() {
             try {
                 var response = await fetch(API_BASE_ADMIN + '/team-members', { headers: { 'Authorization': 'Bearer ' + adminToken } });
@@ -2064,6 +2195,7 @@
             } catch (error) { alert('Error: ' + error.message); }
         };
 
+        // ========== CERTIFICATES ==========
         async function loadCertificates() {
             var tbody = document.getElementById('certificatesTableBody');
             if (!tbody) return;
@@ -2164,6 +2296,7 @@
             } catch (error) { alert('Error: ' + error.message); }
         };
 
+        // ========== LOGIN HISTORY ==========
         async function loadLoginHistory(filters) {
             filters = filters || {};
             var tbody = document.getElementById('loginHistoryTableBody');
@@ -2235,6 +2368,7 @@
             loadLoginHistory({});
         }
 
+        // ========== ACTIVITY LOG ==========
         async function loadActivityLog(filters) {
             filters = filters || {};
             var tbody = document.getElementById('activityLogTableBody');
@@ -2323,6 +2457,202 @@
             loadActivityLog({});
         }
 
+        // ========== TEAM PUBLIC FUNCTIONS (NEW) ==========
+
+        // Load team public members
+        async function loadTeamPublic() {
+            var tbody = document.getElementById('teamPublicTableBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '<tr><td colspan="7" class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>';
+            
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/team-public', {
+                    headers: { 'Authorization': 'Bearer ' + adminToken }
+                });
+                
+                if (!response.ok) throw new Error('Failed to load');
+                
+                var members = await response.json();
+                displayTeamPublic(members);
+            } catch (error) {
+                console.error('Error loading team public:', error);
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Failed to load members</td></tr>';
+            }
+        }
+
+        function displayTeamPublic(members) {
+            var tbody = document.getElementById('teamPublicTableBody');
+            if (!tbody) return;
+            
+            if (!members || members.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No members added yet</td></tr>';
+                return;
+            }
+            
+            var html = '';
+            for (var i = 0; i < members.length; i++) {
+                var m = members[i];
+                var statusClass = m.isActive ? 'status-open' : 'status-closed';
+                var statusText = m.isActive ? 'Active' : 'Inactive';
+                html += `
+                    <tr>
+                        <td>
+                            <img src="${m.photo}" 
+                                 style="width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);" 
+                                 onerror="this.src='assets/img/default-avatar.png'">
+                        </td>
+                        <td><strong>${escapeHtml(m.name)}</strong></td>
+                        <td><span class="status-badge" style="background:var(--primary);color:white;">${escapeHtml(m.position)}</span></td>
+                        <td>${escapeHtml(m.batch)}</td>
+                        <td>${m.linkedin ? `<a href="${m.linkedin}" target="_blank"><i class="fab fa-linkedin" style="color:var(--primary);font-size:1.2rem;"></i></a>` : '-'}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td class="action-buttons">
+                            <button class="btn btn-warning btn-sm" onclick="editTeamPublic('${m._id}')"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteTeamPublic('${m._id}')"><i class="fas fa-trash"></i> Delete</button>
+                        </td>
+                    </tr>
+                `;
+            }
+            tbody.innerHTML = html;
+        }
+
+        // Add team member
+        var addTeamPublicForm = document.getElementById('addTeamPublicForm');
+        if (addTeamPublicForm) {
+            addTeamPublicForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                var name = document.getElementById('tpName').value.trim();
+                var position = document.getElementById('tpPosition').value;
+                var batch = document.getElementById('tpBatch').value.trim();
+                var linkedin = document.getElementById('tpLinkedin').value.trim();
+                var photo = document.getElementById('tpPhoto').files[0];
+                
+                if (!name || !position || !batch || !photo) {
+                    alert('Please fill all required fields and select a photo');
+                    return;
+                }
+                
+                var fd = new FormData();
+                fd.append('name', name);
+                fd.append('position', position);
+                fd.append('batch', batch);
+                fd.append('linkedin', linkedin || '');
+                fd.append('photo', photo);
+                
+                var btn = this.querySelector('button[type="submit"]');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+                
+                try {
+                    var response = await fetch(API_BASE_ADMIN + '/team-public', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + adminToken },
+                        body: fd
+                    });
+                    
+                    var data = await response.json();
+                    
+                    if (response.ok) {
+                        alert('✅ Team member added successfully!');
+                        this.reset();
+                        document.getElementById('tpPreview').style.display = 'none';
+                        loadTeamPublic();
+                    } else {
+                        alert('❌ ' + (data.message || 'Failed to add member'));
+                    }
+                } catch (error) {
+                    console.error('Error adding team public:', error);
+                    alert('❌ Error: ' + error.message);
+                }
+                
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Add Member';
+            });
+        }
+
+        // Photo preview
+        document.getElementById('tpPhoto')?.addEventListener('change', function() {
+            var preview = document.getElementById('tpPreview');
+            var img = document.getElementById('tpPreviewImg');
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    img.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(this.files[0]);
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+
+        // Edit team member
+        window.editTeamPublic = async function(id) {
+            var newName = prompt('Enter new name:');
+            if (!newName) return;
+            
+            var newPosition = prompt('Enter position (Core Member/Coordinator/Sub-Coordinator):');
+            if (!newPosition) return;
+            
+            var newBatch = prompt('Enter batch (e.g., 2022-2026):');
+            if (!newBatch) return;
+            
+            var newLinkedin = prompt('Enter LinkedIn URL (or leave empty):') || '';
+            
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/team-public/' + id, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': 'Bearer ' + adminToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: newName,
+                        position: newPosition,
+                        batch: newBatch,
+                        linkedin: newLinkedin
+                    })
+                });
+                
+                if (response.ok) {
+                    alert('✅ Member updated successfully!');
+                    loadTeamPublic();
+                } else {
+                    var data = await response.json();
+                    alert('❌ ' + (data.message || 'Failed to update'));
+                }
+            } catch (error) {
+                console.error('Error updating team public:', error);
+                alert('❌ Error: ' + error.message);
+            }
+        };
+
+        // Delete team member
+        window.deleteTeamPublic = async function(id) {
+            if (!confirm('⚠️ Are you sure you want to delete this member?')) return;
+            
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/team-public/' + id, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': 'Bearer ' + adminToken }
+                });
+                
+                if (response.ok) {
+                    alert('✅ Member deleted successfully!');
+                    loadTeamPublic();
+                } else {
+                    var data = await response.json();
+                    alert('❌ ' + (data.message || 'Failed to delete'));
+                }
+            } catch (error) {
+                console.error('Error deleting team public:', error);
+                alert('❌ Error: ' + error.message);
+            }
+        };
+
+        // ========== UTILITY ==========
         function escapeHtml(text) {
             if (!text) return '';
             var div = document.createElement('div');
@@ -2330,6 +2660,7 @@
             return div.innerHTML;
         }
 
+        // ========== LOGOUT ==========
         window.logout = function() {
             fetch(API_BASE_ADMIN + '/logout', {
                 method: 'POST',
@@ -2342,6 +2673,7 @@
             window.location.href = 'admin-login.html';
         };
 
+        // ========== INIT ==========
         (async function init() {
             await fetchFreshPermissions();
             applyPermissions();
