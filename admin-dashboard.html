@@ -1200,9 +1200,11 @@
                                 <label>Position *</label>
                                 <select id="tpPosition" required>
                                     <option value="">Select Position</option>
+                                    <option value="Founding Member">🚀 Founding Member</option>
                                     <option value="Senior Coordinator">⭐ Senior Coordinator</option>
                                     <option value="Coordinator">📋 Coordinator</option>
                                     <option value="Sub-Coordinator">🟢 Sub-Coordinator</option>
+                                    <option value="Volunteer">🤝 Volunteer</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -1244,7 +1246,7 @@
                 </div>
             </div>
 
-            <!-- ========== NEW: ALUMNI PANEL ========== -->
+            <!-- ========== ALUMNI PANEL ========== -->
             <div id="alumniPanel" class="panel">
                 <div class="form-card" id="addAlumniCard">
                     <h3 class="form-title"><i class="fas fa-graduation-cap"></i> Add Alumni</h3>
@@ -1437,7 +1439,7 @@
                 menuHtml += '<div class="menu-item" data-panel="team-public"><i class="fas fa-user-plus"></i> Team Public</div>';
             }
 
-            // ========== NEW: Alumni Menu (Super Admin Only) ==========
+            // ========== Alumni Menu (Super Admin Only) ==========
             if (isSuperAdmin) {
                 menuHtml += '<div class="menu-item" data-panel="alumni"><i class="fas fa-graduation-cap"></i> Alumni</div>';
             }
@@ -2666,7 +2668,7 @@
             var newName = prompt('Enter new name:');
             if (!newName) return;
             
-            var newPosition = prompt('Enter position (Senior Coordinator/Coordinator/Sub-Coordinator):');
+            var newPosition = prompt('Enter position (Founding Member/Senior Coordinator/Coordinator/Sub-Coordinator/Volunteer):');
             if (!newPosition) return;
             
             var newBatch = prompt('Enter batch (e.g., 2022-2026):');
@@ -2725,7 +2727,7 @@
             }
         };
 
-        // ========== ALUMNI FUNCTIONS (NEW) ==========
+        // ========== ALUMNI FUNCTIONS ==========
 
         // Load alumni
         async function loadAlumni() {

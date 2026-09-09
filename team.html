@@ -320,6 +320,42 @@
             margin-bottom: 8px;
         }
 
+        /* Founding Member special style */
+        .team-card.founding-card {
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .team-card.founding-card::before {
+            background: linear-gradient(90deg, #ffd700, #ff6b00);
+        }
+
+        .team-card.founding-card .photo {
+            border-color: #ffd700;
+        }
+
+        .team-card.founding-card:hover .photo {
+            border-color: #ff6b00;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+        }
+
+        /* Volunteer special style */
+        .team-card.volunteer-card {
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .team-card.volunteer-card::before {
+            background: linear-gradient(90deg, #10b981, #059669);
+        }
+
+        .team-card.volunteer-card .photo {
+            border-color: #10b981;
+        }
+
+        .team-card.volunteer-card:hover .photo {
+            border-color: #059669;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+        }
+
         .loading-spinner {
             text-align: center;
             padding: 50px;
@@ -423,6 +459,18 @@
 
         <!-- Current Team Content -->
         <div class="team-content active" id="currentTeamContent">
+            
+            <!-- ========== FOUNDING MEMBERS (NEW) ========== -->
+            <div class="team-section">
+                <div class="team-section-header">
+                    <h2>🚀 Founding Members</h2>
+                    <span class="badge-count" id="foundingCount">0 members</span>
+                </div>
+                <div class="team-grid" id="foundingGrid">
+                    <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+                </div>
+            </div>
+
             <!-- Senior Coordinators -->
             <div class="team-section">
                 <div class="team-section-header">
@@ -452,6 +500,17 @@
                     <span class="badge-count" id="subCoordinatorCount">0 members</span>
                 </div>
                 <div class="team-grid" id="subCoordinatorGrid">
+                    <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+                </div>
+            </div>
+
+            <!-- ========== VOLUNTEERS (NEW) ========== -->
+            <div class="team-section">
+                <div class="team-section-header">
+                    <h2>🤝 Volunteers</h2>
+                    <span class="badge-count" id="volunteerCount">0 members</span>
+                </div>
+                <div class="team-grid" id="volunteerGrid">
                     <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
                 </div>
             </div>
@@ -566,14 +625,11 @@
         // ========== TAB SWITCHING ==========
         document.querySelectorAll('.team-tab').forEach(tab => {
             tab.addEventListener('click', function() {
-                // Remove active from all tabs
                 document.querySelectorAll('.team-tab').forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
 
-                // Hide all content
                 document.querySelectorAll('.team-content').forEach(c => c.classList.remove('active'));
 
-                // Show selected content
                 const tabName = this.dataset.tab;
                 if (tabName === 'current') {
                     document.getElementById('currentTeamContent').classList.add('active');
@@ -587,9 +643,11 @@
         // ========== FETCH TEAM MEMBERS ==========
         async function fetchTeam() {
             const grids = {
+                founding: document.getElementById('foundingGrid'),
                 senior: document.getElementById('seniorCoordinatorGrid'),
                 coordinators: document.getElementById('coordinatorGrid'),
-                sub: document.getElementById('subCoordinatorGrid')
+                sub: document.getElementById('subCoordinatorGrid'),
+                volunteers: document.getElementById('volunteerGrid')
             };
 
             Object.values(grids).forEach(g => {
@@ -609,13 +667,17 @@
                 const data = await response.json();
                 console.log('✅ Team data received:', data);
                 
+                document.getElementById('foundingCount').textContent = (data.founding_members?.length || 0) + ' members';
                 document.getElementById('seniorCount').textContent = (data.senior_coordinators?.length || 0) + ' members';
                 document.getElementById('coordinatorCount').textContent = (data.coordinators?.length || 0) + ' members';
                 document.getElementById('subCoordinatorCount').textContent = (data.sub_coordinators?.length || 0) + ' members';
+                document.getElementById('volunteerCount').textContent = (data.volunteers?.length || 0) + ' members';
 
+                renderTeamMembers(grids.founding, data.founding_members, 'team-card founding-card');
                 renderTeamMembers(grids.senior, data.senior_coordinators, 'team-card');
                 renderTeamMembers(grids.coordinators, data.coordinators, 'team-card');
                 renderTeamMembers(grids.sub, data.sub_coordinators, 'team-card');
+                renderTeamMembers(grids.volunteers, data.volunteers, 'team-card volunteer-card');
 
             } catch (error) {
                 console.error('❌ Error fetching team:', error);
@@ -693,10 +755,9 @@
                              loading="lazy" 
                              onerror="this.src='assets/img/default-avatar.png'">
                     </div>
-                    ${m.position ? `<div class="position">${escapeHtml(m.position)}</div>` : `<div class="alumni-badge">🎓 Alumni</div>`}
+                    <div class="position">${escapeHtml(m.position)}</div>
                     <h3>${escapeHtml(m.name)}</h3>
                     <div class="batch">📅 ${escapeHtml(m.batch)}</div>
-                    ${m.description ? `<div class="description">${escapeHtml(m.description)}</div>` : ''}
                     <div class="social-links">
                         ${m.linkedin ? `
                             <a href="${escapeHtml(m.linkedin)}" target="_blank" rel="noopener noreferrer" title="LinkedIn">
