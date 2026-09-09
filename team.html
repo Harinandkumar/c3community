@@ -320,13 +320,13 @@
             <p>Meet the passionate individuals driving the Creative Coding Community</p>
         </div>
 
-        <!-- Core Members -->
+        <!-- Senior Coordinators -->
         <div class="team-section">
             <div class="team-section-header">
-                <h2>⭐ Core Members</h2>
-                <span class="badge-count" id="coreCount">0 members</span>
+                <h2>⭐ Senior Coordinators</h2>
+                <span class="badge-count" id="seniorCount">0 members</span>
             </div>
-            <div class="team-grid" id="coreMembersGrid">
+            <div class="team-grid" id="seniorCoordinatorGrid">
                 <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
             </div>
         </div>
@@ -404,8 +404,12 @@
     <script src="main.js"></script>
     <script>
         // ========== CONFIGURATION ==========
-        // ✅ CHANGE THIS FOR LOCAL TESTING
-        // For production, change to: https://backend-glo6.onrender.com
+        if (typeof API_BASE_URL === 'undefined') {
+            var API_BASE_URL = 'http://localhost:3000';
+        }
+        // For production: https://backend-glo6.onrender.com
+
+        console.log('🚀 Team page loaded, API URL:', API_BASE_URL);
 
         // ========== THEME ==========
         const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -434,7 +438,6 @@
                 icon.className = navLinks.classList.contains('active') ? 'fas fa-times' : 'fas fa-bars';
             });
 
-            // Close menu on link click (mobile)
             document.querySelectorAll('.nav-links a').forEach(link => {
                 link.addEventListener('click', () => {
                     navLinks.classList.remove('active');
@@ -447,12 +450,11 @@
         // ========== FETCH TEAM MEMBERS ==========
         async function fetchTeam() {
             const grids = {
-                core: document.getElementById('coreMembersGrid'),
+                senior: document.getElementById('seniorCoordinatorGrid'),
                 coordinators: document.getElementById('coordinatorGrid'),
                 sub: document.getElementById('subCoordinatorGrid')
             };
 
-            // Show loading
             Object.values(grids).forEach(g => {
                 if (g) {
                     g.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
@@ -470,13 +472,11 @@
                 const data = await response.json();
                 console.log('✅ Team data received:', data);
                 
-                // Update counts
-                document.getElementById('coreCount').textContent = (data.core_members?.length || 0) + ' members';
+                document.getElementById('seniorCount').textContent = (data.senior_coordinators?.length || 0) + ' members';
                 document.getElementById('coordinatorCount').textContent = (data.coordinators?.length || 0) + ' members';
                 document.getElementById('subCoordinatorCount').textContent = (data.sub_coordinators?.length || 0) + ' members';
 
-                // Render each group
-                renderTeamMembers(grids.core, data.core_members);
+                renderTeamMembers(grids.senior, data.senior_coordinators);
                 renderTeamMembers(grids.coordinators, data.coordinators);
                 renderTeamMembers(grids.sub, data.sub_coordinators);
 
