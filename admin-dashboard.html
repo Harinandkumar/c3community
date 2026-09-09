@@ -1398,7 +1398,8 @@
         function buildSidebarMenu() {
             var menuHtml = '';
             menuHtml += '<div class="menu-item active" data-panel="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</div>';
-
+// Add Form Builder menu (All admins can see)
+menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-edit"></i> Form Builder</div>';
             if (hasPermission('events', 'create') || hasPermission('events', 'edit') || hasPermission('events', 'delete')) {
                 menuHtml += '<div class="menu-item" data-panel="events"><i class="fas fa-calendar-alt"></i> Events</div>';
             }
@@ -1452,6 +1453,11 @@
                     var panelName = this.textContent.trim();
                     document.querySelectorAll('.menu-item').forEach(function(m) { m.classList.remove('active'); });
                     this.classList.add('active');
+                    if (panelId === 'form-builder') {
+                window.location.href = 'admin-form-builder.html';
+                return;
+            }
+            
                     switchPanel(panelId, panelName);
                     if (panelId === 'events') loadEvents();
                     if (panelId === 'members') loadMembers();
