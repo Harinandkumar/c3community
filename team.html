@@ -256,7 +256,7 @@
             margin-bottom: 12px;
             line-height: 1.5;
             display: -webkit-box;
-            -webkit-line-clamp: 2;
+            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -460,7 +460,7 @@
         <!-- Current Team Content -->
         <div class="team-content active" id="currentTeamContent">
             
-            <!-- ========== FOUNDING MEMBERS (NEW) ========== -->
+            <!-- ========== FOUNDING MEMBERS ========== -->
             <div class="team-section">
                 <div class="team-section-header">
                     <h2>🚀 Founding Members</h2>
@@ -504,7 +504,7 @@
                 </div>
             </div>
 
-            <!-- ========== VOLUNTEERS (NEW) ========== -->
+            <!-- ========== VOLUNTEERS ========== -->
             <div class="team-section">
                 <div class="team-section-header">
                     <h2>🤝 Volunteers</h2>
@@ -580,7 +580,7 @@
     <script src="main.js"></script>
     <script>
         // ========== CONFIGURATION ==========
-        // Production URL
+        // ✅ PRODUCTION URL
         // var API_BASE_URL = 'https://backend-glo6.onrender.com';
         // For local testing: http://localhost:3000
 
@@ -755,9 +755,10 @@
                              loading="lazy" 
                              onerror="this.src='assets/img/default-avatar.png'">
                     </div>
-                    <div class="position">${escapeHtml(m.position)}</div>
+                    ${m.position ? `<div class="position">${escapeHtml(m.position)}</div>` : `<div class="alumni-badge">🎓 Alumni</div>`}
                     <h3>${escapeHtml(m.name)}</h3>
                     <div class="batch">📅 ${escapeHtml(m.batch)}</div>
+                    ${m.description ? `<div class="description">${escapeHtml(m.description)}</div>` : ''}
                     <div class="social-links">
                         ${m.linkedin ? `
                             <a href="${escapeHtml(m.linkedin)}" target="_blank" rel="noopener noreferrer" title="LinkedIn">
