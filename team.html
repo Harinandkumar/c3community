@@ -19,7 +19,7 @@
 
         .team-header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 30px;
             position: relative;
         }
 
@@ -62,7 +62,7 @@
             color: var(--text);
             text-decoration: none;
             transition: all 0.3s ease;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             font-weight: 500;
         }
 
@@ -72,18 +72,64 @@
             transform: translateX(-3px);
         }
 
-        .team-section {
-            margin-bottom: 50px;
-            animation: fadeInUp 0.5s ease;
+        /* ========== TABS ========== */
+        .team-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            background: var(--card-bg);
+            padding: 8px;
+            border-radius: 60px;
+            border: 1px solid var(--border);
+            flex-wrap: wrap;
         }
 
-        .team-section:nth-child(2) { animation-delay: 0.1s; }
-        .team-section:nth-child(3) { animation-delay: 0.2s; }
-        .team-section:nth-child(4) { animation-delay: 0.3s; }
+        .team-tab {
+            padding: 10px 28px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .team-tab:hover {
+            color: var(--primary);
+            background: rgba(0, 240, 255, 0.05);
+        }
+
+        .team-tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 20px rgba(0, 240, 255, 0.25);
+        }
+
+        .team-tab i {
+            margin-right: 8px;
+        }
+
+        /* ========== TEAM CONTENT ========== */
+        .team-content {
+            display: none;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        .team-content.active {
+            display: block;
+        }
 
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        .team-section {
+            margin-bottom: 50px;
         }
 
         .team-section-header {
@@ -204,6 +250,17 @@
             margin-bottom: 14px;
         }
 
+        .team-card .description {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
         .team-card .social-links {
             display: flex;
             justify-content: center;
@@ -230,6 +287,37 @@
             border-color: var(--primary);
             background: rgba(0, 240, 255, 0.08);
             transform: translateY(-2px);
+        }
+
+        /* Alumni Card - Different border color */
+        .team-card.alumni-card {
+            border-color: rgba(255, 215, 0, 0.2);
+        }
+
+        .team-card.alumni-card::before {
+            background: linear-gradient(90deg, #ffd700, #ff8c00);
+        }
+
+        .team-card.alumni-card .photo {
+            border-color: #ffd700;
+        }
+
+        .team-card.alumni-card:hover .photo {
+            border-color: #ff8c00;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);
+        }
+
+        .team-card .alumni-badge {
+            display: inline-block;
+            padding: 2px 12px;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
         }
 
         .loading-spinner {
@@ -273,6 +361,8 @@
             .team-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
             .team-card .photo { width: 100px; height: 100px; }
             .team-card { padding: 20px 16px; }
+            .team-tabs { border-radius: 30px; padding: 6px; }
+            .team-tab { padding: 8px 16px; font-size: 0.8rem; min-width: 80px; }
         }
 
         @media (max-width: 480px) {
@@ -280,6 +370,7 @@
             .team-header h1 { font-size: 1.6rem; }
             .team-section-header { flex-direction: column; align-items: flex-start; }
             .back-home { width: 100%; justify-content: center; }
+            .team-tab { font-size: 0.7rem; padding: 6px 12px; min-width: 60px; }
         }
 
         @media (max-width: 768px) and (orientation: landscape) {
@@ -320,36 +411,62 @@
             <p>Meet the passionate individuals driving the Creative Coding Community</p>
         </div>
 
-        <!-- Senior Coordinators -->
-        <div class="team-section">
-            <div class="team-section-header">
-                <h2>⭐ Senior Coordinators</h2>
-                <span class="badge-count" id="seniorCount">0 members</span>
+        <!-- Tabs -->
+        <div class="team-tabs">
+            <button class="team-tab active" data-tab="current">
+                <i class="fas fa-users"></i> Current Team
+            </button>
+            <button class="team-tab" data-tab="alumni">
+                <i class="fas fa-graduation-cap"></i> Alumni
+            </button>
+        </div>
+
+        <!-- Current Team Content -->
+        <div class="team-content active" id="currentTeamContent">
+            <!-- Senior Coordinators -->
+            <div class="team-section">
+                <div class="team-section-header">
+                    <h2>⭐ Senior Coordinators</h2>
+                    <span class="badge-count" id="seniorCount">0 members</span>
+                </div>
+                <div class="team-grid" id="seniorCoordinatorGrid">
+                    <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+                </div>
             </div>
-            <div class="team-grid" id="seniorCoordinatorGrid">
-                <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+
+            <!-- Coordinators -->
+            <div class="team-section">
+                <div class="team-section-header">
+                    <h2>📋 Coordinators</h2>
+                    <span class="badge-count" id="coordinatorCount">0 members</span>
+                </div>
+                <div class="team-grid" id="coordinatorGrid">
+                    <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+                </div>
+            </div>
+
+            <!-- Sub-Coordinators -->
+            <div class="team-section">
+                <div class="team-section-header">
+                    <h2>🟢 Sub-Coordinators</h2>
+                    <span class="badge-count" id="subCoordinatorCount">0 members</span>
+                </div>
+                <div class="team-grid" id="subCoordinatorGrid">
+                    <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+                </div>
             </div>
         </div>
 
-        <!-- Coordinators -->
-        <div class="team-section">
-            <div class="team-section-header">
-                <h2>📋 Coordinators</h2>
-                <span class="badge-count" id="coordinatorCount">0 members</span>
-            </div>
-            <div class="team-grid" id="coordinatorGrid">
-                <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
-            </div>
-        </div>
-
-        <!-- Sub-Coordinators -->
-        <div class="team-section">
-            <div class="team-section-header">
-                <h2>🟢 Sub-Coordinators</h2>
-                <span class="badge-count" id="subCoordinatorCount">0 members</span>
-            </div>
-            <div class="team-grid" id="subCoordinatorGrid">
-                <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+        <!-- Alumni Content -->
+        <div class="team-content" id="alumniContent">
+            <div class="team-section">
+                <div class="team-section-header">
+                    <h2>🎓 Our Alumni</h2>
+                    <span class="badge-count" id="alumniCount">0 members</span>
+                </div>
+                <div class="team-grid" id="alumniGrid">
+                    <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+                </div>
             </div>
         </div>
     </main>
@@ -403,12 +520,10 @@
 
     <script src="main.js"></script>
     <script>
-        // ========== PRODUCTION CONFIGURATION ==========
-        // ✅ PRODUCTION URL - Change this to your production backend
+        // ========== CONFIGURATION ==========
+        // Production URL
         // var API_BASE_URL = 'https://backend-glo6.onrender.com';
-        
-        // For local testing, uncomment this line and comment the above:
-        // var API_BASE_URL = 'http://localhost:3000';
+        // For local testing: http://localhost:3000
 
         console.log('🚀 Team page loaded, API URL:', API_BASE_URL);
 
@@ -448,6 +563,27 @@
             });
         }
 
+        // ========== TAB SWITCHING ==========
+        document.querySelectorAll('.team-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active from all tabs
+                document.querySelectorAll('.team-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                // Hide all content
+                document.querySelectorAll('.team-content').forEach(c => c.classList.remove('active'));
+
+                // Show selected content
+                const tabName = this.dataset.tab;
+                if (tabName === 'current') {
+                    document.getElementById('currentTeamContent').classList.add('active');
+                } else if (tabName === 'alumni') {
+                    document.getElementById('alumniContent').classList.add('active');
+                    fetchAlumni();
+                }
+            });
+        });
+
         // ========== FETCH TEAM MEMBERS ==========
         async function fetchTeam() {
             const grids = {
@@ -477,9 +613,9 @@
                 document.getElementById('coordinatorCount').textContent = (data.coordinators?.length || 0) + ' members';
                 document.getElementById('subCoordinatorCount').textContent = (data.sub_coordinators?.length || 0) + ' members';
 
-                renderTeamMembers(grids.senior, data.senior_coordinators);
-                renderTeamMembers(grids.coordinators, data.coordinators);
-                renderTeamMembers(grids.sub, data.sub_coordinators);
+                renderTeamMembers(grids.senior, data.senior_coordinators, 'team-card');
+                renderTeamMembers(grids.coordinators, data.coordinators, 'team-card');
+                renderTeamMembers(grids.sub, data.sub_coordinators, 'team-card');
 
             } catch (error) {
                 console.error('❌ Error fetching team:', error);
@@ -500,8 +636,43 @@
             }
         }
 
+        // ========== FETCH ALUMNI ==========
+        async function fetchAlumni() {
+            const container = document.getElementById('alumniGrid');
+            container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+
+            try {
+                console.log('🔍 Fetching alumni from:', `${API_BASE_URL}/api/public/alumni`);
+                const response = await fetch(`${API_BASE_URL}/api/public/alumni`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ Alumni data received:', data);
+                
+                document.getElementById('alumniCount').textContent = (data?.length || 0) + ' members';
+
+                renderTeamMembers(container, data, 'team-card alumni-card');
+
+            } catch (error) {
+                console.error('❌ Error fetching alumni:', error);
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-users-slash"></i>
+                        <p>Failed to load alumni</p>
+                        <p style="font-size:0.8rem;opacity:0.6;margin-top:8px;">${error.message}</p>
+                        <button onclick="fetchAlumni()" style="margin-top:15px;padding:8px 20px;background:var(--primary);border:none;border-radius:8px;color:white;cursor:pointer;">
+                            <i class="fas fa-sync"></i> Retry
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
         // ========== RENDER TEAM MEMBERS ==========
-        function renderTeamMembers(container, members) {
+        function renderTeamMembers(container, members, cardClass) {
             if (!container) return;
 
             if (!members || members.length === 0) {
@@ -515,16 +686,17 @@
             }
 
             container.innerHTML = members.map((m, index) => `
-                <div class="team-card" style="animation-delay: ${index * 0.05}s">
+                <div class="${cardClass}" style="animation-delay: ${index * 0.05}s">
                     <div class="photo">
                         <img src="${m.photo}" 
                              alt="${escapeHtml(m.name)}" 
                              loading="lazy" 
                              onerror="this.src='assets/img/default-avatar.png'">
                     </div>
+                    ${m.position ? `<div class="position">${escapeHtml(m.position)}</div>` : `<div class="alumni-badge">🎓 Alumni</div>`}
                     <h3>${escapeHtml(m.name)}</h3>
-                    <div class="position">${escapeHtml(m.position)}</div>
                     <div class="batch">📅 ${escapeHtml(m.batch)}</div>
+                    ${m.description ? `<div class="description">${escapeHtml(m.description)}</div>` : ''}
                     <div class="social-links">
                         ${m.linkedin ? `
                             <a href="${escapeHtml(m.linkedin)}" target="_blank" rel="noopener noreferrer" title="LinkedIn">
@@ -549,6 +721,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Team page loaded, API URL:', API_BASE_URL);
             fetchTeam();
+            // Alumni will load when tab is clicked
         });
     </script>
 </body>
