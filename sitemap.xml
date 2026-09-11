@@ -1,13 +1,129 @@
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-<!--  created with Free Online Sitemap Generator www.xml-sitemaps.com  -->
-<url>
-<loc>https://c3community.netlify.app/</loc>
-<lastmod>2026-04-26T18:57:07+00:00</lastmod>
-<priority>1.00</priority>
-</url>
-<url>
-<loc>https://c3community.netlify.app/gallery</loc>
-<lastmod>2026-04-26T18:57:07+00:00</lastmod>
-<priority>0.80</priority>
-</url>
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 
+                            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd
+                            http://www.google.com/schemas/sitemap-image/1.1 
+                            http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd">
+
+    <!-- ========== HOMEPAGE ========== -->
+    <url>
+        <loc>https://c3community.netlify.app/</loc>
+        <lastmod>2026-09-11T00:00:00+00:00</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.00</priority>
+        <image:image>
+            <image:loc>https://c3community.netlify.app/assets/img/logowithoutname.png</image:loc>
+            <image:title>Creative Coding Community - GEC Samastipur</image:title>
+            <image:caption>C3 Community Logo - Coding club at GEC Samastipur</image:caption>
+        </image:image>
+    </url>
+
+    <!-- ========== HOME SECTIONS (Anchor Links) ========== -->
+    <url>
+        <loc>https://c3community.netlify.app/#home</loc>
+        <lastmod>2026-09-11T00:00:00+00:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.95</priority>
+    </url>
+
+    <url>
+        <loc>https://c3community.netlify.app/#events</loc>
+        <lastmod>2026-09-11T00:00:00+00:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.90</priority>
+    </url>
+
+    <url>
+        <loc>https://c3community.netlify.app/#notices</loc>
+        <lastmod>2026-09-11T00:00:00+00:00</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.90</priority>
+    </url>
+
+    <url>
+        <loc>https://c3community.netlify.app/#members</loc>
+        <lastmod>2026-09-11T00:00:00+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.85</priority>
+    </url>
+
+    <url>
+        <loc>https://c3community.netlify.app/#faculty-mentors</loc>
+        <lastmod>2026-09-11T00:00:00+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.80</priority>
+    </url>
+
+    <url>
+        <loc>https://c3community.netlify.app/#coordinators</loc>
+        <lastmod>2026-09-11T00:00:00+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.80</priority>
+    </url>
+
+    <url>
+        <loc>https://c3community.netlify.app/#results</loc>
+        <lastmod>2026-09-11T00:00:00+00:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.85</priority>
+    </url>
+
+    <url>
+        <loc>https://c3community.netlify.app/#recruitment</loc>
+        <lastmod>2026-09-11T00:00:00+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.75</priority>
+    </url>
+
+    <url>
+        <loc>https://c3community.netlify.app/#gallery-carousel</loc>
+        <lastmod>2026-09-11T00:00:00+00:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.85</priority>
+    </url>
+
+    <url>
+        <loc>https://c3community.netlify.app/#contact</loc>
+        <lastmod>2026-09-11T00:00:00+00:00</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.70</priority>
+    </url>
+
+    <!-- ========== SEPARATE PAGES ========== -->
+    
+    <!-- Team Page -->
+    <url>
+        <loc>https://c3community.netlify.app/team.html</loc>
+        <lastmod>2026-09-11T00:00:00+00:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.90</priority>
+    </url>
+
+    <!-- Gallery Page -->
+    <url>
+        <loc>https://c3community.netlify.app/gallery.html</loc>
+        <lastmod>2026-09-11T00:00:00+00:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.90</priority>
+    </url>
+
+    <!-- Gallery (without .html - alternative route) -->
+    <url>
+        <loc>https://c3community.netlify.app/gallery</loc>
+        <lastmod>2026-09-11T00:00:00+00:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.85</priority>
+    </url>
+
+    <!-- ========== AUTH PAGES (Low Priority - for indexing) ========== -->
+    
+    <url>
+        <loc>https://c3community.netlify.app/admin-login.html</loc>
+        <lastmod>2026-09-11T00:00:00+00:00</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.30</priority>
+    </url>
+
 </urlset>
