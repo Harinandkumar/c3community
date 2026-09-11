@@ -209,6 +209,7 @@
         }
 
         .role-super_admin { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #333; }
+        .role-senior_coordinator { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #333; }
         .role-core_member { background: linear-gradient(135deg, var(--primary), #0066ff); color: white; }
         .role-coordinator { background: linear-gradient(135deg, #10b981, #059669); color: white; }
         .role-sub_coordinator { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
@@ -582,6 +583,7 @@
                         <label>Role *</label>
                         <select id="memberRole" required>
                             <option value="">Select Role</option>
+                            <option value="senior_coordinator">⭐ Senior Coordinator</option>
                             <option value="core_member">Core Member</option>
                             <option value="coordinator">Coordinator</option>
                             <option value="sub_coordinator">Sub-Coordinator</option>
@@ -593,7 +595,7 @@
                     </div>
                 </div>
 
-                <!-- ========== NEW: CUSTOM EMAIL SECTION ========== -->
+                <!-- ========== CUSTOM EMAIL SECTION ========== -->
                 <div class="custom-email-section">
                     <div class="custom-email-header">
                         <h4><i class="fas fa-envelope"></i> Welcome Email Settings</h4>
@@ -916,23 +918,36 @@ C3 Team`;
             }
         }
 
+        // ✅ Position default based on role
+        function getDefaultPosition(role) {
+            const positions = {
+                'super_admin': 'Super Admin',
+                'senior_coordinator': 'Senior Coordinator',
+                'core_member': 'Core Member',
+                'coordinator': 'Coordinator',
+                'sub_coordinator': 'Sub-Coordinator'
+            };
+            return positions[role] || '-';
+        }
+
         function displayMembers(members) {
             const tbody = document.getElementById('membersTableBody');
             let html = '';
             
             for (const member of members) {
                 const roleClass = `role-${member.role}`;
-                const roleName = member.role?.replace('_', ' ').toUpperCase() || 'UNKNOWN';
+                const roleName = member.role?.replace(/_/g, ' ').toUpperCase() || 'UNKNOWN';
                 const statusClass = member.isActive ? 'status-active' : 'status-inactive';
                 const statusText = member.isActive ? 'Active' : 'Inactive';
                 const lastLogin = member.lastLogin ? new Date(member.lastLogin).toLocaleDateString() : 'Never';
+                const position = member.position || getDefaultPosition(member.role);
                 
                 html += `
                     <tr>
                         <td><strong>${escapeHtml(member.name)}</strong></td>
                         <td>${escapeHtml(member.email)}</td>
                         <td><span class="role-badge ${roleClass}">${roleName}</span></td>
-                        <td>${escapeHtml(member.position || '-')}</td>
+                        <td>${escapeHtml(position)}</td>
                         <td class="${statusClass}">${statusText}</td>
                         <td>${lastLogin}</td>
                         <td class="action-buttons">
@@ -1132,7 +1147,7 @@ C3 Team`;
             if (!newName) return;
             
             const newPosition = prompt('Enter position:', 'Team Member');
-            const newRole = prompt('Enter role (core_member/coordinator/sub_coordinator):', 'sub_coordinator');
+            const newRole = prompt('Enter role (senior_coordinator/core_member/coordinator/sub_coordinator):', 'sub_coordinator');
             
             try {
                 const response = await fetch(`${API_BASE_URL}/api/team/team-members/${memberId}`, {
