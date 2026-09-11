@@ -265,6 +265,7 @@
             from {
                 opacity: 0;
             }
+
             to {
                 opacity: 1;
             }
@@ -344,14 +345,14 @@
             color: white;
         }
 
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 12px;
-        }
-
         .btn-success {
             background: var(--success);
             color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
         }
 
         .action-buttons {
@@ -416,10 +417,12 @@
         }
 
         @keyframes pulse {
+
             0%,
             100% {
                 opacity: 1;
             }
+
             50% {
                 opacity: 0.6;
             }
@@ -585,34 +588,47 @@
             opacity: 0.8;
         }
 
-        .category-color-dot {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 6px;
-            vertical-align: middle;
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
         }
 
-        /* Team Public Preview Image */
-        .tp-preview-img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--primary);
+        .modal.active {
+            display: flex;
         }
 
-        /* Alumni Preview Image */
-        .alumni-preview-img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #ffd700;
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
-        /* Toast Notification */
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-modal {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
         .toast {
             position: fixed;
             top: 20px;
@@ -634,16 +650,12 @@
             background: var(--danger);
         }
 
-        .toast-info {
-            background: var(--primary);
-            color: var(--bg);
-        }
-
         @keyframes slideIn {
             from {
                 transform: translateX(100%);
                 opacity: 0;
             }
+
             to {
                 transform: translateX(0);
                 opacity: 1;
@@ -690,33 +702,6 @@
             .gallery-grid-admin {
                 grid-template-columns: 1fr;
             }
-        }
-
-        .certificates-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-
-        .certificate-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 16px;
-            border: 1px solid var(--border);
-            transition: all 0.3s;
-            text-align: center;
-        }
-
-        .certificate-card:hover {
-            transform: translateY(-3px);
-            border-color: var(--primary);
-        }
-
-        .certificate-icon {
-            font-size: 40px;
-            color: var(--primary);
-            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -871,10 +856,8 @@
             <div id="notificationsPanel" class="panel">
                 <div class="form-card" id="createNotificationCard">
                     <h3 class="form-title">Send Notification</h3>
-                    <div class="form-group"><label>Title</label><input type="text" id="notifTitle"
-                            placeholder="Notification title"></div>
-                    <div class="form-group"><label>Message</label><textarea id="notifMessage" rows="3"
-                            placeholder="Notification message"></textarea></div>
+                    <div class="form-group"><label>Title</label><input type="text" id="notifTitle"></div>
+                    <div class="form-group"><label>Message</label><textarea id="notifMessage" rows="3"></textarea></div>
                     <div class="form-group"><label>Priority Notice</label><select id="notifPriority">
                             <option value="false">Normal</option>
                             <option value="true">Priority</option>
@@ -885,16 +868,11 @@
                             <option value="new">NEW</option>
                             <option value="upcoming">UPCOMING</option>
                         </select></div>
-                    <div class="form-group"><label>Button 1 Text</label><input type="text" id="notifBtn1Text"
-                            placeholder="e.g., Apply Now"></div>
-                    <div class="form-group"><label>Button 1 Link</label><input type="text" id="notifBtn1Link"
-                            placeholder="https://..."></div>
-                    <div class="form-group"><label>Button 2 Text</label><input type="text" id="notifBtn2Text"
-                            placeholder="e.g., Rule Book"></div>
-                    <div class="form-group"><label>Button 2 Link</label><input type="text" id="notifBtn2Link"
-                            placeholder="https://..."></div>
-                    <button class="btn btn-primary" id="sendNotifBtn" onclick="sendNotification()">Send
-                        Notification</button>
+                    <div class="form-group"><label>Button 1 Text</label><input type="text" id="notifBtn1Text"></div>
+                    <div class="form-group"><label>Button 1 Link</label><input type="text" id="notifBtn1Link"></div>
+                    <div class="form-group"><label>Button 2 Text</label><input type="text" id="notifBtn2Text"></div>
+                    <div class="form-group"><label>Button 2 Link</label><input type="text" id="notifBtn2Link"></div>
+                    <button class="btn btn-primary" onclick="sendNotification()">Send Notification</button>
                 </div>
                 <div class="table-container">
                     <h3 style="padding: 16px;">📋 All Notifications</h3>
@@ -923,8 +901,8 @@
                 <div class="form-card" id="uploadImageCard">
                     <h3 class="form-title">📸 Upload New Image</h3>
                     <form id="uploadImageForm" enctype="multipart/form-data">
-                        <div class="form-group"><label>Image Title</label><input type="text" id="imageTitle"
-                                placeholder="Enter image title" required></div>
+                        <div class="form-group"><label>Image Title</label><input type="text" id="imageTitle" required>
+                        </div>
                         <div class="form-group"><label>📁 Category</label><select id="imageCategory">
                                 <option value="events">🎯 Events</option>
                                 <option value="workshops">💻 Workshops</option>
@@ -936,8 +914,8 @@
                                 accept="image/*" required></div>
                         <div id="uploadPreview" style="margin: 15px 0; display: none;"><img id="previewImg"
                                 style="max-width: 200px; border-radius: 8px; border: 2px solid var(--primary);"></div>
-                        <button type="submit" class="btn btn-primary" id="uploadImageBtn"><i
-                                class="fas fa-cloud-upload-alt"></i> Upload to Cloudinary</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-cloud-upload-alt"></i> Upload to
+                            Cloudinary</button>
                     </form>
                 </div>
                 <div class="table-container">
@@ -953,15 +931,14 @@
                 <div class="form-card" id="createCategoryCard">
                     <h3 class="form-title">🏷️ Add New Category</h3>
                     <div class="form-grid">
-                        <div class="form-group"><label>Category Name</label><input type="text" id="catName"
-                                placeholder="e.g., Hackathon, Seminar" required></div>
-                        <div class="form-group"><label>Icon (Emoji)</label><input type="text" id="catIcon"
-                                placeholder="e.g., 🎯, 💻, 🏆" value="📸"></div>
+                        <div class="form-group"><label>Category Name</label><input type="text" id="catName" required>
+                        </div>
+                        <div class="form-group"><label>Icon (Emoji)</label><input type="text" id="catIcon" value="📸">
+                        </div>
                         <div class="form-group"><label>Color</label><input type="color" id="catColor" value="#00f0ff">
                         </div>
                     </div>
-                    <button class="btn btn-primary" id="createCategoryBtn" onclick="createCategory()">➕ Add
-                        Category</button>
+                    <button class="btn btn-primary" onclick="createCategory()">➕ Add Category</button>
                 </div>
                 <div class="table-container">
                     <h3 style="padding: 16px;">📋 All Categories</h3>
@@ -976,10 +953,8 @@
                 <div class="form-card" id="createNavCard">
                     <h3 class="form-title">➕ Add Custom Navigation Item</h3>
                     <div class="form-grid">
-                        <div class="form-group"><label>Item Name *</label><input type="text" id="navName"
-                                placeholder="e.g., Exam, Resources"></div>
-                        <div class="form-group"><label>Link URL *</label><input type="text" id="navLink"
-                                placeholder="https://... or /page.html"></div>
+                        <div class="form-group"><label>Item Name *</label><input type="text" id="navName"></div>
+                        <div class="form-group"><label>Link URL *</label><input type="text" id="navLink"></div>
                         <div class="form-group"><label>Icon</label><select id="navIcon">
                                 <option value="fa-link">🔗 Link</option>
                                 <option value="fa-book">📖 Book</option>
@@ -1000,7 +975,7 @@
                                 <option value="_blank">New Tab</option>
                             </select></div>
                     </div>
-                    <button class="btn btn-primary" id="createNavBtn" onclick="createNavItem()">➕ Add Nav Item</button>
+                    <button class="btn btn-primary" onclick="createNavItem()">➕ Add Nav Item</button>
                 </div>
                 <div class="table-container">
                     <h3 style="padding: 16px;">📋 Custom Navigation Items</h3>
@@ -1022,10 +997,6 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="info-card">
-                    <h4>📌 Static Nav Items (Always Visible)</h4>
-                    <p>Home, Events, Team, Gallery, Notices, Results, Contact, Login</p>
-                </div>
             </div>
 
             <!-- Work Panel -->
@@ -1035,7 +1006,7 @@
                     <form id="assignWorkForm">
                         <div class="form-grid">
                             <div class="form-group"><label>Task Title *</label><input type="text" id="workTitle"
-                                    required placeholder="e.g., Update Event Page"></div>
+                                    required></div>
                             <div class="form-group"><label>Assign To *</label><select id="workAssignedTo" required>
                                     <option value="">Select Team Member</option>
                                 </select></div>
@@ -1048,7 +1019,7 @@
                                     id="workDueDate"></div>
                         </div>
                         <div class="form-group"><label>Description *</label><textarea id="workDescription" rows="4"
-                                required placeholder="Detailed description of the task..."></textarea></div>
+                                required></textarea></div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Assign
                             Work</button>
                     </form>
@@ -1082,20 +1053,41 @@
                 <div class="form-card">
                     <h3 class="form-title"><i class="fas fa-chart-line"></i> Login Statistics</h3>
                     <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
-                        <div class="stat-card"><div class="stat-info"><h4>Total Logins</h4><div class="value" id="totalLogins">-</div></div><div class="stat-icon"><i class="fas fa-users"></i></div></div>
-                        <div class="stat-card"><div class="stat-info"><h4>Today</h4><div class="value" id="todayLogins">-</div></div><div class="stat-icon"><i class="fas fa-calendar-day"></i></div></div>
-                        <div class="stat-card"><div class="stat-info"><h4>This Week</h4><div class="value" id="weekLogins">-</div></div><div class="stat-icon"><i class="fas fa-calendar-week"></i></div></div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h4>Total Logins</h4>
+                                <div class="value" id="totalLogins">-</div>
+                            </div>
+                            <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h4>Today</h4>
+                                <div class="value" id="todayLogins">-</div>
+                            </div>
+                            <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h4>This Week</h4>
+                                <div class="value" id="weekLogins">-</div>
+                            </div>
+                            <div class="stat-icon"><i class="fas fa-calendar-week"></i></div>
+                        </div>
                     </div>
                 </div>
                 <div class="form-card">
                     <h3 class="form-title"><i class="fas fa-filter"></i> Filter Logs</h3>
                     <div class="form-grid">
-                        <div class="form-group"><label>Search by Email</label><input type="text" id="searchLoginEmail" placeholder="user@example.com"></div>
+                        <div class="form-group"><label>Search by Email</label><input type="text" id="searchLoginEmail">
+                        </div>
                         <div class="form-group"><label>Start Date</label><input type="date" id="loginStartDate"></div>
                         <div class="form-group"><label>End Date</label><input type="date" id="loginEndDate"></div>
                     </div>
-                    <button class="btn btn-primary" onclick="filterLoginHistory()"><i class="fas fa-search"></i> Apply Filters</button>
-                    <button class="btn btn-warning" onclick="resetLoginFilters()" style="margin-left: 10px;"><i class="fas fa-undo"></i> Reset</button>
+                    <button class="btn btn-primary" onclick="filterLoginHistory()"><i class="fas fa-search"></i> Apply
+                        Filters</button>
+                    <button class="btn btn-warning" onclick="resetLoginFilters()" style="margin-left: 10px;"><i
+                            class="fas fa-undo"></i> Reset</button>
                 </div>
                 <div class="table-container">
                     <h3 style="padding: 16px;">📋 Login History (All Users)</h3>
@@ -1113,7 +1105,9 @@
                                 </tr>
                             </thead>
                             <tbody id="loginHistoryTableBody">
-                                <tr><td colspan="7" class="loading">Loading login history...</td></tr>
+                                <tr>
+                                    <td colspan="7" class="loading">Loading login history...</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -1125,30 +1119,66 @@
                 <div class="form-card">
                     <h3 class="form-title"><i class="fas fa-clipboard-list"></i> Admin Activity Log</h3>
                     <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
-                        <div class="stat-card"><div class="stat-info"><h4>Total Actions</h4><div class="value" id="totalActions">-</div></div><div class="stat-icon"><i class="fas fa-chart-line"></i></div></div>
-                        <div class="stat-card"><div class="stat-info"><h4>Today</h4><div class="value" id="todayActions">-</div></div><div class="stat-icon"><i class="fas fa-calendar-day"></i></div></div>
-                        <div class="stat-card"><div class="stat-info"><h4>This Week</h4><div class="value" id="weekActions">-</div></div><div class="stat-icon"><i class="fas fa-calendar-week"></i></div></div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h4>Total Actions</h4>
+                                <div class="value" id="totalActions">-</div>
+                            </div>
+                            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h4>Today</h4>
+                                <div class="value" id="todayActions">-</div>
+                            </div>
+                            <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h4>This Week</h4>
+                                <div class="value" id="weekActions">-</div>
+                            </div>
+                            <div class="stat-icon"><i class="fas fa-calendar-week"></i></div>
+                        </div>
                     </div>
                 </div>
                 <div class="form-card">
                     <h3 class="form-title"><i class="fas fa-filter"></i> Filter Activities</h3>
                     <div class="form-grid">
-                        <div class="form-group"><label>Search Admin Email</label><input type="text" id="searchAdminEmail" placeholder="admin@c3.com"></div>
-                        <div class="form-group"><label>Action Type</label><select id="filterAction"><option value="">All Actions</option></select></div>
-                        <div class="form-group"><label>Start Date</label><input type="date" id="activityStartDate"></div>
+                        <div class="form-group"><label>Search Admin Email</label><input type="text"
+                                id="searchAdminEmail"></div>
+                        <div class="form-group"><label>Action Type</label><select id="filterAction">
+                                <option value="">All Actions</option>
+                            </select></div>
+                        <div class="form-group"><label>Start Date</label><input type="date" id="activityStartDate">
+                        </div>
                         <div class="form-group"><label>End Date</label><input type="date" id="activityEndDate"></div>
                     </div>
-                    <button class="btn btn-primary" onclick="filterActivities()"><i class="fas fa-search"></i> Apply Filters</button>
-                    <button class="btn btn-warning" onclick="resetActivityFilters()" style="margin-left: 10px;"><i class="fas fa-undo"></i> Reset</button>
+                    <button class="btn btn-primary" onclick="filterActivities()"><i class="fas fa-search"></i> Apply
+                        Filters</button>
+                    <button class="btn btn-warning" onclick="resetActivityFilters()" style="margin-left: 10px;"><i
+                            class="fas fa-undo"></i> Reset</button>
                 </div>
                 <div class="table-container">
                     <h3 style="padding: 16px;">📋 All Admin Activities</h3>
                     <div style="overflow-x: auto;">
                         <table style="min-width: 800px;">
                             <thead>
-                                <tr><th>Admin</th><th>Action</th><th>Target</th><th>Date & Time</th><th>IP Address</th><th>Device</th><th>Status</th></tr>
+                                <tr>
+                                    <th>Admin</th>
+                                    <th>Action</th>
+                                    <th>Target</th>
+                                    <th>Date & Time</th>
+                                    <th>IP Address</th>
+                                    <th>Device</th>
+                                    <th>Status</th>
+                                </tr>
                             </thead>
-                            <tbody id="activityLogTableBody"><tr><td colspan="7" class="loading">Loading activities...</td></tr></tbody>
+                            <tbody id="activityLogTableBody">
+                                <tr>
+                                    <td colspan="7" class="loading">Loading activities...</td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -1160,69 +1190,81 @@
                     <h3 class="form-title"><i class="fas fa-certificate"></i> Upload Certificate</h3>
                     <form id="uploadCertificateForm" enctype="multipart/form-data">
                         <div class="form-grid">
-                            <div class="form-group"><label>Certificate Title *</label><input type="text" id="certTitle" required placeholder="e.g., Hackathon Winner 2024"></div>
-                            <div class="form-group"><label>Event Name (Optional)</label><input type="text" id="certEvent" placeholder="e.g., Code Clash 2024"></div>
-                            <div class="form-group"><label>Identifier Type *</label><select id="certIdentifierType" required><option value="rollno">Roll Number</option><option value="regno">Registration Number</option></select></div>
-                            <div class="form-group"><label>Identifier Value *</label><input type="text" id="certIdentifier" required placeholder="e.g., 22152159005"></div>
+                            <div class="form-group"><label>Certificate Title *</label><input type="text" id="certTitle"
+                                    required></div>
+                            <div class="form-group"><label>Event Name (Optional)</label><input type="text"
+                                    id="certEvent"></div>
+                            <div class="form-group"><label>Identifier Type *</label><select id="certIdentifierType"
+                                    required>
+                                    <option value="rollno">Roll Number</option>
+                                    <option value="regno">Registration Number</option>
+                                </select></div>
+                            <div class="form-group"><label>Identifier Value *</label><input type="text"
+                                    id="certIdentifier" required></div>
                         </div>
-                        <div class="form-group"><label>Description (Optional)</label><textarea id="certDescription" rows="2" placeholder="Additional details..."></textarea></div>
-                        <div class="form-group"><label>PDF File *</label><input type="file" id="certFile" accept=".pdf" required></div>
-                        <div id="certUploadPreview" style="margin: 15px 0; display: none;"><p><i class="fas fa-file-pdf"></i> <span id="certFileName"></span></p></div>
-                        <button type="submit" class="btn btn-primary"><i class="fas fa-cloud-upload-alt"></i> Upload Certificate</button>
+                        <div class="form-group"><label>Description (Optional)</label><textarea id="certDescription"
+                                rows="2"></textarea></div>
+                        <div class="form-group"><label>PDF File *</label><input type="file" id="certFile" accept=".pdf"
+                                required></div>
+                        <div id="certUploadPreview" style="margin: 15px 0; display: none;">
+                            <p><i class="fas fa-file-pdf"></i> <span id="certFileName"></span></p>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-cloud-upload-alt"></i> Upload
+                            Certificate</button>
                     </form>
                 </div>
                 <div class="table-container">
-                    <h3 style="padding: 16px;"> All Certificates</h3>
+                    <h3 style="padding: 16px;">All Certificates</h3>
                     <div style="overflow-x: auto;">
                         <table style="min-width: 700px;">
-                            <thead><tr><th>Title</th><th>Identifier</th><th>Type</th><th>Event</th><th>Issued Date</th><th>Actions</th></tr></thead>
-                            <tbody id="certificatesTableBody"><tr><td colspan="6" class="loading">Loading certificates...</td></tr></tbody>
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Identifier</th>
+                                    <th>Type</th>
+                                    <th>Event</th>
+                                    <th>Issued Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="certificatesTableBody">
+                                <tr>
+                                    <td colspan="6" class="loading">Loading certificates...</td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- ========== TEAM PUBLIC PANEL ========== -->
+            <!-- TEAM PUBLIC PANEL -->
             <div id="teamPublicPanel" class="panel">
                 <div class="form-card" id="addTeamPublicCard">
                     <h3 class="form-title"><i class="fas fa-user-plus"></i> Add Team Member (Public Page)</h3>
                     <form id="addTeamPublicForm" enctype="multipart/form-data">
                         <div class="form-grid">
-                            <div class="form-group">
-                                <label>Full Name *</label>
-                                <input type="text" id="tpName" required placeholder="Enter full name">
+                            <div class="form-group"><label>Full Name *</label><input type="text" id="tpName" required>
                             </div>
-                            <div class="form-group">
-                                <label>Batch *</label>
-                                <input type="text" id="tpBatch" required placeholder="e.g., 2022-2026">
+                            <div class="form-group"><label>Batch *</label><input type="text" id="tpBatch" required>
                             </div>
-                            <div class="form-group">
-                                <label>Position *</label>
-                                <select id="tpPosition" required>
+                            <div class="form-group"><label>Position *</label><select id="tpPosition" required>
                                     <option value="">Select Position</option>
                                     <option value="Founding Member">🚀 Founding Member</option>
                                     <option value="Senior Coordinator">⭐ Senior Coordinator</option>
                                     <option value="Coordinator">📋 Coordinator</option>
                                     <option value="Sub-Coordinator">🟢 Sub-Coordinator</option>
                                     <option value="Volunteer">🤝 Volunteer</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>LinkedIn URL (Optional)</label>
-                                <input type="url" id="tpLinkedin" placeholder="https://linkedin.com/in/username">
-                            </div>
+                                </select></div>
+                            <div class="form-group"><label>LinkedIn URL (Optional)</label><input type="url"
+                                    id="tpLinkedin"></div>
                         </div>
-                        <div class="form-group">
-                            <label>Photo * (Max 5MB)</label>
-                            <input type="file" id="tpPhoto" accept="image/*" required>
-                        </div>
-                        <div id="tpPreview" style="margin:15px 0;display:none;">
-                            <img id="tpPreviewImg" style="max-width:150px;border-radius:8px;border:2px solid var(--primary);">
-                        </div>
+                        <div class="form-group"><label>Photo * (Max 5MB)</label><input type="file" id="tpPhoto"
+                                accept="image/*" required></div>
+                        <div id="tpPreview" style="margin:15px 0;display:none;"><img id="tpPreviewImg"
+                                style="max-width:150px;border-radius:8px;border:2px solid var(--primary);"></div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Add Member</button>
                     </form>
                 </div>
-
                 <div class="table-container">
                     <h3 style="padding:16px;">📋 Team Members (Public Page)</h3>
                     <div style="overflow-x:auto;">
@@ -1239,47 +1281,37 @@
                                 </tr>
                             </thead>
                             <tbody id="teamPublicTableBody">
-                                <tr><td colspan="7" class="loading">Loading...</td></tr>
+                                <tr>
+                                    <td colspan="7" class="loading">Loading...</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- ========== ALUMNI PANEL ========== -->
+            <!-- ALUMNI PANEL -->
             <div id="alumniPanel" class="panel">
                 <div class="form-card" id="addAlumniCard">
                     <h3 class="form-title"><i class="fas fa-graduation-cap"></i> Add Alumni</h3>
                     <form id="addAlumniForm" enctype="multipart/form-data">
                         <div class="form-grid">
-                            <div class="form-group">
-                                <label>Full Name *</label>
-                                <input type="text" id="alumniName" required placeholder="Enter full name">
+                            <div class="form-group"><label>Full Name *</label><input type="text" id="alumniName"
+                                    required></div>
+                            <div class="form-group"><label>Batch *</label><input type="text" id="alumniBatch" required>
                             </div>
-                            <div class="form-group">
-                                <label>Batch *</label>
-                                <input type="text" id="alumniBatch" required placeholder="e.g., 2020-2024">
-                            </div>
-                            <div class="form-group">
-                                <label>LinkedIn URL (Optional)</label>
-                                <input type="url" id="alumniLinkedin" placeholder="https://linkedin.com/in/username">
-                            </div>
+                            <div class="form-group"><label>LinkedIn URL (Optional)</label><input type="url"
+                                    id="alumniLinkedin"></div>
                         </div>
-                        <div class="form-group">
-                            <label>Description (Optional)</label>
-                            <textarea id="alumniDescription" rows="3" placeholder="Brief description about the alumni..."></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Photo * (Max 5MB)</label>
-                            <input type="file" id="alumniPhoto" accept="image/*" required>
-                        </div>
-                        <div id="alumniPreview" style="margin:15px 0;display:none;">
-                            <img id="alumniPreviewImg" style="max-width:150px;border-radius:8px;border:2px solid #ffd700;">
-                        </div>
+                        <div class="form-group"><label>Description (Optional)</label><textarea id="alumniDescription"
+                                rows="3"></textarea></div>
+                        <div class="form-group"><label>Photo * (Max 5MB)</label><input type="file" id="alumniPhoto"
+                                accept="image/*" required></div>
+                        <div id="alumniPreview" style="margin:15px 0;display:none;"><img id="alumniPreviewImg"
+                                style="max-width:150px;border-radius:8px;border:2px solid #ffd700;"></div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Add Alumni</button>
                     </form>
                 </div>
-
                 <div class="table-container">
                     <h3 style="padding:16px;">📋 Alumni List</h3>
                     <div style="overflow-x:auto;">
@@ -1296,12 +1328,70 @@
                                 </tr>
                             </thead>
                             <tbody id="alumniTableBody">
-                                <tr><td colspan="7" class="loading">Loading...</td></tr>
+                                <tr>
+                                    <td colspan="7" class="loading">Loading...</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
+
+            <!-- WINNERS PANEL -->
+            <div id="winnersPanel" class="panel">
+                <div class="form-card" id="createWinnersCard">
+                    <h3 class="form-title"><i class="fas fa-trophy"></i> Create Winners Section</h3>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Section Heading *</label><input type="text" id="winnersHeading"
+                                placeholder="e.g., QUIZ CLASH WINNERS"></div>
+                        <div class="form-group"><label>Subtitle (Optional)</label><input type="text"
+                                id="winnersSubtitle" placeholder="e.g., October 2024"></div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group"><label><input type="checkbox" id="winnersShowOnHomepage" checked> Show
+                                on Homepage</label></div>
+                        <div class="form-group"><label><input type="checkbox" id="winnersIsPublished"> Publish
+                                Immediately</label></div>
+                    </div>
+                    <button class="btn btn-primary" onclick="createWinnersSection()"><i class="fas fa-save"></i> Create
+                        Section</button>
+                </div>
+                <div class="table-container">
+                    <h3 style="padding: 16px;">📋 All Winners Sections</h3>
+                    <div id="winnersSectionsList" style="padding: 16px;">
+                        <div class="loading">Loading sections...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Winner Modal -->
+    <div id="addWinnerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Add Winner</h3>
+                <span class="close-modal" onclick="closeAddWinnerModal()">&times;</span>
+            </div>
+            <form id="addWinnerForm" enctype="multipart/form-data">
+                <input type="hidden" id="winnerSectionId">
+                <div class="form-group"><label>Name *</label><input type="text" id="winnerName" required></div>
+                <div class="form-group"><label>Roll/Regno *</label><input type="text" id="winnerRollno" required></div>
+                <div class="form-group"><label>Event Name *</label><input type="text" id="winnerEvent" required></div>
+                <div class="form-group"><label>Rank *</label>
+                    <select id="winnerRank" required>
+                        <option value="1st">🥇 1st Place</option>
+                        <option value="2nd">🥈 2nd Place</option>
+                        <option value="3rd">🥉 3rd Place</option>
+                        <option value="special">⭐ Special</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Photo * (Max 5MB)</label><input type="file" id="winnerPhoto"
+                        accept="image/*" required></div>
+                <div id="winnerPhotoPreview" style="margin:15px 0;display:none;"><img id="winnerPhotoPreviewImg"
+                        style="max-width:150px;border-radius:12px;border:2px solid var(--primary);"></div>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Add Winner</button>
+            </form>
         </div>
     </div>
 
@@ -1312,8 +1402,6 @@
 
         var isTeamLogin = !!teamMemberData;
         var API_BASE_ADMIN = API_BASE_URL + '/api/team';
-
-        console.log('Login type:', isTeamLogin ? 'Team (OTP)' : 'Old Admin');
 
         var userPermissions = null;
         var userRole = null;
@@ -1335,16 +1423,10 @@
                     localStorage.setItem('teamMember', JSON.stringify(freshMember));
                     document.getElementById('userNameDisplay').innerHTML = freshMember.name + ' <span style="font-size:10px">(' + (isSuperAdmin ? 'Super Admin' : userRole) + ')</span>';
                     document.getElementById('userRoleBadge').innerHTML = isSuperAdmin ? '👑 Super Admin' : (userRole ? userRole.replace('_', ' ') : 'Team Member');
-                    console.log('✅ Permissions refreshed from server');
                     return true;
-                } else {
-                    console.warn('Failed to fetch fresh permissions, using cached data');
-                    return false;
                 }
-            } catch (error) {
-                console.error('Failed to fetch fresh permissions:', error);
                 return false;
-            }
+            } catch (error) { return false; }
         }
 
         if (teamMemberData) {
@@ -1358,20 +1440,8 @@
                 var badgeEl = document.getElementById('userRoleBadge');
                 if (nameEl) nameEl.innerHTML = member.name + ' <span style="font-size:10px">(' + (isSuperAdmin ? 'Super Admin' : userRole) + ')</span>';
                 if (badgeEl) badgeEl.innerHTML = isSuperAdmin ? '👑 Super Admin' : (userRole ? userRole.replace('_', ' ') : 'Team Member');
-            } catch (e) {
-                isSuperAdmin = true;
-                var nameEl = document.getElementById('userNameDisplay');
-                var badgeEl = document.getElementById('userRoleBadge');
-                if (nameEl) nameEl.innerHTML = 'Admin';
-                if (badgeEl) badgeEl.innerHTML = '👑 Full Admin';
-            }
-        } else {
-            isSuperAdmin = true;
-            var nameEl = document.getElementById('userNameDisplay');
-            var badgeEl = document.getElementById('userRoleBadge');
-            if (nameEl) nameEl.innerHTML = 'Admin';
-            if (badgeEl) badgeEl.innerHTML = '👑 Full Admin';
-        }
+            } catch (e) { isSuperAdmin = true; }
+        } else { isSuperAdmin = true; }
 
         function hasPermission(module, action) {
             if (isSuperAdmin) return true;
@@ -1393,13 +1463,17 @@
             if (teamManagementLink) teamManagementLink.style.display = isSuperAdmin ? 'block' : 'none';
             var uploadCertCard = document.getElementById('uploadCertificateCard');
             if (uploadCertCard) uploadCertCard.style.display = hasPermission('certificates', 'upload') ? 'block' : 'none';
+            if (!hasPermission('winners', 'create') && !isSuperAdmin) {
+                var el = document.getElementById('createWinnersCard');
+                if (el) el.style.display = 'none';
+            }
         }
 
         function buildSidebarMenu() {
             var menuHtml = '';
             menuHtml += '<div class="menu-item active" data-panel="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</div>';
-// Add Form Builder menu (All admins can see)
-menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-edit"></i> Form Builder</div>';
+            menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-edit"></i> Form Builder</div>';
+
             if (hasPermission('events', 'create') || hasPermission('events', 'edit') || hasPermission('events', 'delete')) {
                 menuHtml += '<div class="menu-item" data-panel="events"><i class="fas fa-calendar-alt"></i> Events</div>';
             }
@@ -1435,29 +1509,29 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
                 menuHtml += '<div class="menu-item" data-panel="certificates"><i class="fas fa-certificate"></i> Certificates</div>';
             }
 
-            // ========== Team Public Menu (Super Admin Only) ==========
-            if (isSuperAdmin) {
-                menuHtml += '<div class="menu-item" data-panel="team-public"><i class="fas fa-user-plus"></i> Team Public</div>';
+            if (hasPermission('winners', 'create') || hasPermission('winners', 'edit') || hasPermission('winners', 'delete') || isSuperAdmin) {
+                menuHtml += '<div class="menu-item" data-panel="winners"><i class="fas fa-trophy"></i> Winners Manager</div>';
             }
 
-            // ========== Alumni Menu (Super Admin Only) ==========
             if (isSuperAdmin) {
+                menuHtml += '<div class="menu-item" data-panel="team-public"><i class="fas fa-user-plus"></i> Team Public</div>';
                 menuHtml += '<div class="menu-item" data-panel="alumni"><i class="fas fa-graduation-cap"></i> Alumni</div>';
             }
 
             document.getElementById('sidebarMenu').innerHTML = menuHtml;
 
-            document.querySelectorAll('.menu-item').forEach(function(item) {
-                item.addEventListener('click', function() {
+            document.querySelectorAll('.menu-item').forEach(function (item) {
+                item.addEventListener('click', function () {
                     var panelId = this.dataset.panel;
                     var panelName = this.textContent.trim();
-                    document.querySelectorAll('.menu-item').forEach(function(m) { m.classList.remove('active'); });
+                    document.querySelectorAll('.menu-item').forEach(function (m) { m.classList.remove('active'); });
                     this.classList.add('active');
+
                     if (panelId === 'form-builder') {
-                window.location.href = 'admin-form-builder.html';
-                return;
-            }
-            
+                        window.location.href = 'admin-form-builder.html';
+                        return;
+                    }
+
                     switchPanel(panelId, panelName);
                     if (panelId === 'events') loadEvents();
                     if (panelId === 'members') loadMembers();
@@ -1472,6 +1546,7 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
                     if (panelId === 'dashboard') loadDashboard();
                     if (panelId === 'team-public') loadTeamPublic();
                     if (panelId === 'alumni') loadAlumni();
+                    if (panelId === 'winners') loadWinnersSections();
                 });
             });
         }
@@ -1490,7 +1565,7 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
         function openSidebar() { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
 
         if (mobileMenuToggle) {
-            mobileMenuToggle.addEventListener('click', function(e) {
+            mobileMenuToggle.addEventListener('click', function (e) {
                 e.stopPropagation();
                 if (sidebar.classList.contains('open')) closeSidebar(); else openSidebar();
             });
@@ -1510,7 +1585,8 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
             'login-history': document.getElementById('loginHistoryPanel'),
             'activity-log': document.getElementById('activityLogPanel'),
             'team-public': document.getElementById('teamPublicPanel'),
-            'alumni': document.getElementById('alumniPanel')
+            'alumni': document.getElementById('alumniPanel'),
+            'winners': document.getElementById('winnersPanel')
         };
         var pageTitle = document.getElementById('pageTitle');
 
@@ -1533,9 +1609,9 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
                 var eventsArray = Array.isArray(events) ? events : (events.events || []);
                 document.getElementById('totalMembers').textContent = membersArray.length;
                 document.getElementById('totalEvents').textContent = eventsArray.length;
-                var verifiedCount = membersArray.filter(function(m) { return m.isverified === true; }).length;
+                var verifiedCount = membersArray.filter(function (m) { return m.isverified === true; }).length;
                 document.getElementById('verifiedMembers').textContent = verifiedCount;
-                var activeCount = eventsArray.filter(function(e) { return e.isOpen === true; }).length;
+                var activeCount = eventsArray.filter(function (e) { return e.isOpen === true; }).length;
                 document.getElementById('activeEvents').textContent = activeCount;
             } catch (error) { console.error('Dashboard error:', error); }
         }
@@ -1580,7 +1656,7 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
 
         var createEventForm = document.getElementById('createEventForm');
         if (createEventForm) {
-            createEventForm.addEventListener('submit', async function(e) {
+            createEventForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 if (!hasPermission('events', 'create')) { alert('No permission to create events'); return; }
                 var eventData = {
@@ -1605,7 +1681,7 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
             });
         }
 
-        window.deleteEvent = async function(id) {
+        window.deleteEvent = async function (id) {
             if (!hasPermission('events', 'delete')) { alert('No permission'); return; }
             if (confirm('Delete this event?')) {
                 await fetch(API_BASE_ADMIN + '/events/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } });
@@ -1614,7 +1690,7 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
             }
         };
 
-        window.toggleEventStatus = async function(id, status) {
+        window.toggleEventStatus = async function (id, status) {
             if (!hasPermission('events', 'edit')) { alert('No permission'); return; }
             await fetch(API_BASE_ADMIN + '/events/' + id, {
                 method: 'PUT',
@@ -1670,7 +1746,7 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
             tbody.innerHTML = html;
         }
 
-        window.deleteUser = async function(id) {
+        window.deleteUser = async function (id) {
             if (!hasPermission('members', 'delete')) { alert('No permission'); return; }
             if (confirm('Delete this user?')) {
                 await fetch(API_BASE_ADMIN + '/users/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } });
@@ -1681,7 +1757,7 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
 
         var searchMemberInput = document.getElementById('searchMember');
         if (searchMemberInput) {
-            searchMemberInput.addEventListener('input', async function(e) {
+            searchMemberInput.addEventListener('input', async function (e) {
                 var search = e.target.value;
                 try {
                     var response = await fetch(API_BASE_ADMIN + '/users?search=' + encodeURIComponent(search), { headers: { 'Authorization': 'Bearer ' + adminToken } });
@@ -1730,16 +1806,16 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
             }
         }
 
-        window.sendNotification = async function() {
+        window.sendNotification = async function () {
             if (!hasPermission('notifications', 'create')) { alert('No permission'); return; }
-            var title = document.getElementById('notifTitle') ? document.getElementById('notifTitle').value : '';
-            var message = document.getElementById('notifMessage') ? document.getElementById('notifMessage').value : '';
-            var isPriority = document.getElementById('notifPriority') ? document.getElementById('notifPriority').value === 'true' : false;
-            var badge = document.getElementById('notifBadge') ? document.getElementById('notifBadge').value : 'none';
-            var b1t = document.getElementById('notifBtn1Text') ? document.getElementById('notifBtn1Text').value : '';
-            var b1l = document.getElementById('notifBtn1Link') ? document.getElementById('notifBtn1Link').value : '';
-            var b2t = document.getElementById('notifBtn2Text') ? document.getElementById('notifBtn2Text').value : '';
-            var b2l = document.getElementById('notifBtn2Link') ? document.getElementById('notifBtn2Link').value : '';
+            var title = document.getElementById('notifTitle').value;
+            var message = document.getElementById('notifMessage').value;
+            var isPriority = document.getElementById('notifPriority').value === 'true';
+            var badge = document.getElementById('notifBadge').value;
+            var b1t = document.getElementById('notifBtn1Text').value;
+            var b1l = document.getElementById('notifBtn1Link').value;
+            var b2t = document.getElementById('notifBtn2Text').value;
+            var b2l = document.getElementById('notifBtn2Link').value;
             if (!title || !message) { alert('Please fill title and message'); return; }
             try {
                 var response = await fetch(API_BASE_ADMIN + '/notifications/create', {
@@ -1749,20 +1825,18 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
                 });
                 if (response.ok) {
                     alert('Notification sent!');
-                    ['notifTitle', 'notifMessage', 'notifBtn1Text', 'notifBtn1Link', 'notifBtn2Text', 'notifBtn2Link'].forEach(function(id) {
+                    ['notifTitle', 'notifMessage', 'notifBtn1Text', 'notifBtn1Link', 'notifBtn2Text', 'notifBtn2Link'].forEach(function (id) {
                         var el = document.getElementById(id);
                         if (el) el.value = '';
                     });
-                    var notifPriority = document.getElementById('notifPriority');
-                    if (notifPriority) notifPriority.value = 'false';
-                    var notifBadge = document.getElementById('notifBadge');
-                    if (notifBadge) notifBadge.value = 'none';
+                    document.getElementById('notifPriority').value = 'false';
+                    document.getElementById('notifBadge').value = 'none';
                     loadNotifications();
                 } else { alert('Failed'); }
             } catch (error) { alert('Error'); }
         };
 
-        window.deleteNotification = async function(id) {
+        window.deleteNotification = async function (id) {
             if (!hasPermission('notifications', 'delete')) { alert('No permission'); return; }
             if (confirm('Delete this notification?')) {
                 await fetch(API_BASE_ADMIN + '/notifications/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } });
@@ -1809,13 +1883,13 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
             }
         }
 
-        window.createNavItem = async function() {
+        window.createNavItem = async function () {
             if (!hasPermission('navItems', 'create')) { alert('No permission to create nav items'); return; }
-            var name = document.getElementById('navName') ? document.getElementById('navName').value : '';
-            var link = document.getElementById('navLink') ? document.getElementById('navLink').value : '';
-            var icon = document.getElementById('navIcon') ? document.getElementById('navIcon').value : '';
-            var badge = document.getElementById('navBadge') ? document.getElementById('navBadge').value : 'none';
-            var target = document.getElementById('navTarget') ? document.getElementById('navTarget').value : '_self';
+            var name = document.getElementById('navName').value;
+            var link = document.getElementById('navLink').value;
+            var icon = document.getElementById('navIcon').value;
+            var badge = document.getElementById('navBadge').value;
+            var target = document.getElementById('navTarget').value;
             if (!name || !link) { alert('Please fill Name and Link'); return; }
             if (!link.startsWith('http://') && !link.startsWith('https://') && !link.startsWith('/') && !link.startsWith('#')) link = 'https://' + link;
             try {
@@ -1833,7 +1907,7 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
             } catch (error) { alert('Error'); }
         };
 
-        window.editNavItem = async function(id) {
+        window.editNavItem = async function (id) {
             if (!hasPermission('navItems', 'edit')) { alert('No permission'); return; }
             var newName = prompt('Edit Item Name:');
             if (!newName) return;
@@ -1852,7 +1926,7 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
             loadNavItems();
         };
 
-        window.deleteNavItem = async function(id) {
+        window.deleteNavItem = async function (id) {
             if (!hasPermission('navItems', 'delete')) { alert('No permission'); return; }
             if (confirm('Delete this nav item?')) {
                 await fetch(API_BASE_ADMIN + '/nav-items/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } });
@@ -1929,7 +2003,7 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
             if (categories && Array.isArray(categories)) {
                 for (var i = 0; i < categories.length; i++) {
                     var cat = categories[i];
-                    var isStatic = staticCats.some(function(s) { return s.name === cat.name; });
+                    var isStatic = staticCats.some(function (s) { return s.name === cat.name; });
                     if (!isStatic && cat.name) {
                         options += '<option value="' + cat.name + '"' + (cat.name === selectedCategory ? ' selected' : '') + '>' + (cat.icon || '') + ' ' + cat.name + '</option>';
                     }
@@ -1976,7 +2050,7 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
 
         var uploadForm = document.getElementById('uploadImageForm');
         if (uploadForm) {
-            uploadForm.addEventListener('submit', async function(e) {
+            uploadForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 if (!hasPermission('gallery', 'upload')) { alert('No permission to upload images'); return; }
                 var title = document.getElementById('imageTitle').value;
@@ -2008,12 +2082,12 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
 
         var imageFileInput = document.getElementById('imageFile');
         if (imageFileInput) {
-            imageFileInput.addEventListener('change', function() {
+            imageFileInput.addEventListener('change', function () {
                 var preview = document.getElementById('uploadPreview');
                 var previewImg = document.getElementById('previewImg');
                 if (this.files && this.files[0]) {
                     var reader = new FileReader();
-                    reader.onload = function(ev) {
+                    reader.onload = function (ev) {
                         previewImg.src = ev.target.result;
                         preview.style.display = 'block';
                     };
@@ -2022,7 +2096,7 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
             });
         }
 
-        window.updateImage = async function(id) {
+        window.updateImage = async function (id) {
             if (!hasPermission('gallery', 'upload')) { alert('No permission to update'); return; }
             var newTitle = document.getElementById('edit-title-' + id).value;
             var newCategory = document.getElementById('edit-category-' + id).value;
@@ -2038,7 +2112,7 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
             } catch (error) { alert('Error updating'); }
         };
 
-        window.deleteGalleryImage = async function(id) {
+        window.deleteGalleryImage = async function (id) {
             if (!hasPermission('gallery', 'delete')) { alert('No permission to delete'); return; }
             if (confirm('Delete this image?')) {
                 try {
@@ -2078,8 +2152,8 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
                 var cat = categories[i];
                 var actions = '';
                 if (canEdit) {
-                    actions += '<input type="text" id="edit-cat-name-' + cat._id + '" class="edit-title" placeholder="Name" value="' + escapeHtml(cat.name) + '">' +
-                        '<input type="text" id="edit-cat-icon-' + cat._id + '" class="edit-title" placeholder="Icon" value="' + escapeHtml(cat.icon) + '">' +
+                    actions += '<input type="text" id="edit-cat-name-' + cat._id + '" class="edit-title" value="' + escapeHtml(cat.name) + '">' +
+                        '<input type="text" id="edit-cat-icon-' + cat._id + '" class="edit-title" value="' + escapeHtml(cat.icon) + '">' +
                         '<input type="color" id="edit-cat-color-' + cat._id + '" class="edit-title" value="' + escapeHtml(cat.color) + '">' +
                         '<button class="update-image-btn" onclick="updateCategory(\'' + cat._id + '\')">Update</button>';
                 }
@@ -2090,18 +2164,17 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
                     '<div class="title" style="font-size:32px;text-align:center;">' + escapeHtml(cat.icon) + '</div>' +
                     '<div class="title"><strong>' + escapeHtml(cat.name) + '</strong></div>' +
                     '<div class="date">Created: ' + new Date(cat.createdAt).toLocaleDateString() + '</div>' +
-                    '<div style="width:40px;height:4px;background:' + escapeHtml(cat.color) + ';margin:8px auto;border-radius:2px;"></div>' +
                     actions +
                     '</div></div>';
             }
             container.innerHTML = html;
         }
 
-        window.createCategory = async function() {
+        window.createCategory = async function () {
             if (!hasPermission('categories', 'create')) { alert('No permission to create categories'); return; }
-            var name = document.getElementById('catName') ? document.getElementById('catName').value : '';
-            var icon = document.getElementById('catIcon') ? document.getElementById('catIcon').value : '';
-            var color = document.getElementById('catColor') ? document.getElementById('catColor').value : '#00f0ff';
+            var name = document.getElementById('catName').value;
+            var icon = document.getElementById('catIcon').value;
+            var color = document.getElementById('catColor').value;
             if (!name) { alert('Please enter category name'); return; }
             try {
                 var response = await fetch(API_BASE_ADMIN + '/categories', {
@@ -2122,7 +2195,7 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
             } catch (error) { alert('Error creating category'); }
         };
 
-        window.updateCategory = async function(id) {
+        window.updateCategory = async function (id) {
             if (!hasPermission('categories', 'edit')) { alert('No permission'); return; }
             var name = document.getElementById('edit-cat-name-' + id).value;
             var icon = document.getElementById('edit-cat-icon-' + id).value;
@@ -2139,7 +2212,7 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
             } catch (error) { alert('Error updating'); }
         };
 
-        window.deleteCategory = async function(id) {
+        window.deleteCategory = async function (id) {
             if (!hasPermission('categories', 'delete')) { alert('No permission'); return; }
             if (confirm('Delete this category?')) {
                 try {
@@ -2188,8 +2261,6 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
                     tbody.innerHTML = '<td><td colspan="6" class="empty-state">No tasks found<\/td><\/tr>';
                     return;
                 }
-                var tasksTitle = document.getElementById('tasksTitle');
-                if (tasksTitle) tasksTitle.innerHTML = isSuperAdmin ? '📋 All Tasks' : '📋 My Tasks';
                 var html = '';
                 for (var i = 0; i < tasks.length; i++) {
                     var task = tasks[i];
@@ -2221,7 +2292,7 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
 
         var assignWorkForm = document.getElementById('assignWorkForm');
         if (assignWorkForm) {
-            assignWorkForm.addEventListener('submit', async function(e) {
+            assignWorkForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 if (!isSuperAdmin) { alert('Only Super Admin can assign work'); return; }
                 var workData = {
@@ -2242,7 +2313,7 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
                         body: JSON.stringify(workData)
                     });
                     if (response.ok) {
-                        alert('Work assigned successfully! Email notification sent.');
+                        alert('Work assigned successfully!');
                         assignWorkForm.reset();
                         loadTasks();
                         loadTeamMembersForAssign();
@@ -2255,7 +2326,7 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
             });
         }
 
-        window.updateTaskStatus = async function(taskId, newStatus) {
+        window.updateTaskStatus = async function (taskId, newStatus) {
             try {
                 var response = await fetch(API_BASE_ADMIN + '/work/' + taskId + '/status', {
                     method: 'PUT',
@@ -2267,7 +2338,7 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
             } catch (error) { alert('Error: ' + error.message); }
         };
 
-        window.deleteTask = async function(taskId) {
+        window.deleteTask = async function (taskId) {
             if (!confirm('Delete this task?')) return;
             try {
                 var response = await fetch(API_BASE_ADMIN + '/work/' + taskId, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } });
@@ -2287,7 +2358,6 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
                 var certificates = await response.json();
                 displayCertificatesTable(certificates);
             } catch (error) {
-                console.error('Error loading certificates:', error);
                 tbody.innerHTML = '<tr><td colspan="6" class="loading">Failed to load certificates<\/td><\/tr>';
             }
         }
@@ -2317,9 +2387,9 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
 
         var uploadCertForm = document.getElementById('uploadCertificateForm');
         if (uploadCertForm) {
-            uploadCertForm.addEventListener('submit', async function(e) {
+            uploadCertForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
-                if (!hasPermission('certificates', 'upload')) { alert('You do not have permission to upload certificates'); return; }
+                if (!hasPermission('certificates', 'upload')) { alert('No permission'); return; }
                 var title = document.getElementById('certTitle').value;
                 var desc = document.getElementById('certDescription').value;
                 var ident = document.getElementById('certIdentifier').value;
@@ -2355,7 +2425,7 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
 
         var certFileInput = document.getElementById('certFile');
         if (certFileInput) {
-            certFileInput.addEventListener('change', function() {
+            certFileInput.addEventListener('change', function () {
                 var preview = document.getElementById('certUploadPreview');
                 var fnSpan = document.getElementById('certFileName');
                 if (this.files && this.files[0]) {
@@ -2367,9 +2437,9 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
             });
         }
 
-        window.deleteCertificate = async function(id) {
-            if (!hasPermission('certificates', 'delete')) { alert('You do not have permission to delete certificates'); return; }
-            if (!confirm('Delete this certificate? This action cannot be undone.')) return;
+        window.deleteCertificate = async function (id) {
+            if (!hasPermission('certificates', 'delete')) { alert('No permission'); return; }
+            if (!confirm('Delete this certificate?')) return;
             try {
                 var response = await fetch(API_BASE_ADMIN + '/certificates/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } });
                 if (response.ok) { alert('Certificate deleted successfully'); loadCertificates(); }
@@ -2394,16 +2464,12 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
                 if (!response.ok) throw new Error('Failed to load login history');
                 var data = await response.json();
                 if (data.stats) {
-                    var totalEl = document.getElementById('totalLogins');
-                    var todayEl = document.getElementById('todayLogins');
-                    var weekEl = document.getElementById('weekLogins');
-                    if (totalEl) totalEl.textContent = data.stats.total || 0;
-                    if (todayEl) todayEl.textContent = data.stats.today || 0;
-                    if (weekEl) weekEl.textContent = data.stats.thisWeek || 0;
+                    document.getElementById('totalLogins').textContent = data.stats.total || 0;
+                    document.getElementById('todayLogins').textContent = data.stats.today || 0;
+                    document.getElementById('weekLogins').textContent = data.stats.thisWeek || 0;
                 }
                 displayLoginHistoryTable(data.history || []);
             } catch (error) {
-                console.error('Error loading login history:', error);
                 tbody.innerHTML = '<tr><td colspan="7" class="loading">Failed to load login history<\/td><\/tr>';
             }
         }
@@ -2433,19 +2499,17 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
 
         function filterLoginHistory() {
             var filters = {
-                email: document.getElementById('searchLoginEmail') ? document.getElementById('searchLoginEmail').value : '',
-                startDate: document.getElementById('loginStartDate') ? document.getElementById('loginStartDate').value : '',
-                endDate: document.getElementById('loginEndDate') ? document.getElementById('loginEndDate').value : ''
+                email: document.getElementById('searchLoginEmail').value,
+                startDate: document.getElementById('loginStartDate').value,
+                endDate: document.getElementById('loginEndDate').value
             };
             loadLoginHistory(filters);
         }
 
         function resetLoginFilters() {
-            var ids = ['searchLoginEmail', 'loginStartDate', 'loginEndDate'];
-            for (var i = 0; i < ids.length; i++) {
-                var el = document.getElementById(ids[i]);
-                if (el) el.value = '';
-            }
+            document.getElementById('searchLoginEmail').value = '';
+            document.getElementById('loginStartDate').value = '';
+            document.getElementById('loginEndDate').value = '';
             loadLoginHistory({});
         }
 
@@ -2467,12 +2531,9 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
                 if (!response.ok) throw new Error('Failed to load activity log');
                 var data = await response.json();
                 if (data.stats) {
-                    var totalEl = document.getElementById('totalActions');
-                    var todayEl = document.getElementById('todayActions');
-                    var weekEl = document.getElementById('weekActions');
-                    if (totalEl) totalEl.textContent = data.stats.total || 0;
-                    if (todayEl) todayEl.textContent = data.stats.today || 0;
-                    if (weekEl) weekEl.textContent = data.stats.thisWeek || 0;
+                    document.getElementById('totalActions').textContent = data.stats.total || 0;
+                    document.getElementById('todayActions').textContent = data.stats.today || 0;
+                    document.getElementById('weekActions').textContent = data.stats.thisWeek || 0;
                 }
                 if (data.actionTypes && data.actionTypes.length > 0) {
                     var actionSelect = document.getElementById('filterAction');
@@ -2487,7 +2548,6 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
                 }
                 displayActivityLogTable(data.logs || []);
             } catch (error) {
-                console.error('Error loading activity log:', error);
                 tbody.innerHTML = '<tr><td colspan="7" class="loading">Failed to load activities<\/td><\/tr>';
             }
         }
@@ -2521,412 +2581,441 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
 
         function filterActivities() {
             var filters = {
-                adminEmail: document.getElementById('searchAdminEmail') ? document.getElementById('searchAdminEmail').value : '',
-                action: document.getElementById('filterAction') ? document.getElementById('filterAction').value : '',
-                startDate: document.getElementById('activityStartDate') ? document.getElementById('activityStartDate').value : '',
-                endDate: document.getElementById('activityEndDate') ? document.getElementById('activityEndDate').value : ''
+                adminEmail: document.getElementById('searchAdminEmail').value,
+                action: document.getElementById('filterAction').value,
+                startDate: document.getElementById('activityStartDate').value,
+                endDate: document.getElementById('activityEndDate').value
             };
             loadActivityLog(filters);
         }
 
         function resetActivityFilters() {
-            var ids = ['searchAdminEmail', 'filterAction', 'activityStartDate', 'activityEndDate'];
-            for (var i = 0; i < ids.length; i++) {
-                var el = document.getElementById(ids[i]);
-                if (el) el.value = '';
-            }
+            document.getElementById('searchAdminEmail').value = '';
+            document.getElementById('filterAction').value = '';
+            document.getElementById('activityStartDate').value = '';
+            document.getElementById('activityEndDate').value = '';
             loadActivityLog({});
         }
 
-        // ========== TEAM PUBLIC FUNCTIONS ==========
-
-        // Load team public members
+        // ========== TEAM PUBLIC ==========
         async function loadTeamPublic() {
             var tbody = document.getElementById('teamPublicTableBody');
             if (!tbody) return;
-            
             tbody.innerHTML = '<tr><td colspan="7" class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>';
-            
             try {
-                var response = await fetch(API_BASE_ADMIN + '/team-public', {
-                    headers: { 'Authorization': 'Bearer ' + adminToken }
-                });
-                
+                var response = await fetch(API_BASE_ADMIN + '/team-public', { headers: { 'Authorization': 'Bearer ' + adminToken } });
                 if (!response.ok) throw new Error('Failed to load');
-                
                 var members = await response.json();
                 displayTeamPublic(members);
             } catch (error) {
-                console.error('Error loading team public:', error);
                 tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Failed to load members</td></tr>';
             }
         }
 
         function displayTeamPublic(members) {
             var tbody = document.getElementById('teamPublicTableBody');
-            if (!tbody) return;
-            
             if (!members || members.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No members added yet</td></tr>';
                 return;
             }
-            
             var html = '';
             for (var i = 0; i < members.length; i++) {
                 var m = members[i];
                 var statusClass = m.isActive ? 'status-open' : 'status-closed';
                 var statusText = m.isActive ? 'Active' : 'Inactive';
-                html += `
-                    <tr>
-                        <td>
-                            <img src="${m.photo}" 
-                                 style="width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);" 
-                                 onerror="this.src='assets/img/default-avatar.png'">
-                        </td>
-                        <td><strong>${escapeHtml(m.name)}</strong></td>
-                        <td><span class="status-badge" style="background:var(--primary);color:white;">${escapeHtml(m.position)}</span></td>
-                        <td>${escapeHtml(m.batch)}</td>
-                        <td>${m.linkedin ? `<a href="${m.linkedin}" target="_blank"><i class="fab fa-linkedin" style="color:var(--primary);font-size:1.2rem;"></i></a>` : '-'}</td>
-                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                        <td class="action-buttons">
-                            <button class="btn btn-warning btn-sm" onclick="editTeamPublic('${m._id}')"><i class="fas fa-edit"></i> Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteTeamPublic('${m._id}')"><i class="fas fa-trash"></i> Delete</button>
-                        </td>
-                    </tr>
-                `;
+                html += `<tr>
+                    <td><img src="${m.photo}" style="width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);" onerror="this.src='assets/img/default-avatar.png'"></td>
+                    <td><strong>${escapeHtml(m.name)}</strong></td>
+                    <td><span class="status-badge" style="background:var(--primary);color:white;">${escapeHtml(m.position)}</span></td>
+                    <td>${escapeHtml(m.batch)}</td>
+                    <td>${m.linkedin ? `<a href="${m.linkedin}" target="_blank"><i class="fab fa-linkedin" style="color:var(--primary);font-size:1.2rem;"></i></a>` : '-'}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td class="action-buttons">
+                        <button class="btn btn-warning btn-sm" onclick="editTeamPublic('${m._id}')"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteTeamPublic('${m._id}')"><i class="fas fa-trash"></i> Delete</button>
+                    </td>
+                </tr>`;
             }
             tbody.innerHTML = html;
         }
 
-        // Add team member
         var addTeamPublicForm = document.getElementById('addTeamPublicForm');
         if (addTeamPublicForm) {
-            addTeamPublicForm.addEventListener('submit', async function(e) {
+            addTeamPublicForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
-                
                 var name = document.getElementById('tpName').value.trim();
                 var position = document.getElementById('tpPosition').value;
                 var batch = document.getElementById('tpBatch').value.trim();
                 var linkedin = document.getElementById('tpLinkedin').value.trim();
                 var photo = document.getElementById('tpPhoto').files[0];
-                
-                if (!name || !position || !batch || !photo) {
-                    alert('Please fill all required fields and select a photo');
-                    return;
-                }
-                
+                if (!name || !position || !batch || !photo) { alert('Please fill all fields'); return; }
                 var fd = new FormData();
                 fd.append('name', name);
                 fd.append('position', position);
                 fd.append('batch', batch);
                 fd.append('linkedin', linkedin || '');
                 fd.append('photo', photo);
-                
                 var btn = this.querySelector('button[type="submit"]');
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
-                
                 try {
-                    var response = await fetch(API_BASE_ADMIN + '/team-public', {
-                        method: 'POST',
-                        headers: { 'Authorization': 'Bearer ' + adminToken },
-                        body: fd
-                    });
-                    
+                    var response = await fetch(API_BASE_ADMIN + '/team-public', { method: 'POST', headers: { 'Authorization': 'Bearer ' + adminToken }, body: fd });
                     var data = await response.json();
-                    
                     if (response.ok) {
-                        alert('✅ Team member added successfully!');
+                        alert('✅ Team member added!');
                         this.reset();
                         document.getElementById('tpPreview').style.display = 'none';
                         loadTeamPublic();
-                    } else {
-                        alert('❌ ' + (data.message || 'Failed to add member'));
-                    }
-                } catch (error) {
-                    console.error('Error adding team public:', error);
-                    alert('❌ Error: ' + error.message);
-                }
-                
+                    } else { alert('❌ ' + (data.message || 'Failed')); }
+                } catch (error) { alert('❌ ' + error.message); }
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-save"></i> Add Member';
             });
         }
 
-        // Photo preview for team public
-        document.getElementById('tpPhoto')?.addEventListener('change', function() {
+        document.getElementById('tpPhoto')?.addEventListener('change', function () {
             var preview = document.getElementById('tpPreview');
             var img = document.getElementById('tpPreviewImg');
             if (this.files && this.files[0]) {
                 var reader = new FileReader();
-                reader.onload = function(e) {
-                    img.src = e.target.result;
-                    preview.style.display = 'block';
-                };
+                reader.onload = function (e) { img.src = e.target.result; preview.style.display = 'block'; };
                 reader.readAsDataURL(this.files[0]);
-            } else {
-                preview.style.display = 'none';
-            }
+            } else { preview.style.display = 'none'; }
         });
 
-        // Edit team member
-        window.editTeamPublic = async function(id) {
+        window.editTeamPublic = async function (id) {
             var newName = prompt('Enter new name:');
             if (!newName) return;
-            
             var newPosition = prompt('Enter position (Founding Member/Senior Coordinator/Coordinator/Sub-Coordinator/Volunteer):');
             if (!newPosition) return;
-            
-            var newBatch = prompt('Enter batch (e.g., 2022-2026):');
+            var newBatch = prompt('Enter batch:');
             if (!newBatch) return;
-            
-            var newLinkedin = prompt('Enter LinkedIn URL (or leave empty):') || '';
-            
+            var newLinkedin = prompt('Enter LinkedIn URL:') || '';
             try {
                 var response = await fetch(API_BASE_ADMIN + '/team-public/' + id, {
                     method: 'PUT',
-                    headers: {
-                        'Authorization': 'Bearer ' + adminToken,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        name: newName,
-                        position: newPosition,
-                        batch: newBatch,
-                        linkedin: newLinkedin
-                    })
+                    headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: newName, position: newPosition, batch: newBatch, linkedin: newLinkedin })
                 });
-                
-                if (response.ok) {
-                    alert('✅ Member updated successfully!');
-                    loadTeamPublic();
-                } else {
-                    var data = await response.json();
-                    alert('❌ ' + (data.message || 'Failed to update'));
-                }
-            } catch (error) {
-                console.error('Error updating team public:', error);
-                alert('❌ Error: ' + error.message);
-            }
+                if (response.ok) { alert('✅ Updated!'); loadTeamPublic(); }
+            } catch (error) { alert('❌ ' + error.message); }
         };
 
-        // Delete team member
-        window.deleteTeamPublic = async function(id) {
-            if (!confirm('⚠️ Are you sure you want to delete this member?')) return;
-            
+        window.deleteTeamPublic = async function (id) {
+            if (!confirm('Delete this member?')) return;
             try {
-                var response = await fetch(API_BASE_ADMIN + '/team-public/' + id, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': 'Bearer ' + adminToken }
-                });
-                
-                if (response.ok) {
-                    alert('✅ Member deleted successfully!');
-                    loadTeamPublic();
-                } else {
-                    var data = await response.json();
-                    alert('❌ ' + (data.message || 'Failed to delete'));
-                }
-            } catch (error) {
-                console.error('Error deleting team public:', error);
-                alert('❌ Error: ' + error.message);
-            }
+                var response = await fetch(API_BASE_ADMIN + '/team-public/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } });
+                if (response.ok) { alert('✅ Deleted!'); loadTeamPublic(); }
+            } catch (error) { alert('❌ ' + error.message); }
         };
 
-        // ========== ALUMNI FUNCTIONS ==========
-
-        // Load alumni
+        // ========== ALUMNI ==========
         async function loadAlumni() {
             var tbody = document.getElementById('alumniTableBody');
             if (!tbody) return;
-            
             tbody.innerHTML = '<tr><td colspan="7" class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>';
-            
             try {
-                var response = await fetch(API_BASE_ADMIN + '/alumni', {
-                    headers: { 'Authorization': 'Bearer ' + adminToken }
-                });
-                
+                var response = await fetch(API_BASE_ADMIN + '/alumni', { headers: { 'Authorization': 'Bearer ' + adminToken } });
                 if (!response.ok) throw new Error('Failed to load');
-                
                 var alumni = await response.json();
                 displayAlumni(alumni);
             } catch (error) {
-                console.error('Error loading alumni:', error);
                 tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Failed to load alumni</td></tr>';
             }
         }
 
         function displayAlumni(alumni) {
             var tbody = document.getElementById('alumniTableBody');
-            if (!tbody) return;
-            
             if (!alumni || alumni.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No alumni added yet</td></tr>';
                 return;
             }
-            
             var html = '';
             for (var i = 0; i < alumni.length; i++) {
                 var a = alumni[i];
                 var statusClass = a.isActive ? 'status-open' : 'status-closed';
                 var statusText = a.isActive ? 'Active' : 'Inactive';
                 var desc = a.description ? a.description.substring(0, 50) + (a.description.length > 50 ? '...' : '') : '-';
-                
-                html += `
-                    <tr>
-                        <td>
-                            <img src="${a.photo}" 
-                                 style="width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid #ffd700;" 
-                                 onerror="this.src='assets/img/default-avatar.png'">
-                        </td>
-                        <td><strong>${escapeHtml(a.name)}</strong></td>
-                        <td>${escapeHtml(a.batch)}</td>
-                        <td>${escapeHtml(desc)}</td>
-                        <td>${a.linkedin ? `<a href="${a.linkedin}" target="_blank"><i class="fab fa-linkedin" style="color:var(--primary);font-size:1.2rem;"></i></a>` : '-'}</td>
-                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                        <td class="action-buttons">
-                            <button class="btn btn-warning btn-sm" onclick="editAlumni('${a._id}')"><i class="fas fa-edit"></i> Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteAlumni('${a._id}')"><i class="fas fa-trash"></i> Delete</button>
-                        </td>
-                    </tr>
-                `;
+                html += `<tr>
+                    <td><img src="${a.photo}" style="width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid #ffd700;" onerror="this.src='assets/img/default-avatar.png'"></td>
+                    <td><strong>${escapeHtml(a.name)}</strong></td>
+                    <td>${escapeHtml(a.batch)}</td>
+                    <td>${escapeHtml(desc)}</td>
+                    <td>${a.linkedin ? `<a href="${a.linkedin}" target="_blank"><i class="fab fa-linkedin" style="color:var(--primary);font-size:1.2rem;"></i></a>` : '-'}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td class="action-buttons">
+                        <button class="btn btn-warning btn-sm" onclick="editAlumni('${a._id}')"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteAlumni('${a._id}')"><i class="fas fa-trash"></i> Delete</button>
+                    </td>
+                </tr>`;
             }
             tbody.innerHTML = html;
         }
 
-        // Add alumni
         var addAlumniForm = document.getElementById('addAlumniForm');
         if (addAlumniForm) {
-            addAlumniForm.addEventListener('submit', async function(e) {
+            addAlumniForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
-                
                 var name = document.getElementById('alumniName').value.trim();
                 var batch = document.getElementById('alumniBatch').value.trim();
                 var linkedin = document.getElementById('alumniLinkedin').value.trim();
                 var description = document.getElementById('alumniDescription').value.trim();
                 var photo = document.getElementById('alumniPhoto').files[0];
-                
-                if (!name || !batch || !photo) {
-                    alert('Please fill all required fields and select a photo');
-                    return;
-                }
-                
+                if (!name || !batch || !photo) { alert('Please fill all fields'); return; }
                 var fd = new FormData();
                 fd.append('name', name);
                 fd.append('batch', batch);
                 fd.append('linkedin', linkedin || '');
                 fd.append('description', description || '');
                 fd.append('photo', photo);
-                
                 var btn = this.querySelector('button[type="submit"]');
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
-                
                 try {
-                    var response = await fetch(API_BASE_ADMIN + '/alumni', {
-                        method: 'POST',
-                        headers: { 'Authorization': 'Bearer ' + adminToken },
-                        body: fd
-                    });
-                    
+                    var response = await fetch(API_BASE_ADMIN + '/alumni', { method: 'POST', headers: { 'Authorization': 'Bearer ' + adminToken }, body: fd });
                     var data = await response.json();
-                    
                     if (response.ok) {
-                        alert('✅ Alumni added successfully!');
+                        alert('✅ Alumni added!');
                         this.reset();
                         document.getElementById('alumniPreview').style.display = 'none';
                         loadAlumni();
-                    } else {
-                        alert('❌ ' + (data.message || 'Failed to add alumni'));
-                    }
-                } catch (error) {
-                    console.error('Error adding alumni:', error);
-                    alert('❌ Error: ' + error.message);
-                }
-                
+                    } else { alert('❌ ' + (data.message || 'Failed')); }
+                } catch (error) { alert('❌ ' + error.message); }
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-save"></i> Add Alumni';
             });
         }
 
-        // Photo preview for alumni
-        document.getElementById('alumniPhoto')?.addEventListener('change', function() {
+        document.getElementById('alumniPhoto')?.addEventListener('change', function () {
             var preview = document.getElementById('alumniPreview');
             var img = document.getElementById('alumniPreviewImg');
             if (this.files && this.files[0]) {
                 var reader = new FileReader();
-                reader.onload = function(e) {
-                    img.src = e.target.result;
-                    preview.style.display = 'block';
-                };
+                reader.onload = function (e) { img.src = e.target.result; preview.style.display = 'block'; };
                 reader.readAsDataURL(this.files[0]);
-            } else {
-                preview.style.display = 'none';
-            }
+            } else { preview.style.display = 'none'; }
         });
 
-        // Edit alumni
-        window.editAlumni = async function(id) {
+        window.editAlumni = async function (id) {
             var newName = prompt('Enter new name:');
             if (!newName) return;
-            
-            var newBatch = prompt('Enter batch (e.g., 2020-2024):');
+            var newBatch = prompt('Enter batch:');
             if (!newBatch) return;
-            
-            var newLinkedin = prompt('Enter LinkedIn URL (or leave empty):') || '';
-            var newDescription = prompt('Enter description (or leave empty):') || '';
-            
+            var newLinkedin = prompt('Enter LinkedIn:') || '';
+            var newDescription = prompt('Enter description:') || '';
             try {
                 var response = await fetch(API_BASE_ADMIN + '/alumni/' + id, {
                     method: 'PUT',
-                    headers: {
-                        'Authorization': 'Bearer ' + adminToken,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        name: newName,
-                        batch: newBatch,
-                        linkedin: newLinkedin,
-                        description: newDescription
-                    })
+                    headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: newName, batch: newBatch, linkedin: newLinkedin, description: newDescription })
                 });
-                
-                if (response.ok) {
-                    alert('✅ Alumni updated successfully!');
-                    loadAlumni();
-                } else {
-                    var data = await response.json();
-                    alert('❌ ' + (data.message || 'Failed to update'));
-                }
-            } catch (error) {
-                console.error('Error updating alumni:', error);
-                alert('❌ Error: ' + error.message);
-            }
+                if (response.ok) { alert('✅ Updated!'); loadAlumni(); }
+            } catch (error) { alert('❌ ' + error.message); }
         };
 
-        // Delete alumni
-        window.deleteAlumni = async function(id) {
-            if (!confirm('⚠️ Are you sure you want to delete this alumni?')) return;
-            
+        window.deleteAlumni = async function (id) {
+            if (!confirm('Delete this alumni?')) return;
             try {
-                var response = await fetch(API_BASE_ADMIN + '/alumni/' + id, {
+                var response = await fetch(API_BASE_ADMIN + '/alumni/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + adminToken } });
+                if (response.ok) { alert('✅ Deleted!'); loadAlumni(); }
+            } catch (error) { alert('❌ ' + error.message); }
+        };
+
+        // ========== WINNERS MANAGER ==========
+        async function loadWinnersSections() {
+            var container = document.getElementById('winnersSectionsList');
+            if (!container) return;
+            container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/winners', { headers: { 'Authorization': 'Bearer ' + adminToken } });
+                if (!response.ok) throw new Error('Failed to load');
+                var sections = await response.json();
+                displayWinnersSections(sections);
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state">Failed to load sections</div>';
+            }
+        }
+
+        function displayWinnersSections(sections) {
+            var container = document.getElementById('winnersSectionsList');
+            if (!sections || sections.length === 0) {
+                container.innerHTML = '<div class="empty-state">No sections created yet</div>';
+                return;
+            }
+
+            var canCreate = hasPermission('winners', 'create') || isSuperAdmin;
+            var canEdit = hasPermission('winners', 'edit') || isSuperAdmin;
+            var canDelete = hasPermission('winners', 'delete') || isSuperAdmin;
+
+            var html = '';
+            sections.forEach(function (section) {
+                var statusBadge = section.isPublished
+                    ? '<span class="status-badge status-open">Published</span>'
+                    : '<span class="status-badge status-closed">Draft</span>';
+
+                html += '<div class="form-card" style="margin: 16px 0;">' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px;">' +
+                    '<div>' +
+                    '<h3 style="color:var(--primary);margin-bottom:4px;">' + escapeHtml(section.heading) + '</h3>' +
+                    (section.subtitle ? '<p style="color:var(--text-secondary);font-size:13px;">' + escapeHtml(section.subtitle) + '</p>' : '') +
+                    '<div style="margin-top:8px;">' + statusBadge +
+                    '<span style="font-size:12px;color:var(--text-secondary);margin-left:8px;">' + section.winners.length + ' winner(s)</span>' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="action-buttons">' +
+                    (canCreate ? '<button class="btn btn-primary btn-sm" onclick="openAddWinnerModal(\'' + section._id + '\')"><i class="fas fa-plus"></i> Add Winner</button>' : '') +
+                    (canEdit ? '<button class="btn btn-warning btn-sm" onclick="toggleWinnersPublish(\'' + section._id + '\', ' + section.isPublished + ')">' + (section.isPublished ? '📥 Unpublish' : '📤 Publish') + '</button>' : '') +
+                    (canDelete ? '<button class="btn btn-danger btn-sm" onclick="deleteWinnersSection(\'' + section._id + '\')"><i class="fas fa-trash"></i> Delete</button>' : '') +
+                    '</div>' +
+                    '</div>';
+
+                if (section.winners.length > 0) {
+                    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;">';
+                    section.winners.forEach(function (w) {
+                        var rankIcon = w.rank === '1st' ? '🥇' : w.rank === '2nd' ? '🥈' : w.rank === '3rd' ? '🥉' : '⭐';
+                        html += '<div style="background:var(--bg);border-radius:12px;padding:16px;text-align:center;border:1px solid var(--border);">' +
+                            '<img src="' + w.photo + '" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--primary);margin-bottom:10px;" onerror="this.src=\'assets/img/default-avatar.png\'">' +
+                            '<div style="font-weight:600;margin-bottom:4px;">' + escapeHtml(w.name) + '</div>' +
+                            '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px;">' + escapeHtml(w.rollno) + '</div>' +
+                            '<div style="font-size:12px;color:var(--primary);">🎯 ' + escapeHtml(w.eventName) + '</div>' +
+                            '<div style="font-size:12px;margin-top:8px;">' + rankIcon + ' ' + w.rank + '</div>' +
+                            (canDelete ? '<button class="btn btn-danger btn-sm" style="margin-top:8px;width:100%;" onclick="deleteWinnerItem(\'' + section._id + '\', \'' + w._id + '\')"><i class="fas fa-trash"></i> Delete</button>' : '') +
+                            '</div>';
+                    });
+                    html += '</div>';
+                } else {
+                    html += '<div class="empty-state">No winners added yet</div>';
+                }
+
+                html += '</div>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        async function createWinnersSection() {
+            if (!hasPermission('winners', 'create') && !isSuperAdmin) { alert('No permission'); return; }
+            var heading = document.getElementById('winnersHeading').value.trim();
+            var subtitle = document.getElementById('winnersSubtitle').value.trim();
+            var showOnHomepage = document.getElementById('winnersShowOnHomepage').checked;
+            var isPublished = document.getElementById('winnersIsPublished').checked;
+            if (!heading) { alert('Please enter heading'); return; }
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/winners', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ heading: heading, subtitle: subtitle, showOnHomepage: showOnHomepage, isPublished: isPublished })
+                });
+                if (response.ok) {
+                    alert('✅ Section created!');
+                    document.getElementById('winnersHeading').value = '';
+                    document.getElementById('winnersSubtitle').value = '';
+                    loadWinnersSections();
+                } else {
+                    var err = await response.json();
+                    alert('❌ ' + err.message);
+                }
+            } catch (error) { alert('❌ ' + error.message); }
+        }
+
+        async function toggleWinnersPublish(sectionId, currentStatus) {
+            if (!hasPermission('winners', 'edit') && !isSuperAdmin) { alert('No permission'); return; }
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/winners/' + sectionId, {
+                    method: 'PUT',
+                    headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ isPublished: !currentStatus })
+                });
+                if (response.ok) { alert('✅ Updated!'); loadWinnersSections(); }
+            } catch (error) { alert('❌ ' + error.message); }
+        }
+
+        async function deleteWinnersSection(sectionId) {
+            if (!hasPermission('winners', 'delete') && !isSuperAdmin) { alert('No permission'); return; }
+            if (!confirm('⚠️ Delete this section and all winners?')) return;
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/winners/' + sectionId, {
                     method: 'DELETE',
                     headers: { 'Authorization': 'Bearer ' + adminToken }
                 });
-                
-                if (response.ok) {
-                    alert('✅ Alumni deleted successfully!');
-                    loadAlumni();
-                } else {
-                    var data = await response.json();
-                    alert('❌ ' + (data.message || 'Failed to delete'));
-                }
-            } catch (error) {
-                console.error('Error deleting alumni:', error);
-                alert('❌ Error: ' + error.message);
+                if (response.ok) { alert('✅ Section deleted!'); loadWinnersSections(); }
+            } catch (error) { alert('❌ ' + error.message); }
+        }
+
+        function openAddWinnerModal(sectionId) {
+            document.getElementById('winnerSectionId').value = sectionId;
+            document.getElementById('addWinnerModal').classList.add('active');
+        }
+
+        function closeAddWinnerModal() {
+            document.getElementById('addWinnerModal').classList.remove('active');
+            document.getElementById('addWinnerForm').reset();
+            document.getElementById('winnerPhotoPreview').style.display = 'none';
+        }
+
+        var addWinnerForm = document.getElementById('addWinnerForm');
+        if (addWinnerForm) {
+            addWinnerForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                if (!hasPermission('winners', 'create') && !isSuperAdmin) { alert('No permission'); return; }
+                var sectionId = document.getElementById('winnerSectionId').value;
+                var name = document.getElementById('winnerName').value.trim();
+                var rollno = document.getElementById('winnerRollno').value.trim();
+                var eventName = document.getElementById('winnerEvent').value.trim();
+                var rank = document.getElementById('winnerRank').value;
+                var photo = document.getElementById('winnerPhoto').files[0];
+                if (!name || !rollno || !eventName || !photo) { alert('Fill all fields'); return; }
+                var fd = new FormData();
+                fd.append('name', name);
+                fd.append('rollno', rollno);
+                fd.append('eventName', eventName);
+                fd.append('rank', rank);
+                fd.append('photo', photo);
+                var btn = this.querySelector('button[type="submit"]');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+                try {
+                    var response = await fetch(API_BASE_ADMIN + '/winners/' + sectionId + '/add-winner', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + adminToken },
+                        body: fd
+                    });
+                    if (response.ok) {
+                        alert('✅ Winner added!');
+                        closeAddWinnerModal();
+                        loadWinnersSections();
+                    } else {
+                        var err = await response.json();
+                        alert('❌ ' + err.message);
+                    }
+                } catch (error) { alert('❌ ' + error.message); }
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Add Winner';
+            });
+        }
+
+        document.getElementById('winnerPhoto').addEventListener('change', function () {
+            var preview = document.getElementById('winnerPhotoPreview');
+            var img = document.getElementById('winnerPhotoPreviewImg');
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) { img.src = e.target.result; preview.style.display = 'block'; };
+                reader.readAsDataURL(this.files[0]);
             }
-        };
+        });
+
+        async function deleteWinnerItem(sectionId, winnerId) {
+            if (!hasPermission('winners', 'delete') && !isSuperAdmin) { alert('No permission'); return; }
+            if (!confirm('Delete this winner?')) return;
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/winners/' + sectionId + '/winner/' + winnerId, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': 'Bearer ' + adminToken }
+                });
+                if (response.ok) { alert('✅ Winner deleted!'); loadWinnersSections(); }
+            } catch (error) { alert('❌ ' + error.message); }
+        }
 
         // ========== UTILITY ==========
         function escapeHtml(text) {
@@ -2937,11 +3026,11 @@ menuHtml += '<div class="menu-item" data-panel="form-builder"><i class="fas fa-e
         }
 
         // ========== LOGOUT ==========
-        window.logout = function() {
+        window.logout = function () {
             fetch(API_BASE_ADMIN + '/logout', {
                 method: 'POST',
                 headers: { 'Authorization': 'Bearer ' + adminToken }
-            }).catch(function() {});
+            }).catch(function () { });
             localStorage.removeItem('adminToken');
             localStorage.removeItem('adminData');
             localStorage.removeItem('teamMember');

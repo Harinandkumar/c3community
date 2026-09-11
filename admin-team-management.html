@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -181,7 +182,8 @@
             min-width: 800px;
         }
 
-        th, td {
+        th,
+        td {
             padding: 12px 16px;
             text-align: left;
             border-bottom: 1px solid var(--border);
@@ -208,14 +210,38 @@
             font-weight: 600;
         }
 
-        .role-super_admin { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #333; }
-        .role-senior_coordinator { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #333; }
-        .role-core_member { background: linear-gradient(135deg, var(--primary), #0066ff); color: white; }
-        .role-coordinator { background: linear-gradient(135deg, #10b981, #059669); color: white; }
-        .role-sub_coordinator { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+        .role-super_admin {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #333;
+        }
 
-        .status-active { color: var(--success); }
-        .status-inactive { color: var(--danger); }
+        .role-senior_coordinator {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #333;
+        }
+
+        .role-core_member {
+            background: linear-gradient(135deg, var(--primary), #0066ff);
+            color: white;
+        }
+
+        .role-coordinator {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .role-sub_coordinator {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .status-active {
+            color: var(--success);
+        }
+
+        .status-inactive {
+            color: var(--danger);
+        }
 
         .loading {
             text-align: center;
@@ -249,10 +275,6 @@
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
-        }
-
-        .modal-content.large {
-            max-width: 700px;
         }
 
         .modal-header {
@@ -296,7 +318,7 @@
             margin: 20px 0;
         }
 
-        /* ========== CUSTOM EMAIL STYLES ========== */
+        /* Custom Email Styles */
         .custom-email-section {
             border: 2px solid var(--primary);
             border-radius: 12px;
@@ -359,11 +381,11 @@
             border-radius: 50%;
         }
 
-        .toggle-switch input:checked + .toggle-slider {
+        .toggle-switch input:checked+.toggle-slider {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
         }
 
-        .toggle-switch input:checked + .toggle-slider:before {
+        .toggle-switch input:checked+.toggle-slider:before {
             transform: translateX(24px);
         }
 
@@ -419,7 +441,7 @@
             flex-wrap: wrap;
         }
 
-        /* ========== EMAIL PREVIEW ========== */
+        /* Email Preview */
         .email-preview-container {
             background: var(--bg);
             border-radius: 12px;
@@ -519,7 +541,7 @@
             font-size: 14px;
         }
 
-        /* ========== TOAST ========== */
+        /* Toast */
         .toast {
             position: fixed;
             top: 20px;
@@ -534,23 +556,52 @@
             max-width: 400px;
         }
 
-        .toast-success { background: var(--success); }
-        .toast-error { background: var(--danger); }
-        .toast-info { background: var(--primary); color: var(--bg); }
+        .toast-success {
+            background: var(--success);
+        }
+
+        .toast-error {
+            background: var(--danger);
+        }
+
+        .toast-info {
+            background: var(--primary);
+            color: var(--bg);
+        }
 
         @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         @media (max-width: 768px) {
-            .container { padding: 16px; }
-            .form-grid { grid-template-columns: 1fr; }
-            .email-options-grid { grid-template-columns: 1fr; }
-            .custom-email-header { flex-direction: column; align-items: flex-start; }
+            .container {
+                padding: 16px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .email-options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .custom-email-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -595,7 +646,7 @@
                     </div>
                 </div>
 
-                <!-- ========== CUSTOM EMAIL SECTION ========== -->
+                <!-- Custom Email Section -->
                 <div class="custom-email-section">
                     <div class="custom-email-header">
                         <h4><i class="fas fa-envelope"></i> Welcome Email Settings</h4>
@@ -605,16 +656,15 @@
                         </label>
                     </div>
                     <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
-                        <i class="fas fa-info-circle"></i> 
+                        <i class="fas fa-info-circle"></i>
                         By default, a standard welcome email will be sent. Enable the toggle to customize it.
                     </p>
 
                     <div id="customEmailSection" style="display: none;">
                         <div class="form-group">
                             <label><i class="fas fa-heading"></i> Email Subject</label>
-                            <input type="text" id="emailSubject" 
-                                   value="🎉 Welcome to C3 Admin Team, {name}!"
-                                   placeholder="Enter email subject">
+                            <input type="text" id="emailSubject" value="🎉 Welcome to C3 Admin Team, {name}!"
+                                placeholder="Enter email subject">
                             <div class="placeholder-hint">
                                 Placeholders: {name} {email} {role} {position} {addedBy}
                             </div>
@@ -661,7 +711,9 @@ C3 Team</textarea>
                             <button type="button" class="btn btn-warning" onclick="previewEmail()">
                                 <i class="fas fa-eye"></i> Preview Email
                             </button>
-                            <button type="button" class="btn btn-sm" style="background:transparent;border:1px solid var(--border);color:var(--text-secondary);" onclick="resetEmailTemplate()">
+                            <button type="button" class="btn btn-sm"
+                                style="background:transparent;border:1px solid var(--border);color:var(--text-secondary);"
+                                onclick="resetEmailTemplate()">
                                 <i class="fas fa-undo"></i> Reset to Default
                             </button>
                         </div>
@@ -690,7 +742,10 @@ C3 Team</textarea>
                     </tr>
                 </thead>
                 <tbody id="membersTableBody">
-                    <tr><td colspan="7" class="loading"><i class="fas fa-spinner fa-spin"></i> Loading team members...</td></tr>
+                    <tr>
+                        <td colspan="7" class="loading"><i class="fas fa-spinner fa-spin"></i> Loading team members...
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -707,24 +762,31 @@ C3 Team</textarea>
                 <input type="hidden" id="permMemberId">
                 <div class="permission-group">
                     <h4>📅 Events</h4>
-                    <div class="permission-item"><input type="checkbox" id="permEventsCreate"> <label>Create</label></div>
+                    <div class="permission-item"><input type="checkbox" id="permEventsCreate"> <label>Create</label>
+                    </div>
                     <div class="permission-item"><input type="checkbox" id="permEventsEdit"> <label>Edit</label></div>
-                    <div class="permission-item"><input type="checkbox" id="permEventsDelete"> <label>Delete</label></div>
+                    <div class="permission-item"><input type="checkbox" id="permEventsDelete"> <label>Delete</label>
+                    </div>
                 </div>
                 <div class="permission-group">
                     <h4>🔔 Notifications</h4>
-                    <div class="permission-item"><input type="checkbox" id="permNotifCreate"> <label>Create</label></div>
-                    <div class="permission-item"><input type="checkbox" id="permNotifDelete"> <label>Delete</label></div>
+                    <div class="permission-item"><input type="checkbox" id="permNotifCreate"> <label>Create</label>
+                    </div>
+                    <div class="permission-item"><input type="checkbox" id="permNotifDelete"> <label>Delete</label>
+                    </div>
                 </div>
                 <div class="permission-group">
                     <h4>📸 Gallery</h4>
-                    <div class="permission-item"><input type="checkbox" id="permGalleryUpload"> <label>Upload</label></div>
-                    <div class="permission-item"><input type="checkbox" id="permGalleryDelete"> <label>Delete</label></div>
+                    <div class="permission-item"><input type="checkbox" id="permGalleryUpload"> <label>Upload</label>
+                    </div>
+                    <div class="permission-item"><input type="checkbox" id="permGalleryDelete"> <label>Delete</label>
+                    </div>
                 </div>
                 <div class="permission-group">
                     <h4>👥 Members</h4>
                     <div class="permission-item"><input type="checkbox" id="permMembersView"> <label>View</label></div>
-                    <div class="permission-item"><input type="checkbox" id="permMembersDelete"> <label>Delete</label></div>
+                    <div class="permission-item"><input type="checkbox" id="permMembersDelete"> <label>Delete</label>
+                    </div>
                 </div>
                 <div class="permission-group">
                     <h4>🏷️ Categories</h4>
@@ -740,43 +802,51 @@ C3 Team</textarea>
                 </div>
                 <div class="permission-group">
                     <h4>📜 Certificates</h4>
-                    <div class="permission-item"><input type="checkbox" id="permCertUpload"> <label>Upload Certificate</label></div>
-                    <div class="permission-item"><input type="checkbox" id="permCertDelete"> <label>Delete Certificate</label></div>
+                    <div class="permission-item"><input type="checkbox" id="permCertUpload"> <label>Upload
+                            Certificate</label></div>
+                    <div class="permission-item"><input type="checkbox" id="permCertDelete"> <label>Delete
+                            Certificate</label></div>
+                </div>
+                <!-- ✅ NEW: Winners Permission -->
+                <div class="permission-group">
+                    <h4>🏆 Winners</h4>
+                    <div class="permission-item"><input type="checkbox" id="permWinnersCreate"> <label>Create</label>
+                    </div>
+                    <div class="permission-item"><input type="checkbox" id="permWinnersEdit"> <label>Edit</label></div>
+                    <div class="permission-item"><input type="checkbox" id="permWinnersDelete"> <label>Delete</label>
+                    </div>
                 </div>
                 <hr>
-                <button class="btn btn-primary" onclick="savePermissions()"><i class="fas fa-save"></i> Save Permissions</button>
+                <button class="btn btn-primary" onclick="savePermissions()"><i class="fas fa-save"></i> Save
+                    Permissions</button>
             </div>
         </div>
     </div>
 
     <!-- Email Preview Modal -->
     <div id="emailPreviewModal" class="modal">
-        <div class="modal-content large">
+        <div class="modal-content" style="max-width: 700px;">
             <div class="modal-header">
                 <h3><i class="fas fa-envelope"></i> Email Preview</h3>
                 <span class="close-modal" onclick="closeEmailPreview()">&times;</span>
             </div>
-            <div id="emailPreviewContent">
-                <!-- Preview content will be inserted here -->
-            </div>
+            <div id="emailPreviewContent"></div>
         </div>
     </div>
 
     <script>
         const API_BASE_URL = 'https://backend-glo6.onrender.com';
         const adminToken = localStorage.getItem('adminToken');
-        
+
         if (!adminToken) {
             window.location.href = 'admin-login.html';
         }
 
         let currentEditingMember = null;
 
-        // Theme
         const savedTheme = localStorage.getItem('theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
 
-        // ========== TOAST ==========
         function showToast(message, type) {
             const toast = document.createElement('div');
             toast.className = 'toast toast-' + type;
@@ -785,7 +855,7 @@ C3 Team</textarea>
             setTimeout(() => toast.remove(), 4000);
         }
 
-        // ========== CUSTOM EMAIL FUNCTIONS ==========
+        // ========== CUSTOM EMAIL ==========
         function toggleCustomEmail() {
             const useCustom = document.getElementById('useCustomEmail').checked;
             const section = document.getElementById('customEmailSection');
@@ -794,7 +864,7 @@ C3 Team</textarea>
 
         function resetEmailTemplate() {
             if (!confirm('Reset email template to default?')) return;
-            
+
             document.getElementById('emailSubject').value = '🎉 Welcome to C3 Admin Team, {name}!';
             document.getElementById('emailBody').value = `Hi {name},
 
@@ -811,7 +881,7 @@ C3 Team`;
             document.getElementById('includePermissions').checked = true;
             document.getElementById('includeLoginInstructions').checked = true;
             document.getElementById('includeLoginButton').checked = true;
-            
+
             showToast('✅ Template reset to default', 'success');
         }
 
@@ -820,25 +890,25 @@ C3 Team`;
             const email = document.getElementById('memberEmail').value || 'john@example.com';
             const role = document.getElementById('memberRole').value || 'core_member';
             const position = document.getElementById('memberPosition').value || 'Core Member';
-            
+
             const subject = document.getElementById('emailSubject').value
                 .replace(/{name}/g, name)
                 .replace(/{email}/g, email)
                 .replace(/{role}/g, role)
                 .replace(/{position}/g, position)
                 .replace(/{addedBy}/g, 'Admin');
-            
+
             const body = document.getElementById('emailBody').value
                 .replace(/{name}/g, name)
                 .replace(/{email}/g, email)
                 .replace(/{role}/g, role)
                 .replace(/{position}/g, position)
                 .replace(/{addedBy}/g, 'Admin');
-            
+
             const includePermissions = document.getElementById('includePermissions').checked;
             const includeLoginInstructions = document.getElementById('includeLoginInstructions').checked;
             const includeLoginButton = document.getElementById('includeLoginButton').checked;
-            
+
             let html = `
                 <div class="email-preview-container">
                     <div class="email-preview-subject">
@@ -855,9 +925,6 @@ C3 Team`;
                                 <div class="perm-item">📅 <strong>Events:</strong> ✅ Create | ✅ Edit | ✅ Delete</div>
                                 <div class="perm-item">🔔 <strong>Notifications:</strong> ✅ Create | ✅ Delete</div>
                                 <div class="perm-item">📸 <strong>Gallery:</strong> ✅ Upload | ✅ Delete</div>
-                                <div class="perm-item">👥 <strong>Members:</strong> ✅ View</div>
-                                <div class="perm-item">🏷️ <strong>Categories:</strong> ✅ Create | ✅ Edit | ✅ Delete</div>
-                                <div class="perm-item">📋 <strong>Nav Items:</strong> ✅ Create | ✅ Edit | ✅ Delete</div>
                             </div>
                         ` : ''}
                         
@@ -882,7 +949,7 @@ C3 Team`;
                     </div>
                 </div>
             `;
-            
+
             document.getElementById('emailPreviewContent').innerHTML = html;
             document.getElementById('emailPreviewModal').classList.add('active');
         }
@@ -895,22 +962,22 @@ C3 Team`;
         async function loadMembers() {
             const tbody = document.getElementById('membersTableBody');
             tbody.innerHTML = '<tr><td colspan="7" class="loading"><i class="fas fa-spinner fa-spin"></i> Loading team members...</td></tr>';
-            
+
             try {
                 const response = await fetch(`${API_BASE_URL}/api/team/team-members`, {
                     headers: { 'Authorization': 'Bearer ' + adminToken }
                 });
-                
+
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                
+
                 const data = await response.json();
                 const members = data.members || (Array.isArray(data) ? data : []);
-                
+
                 if (members.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="7" class="loading">No team members found. Add your first member above!</td></tr>';
                     return;
                 }
-                
+
                 displayMembers(members);
             } catch (error) {
                 console.error('Error:', error);
@@ -918,7 +985,6 @@ C3 Team`;
             }
         }
 
-        // ✅ Position default based on role
         function getDefaultPosition(role) {
             const positions = {
                 'super_admin': 'Super Admin',
@@ -933,7 +999,7 @@ C3 Team`;
         function displayMembers(members) {
             const tbody = document.getElementById('membersTableBody');
             let html = '';
-            
+
             for (const member of members) {
                 const roleClass = `role-${member.role}`;
                 const roleName = member.role?.replace(/_/g, ' ').toUpperCase() || 'UNKNOWN';
@@ -941,7 +1007,7 @@ C3 Team`;
                 const statusText = member.isActive ? 'Active' : 'Inactive';
                 const lastLogin = member.lastLogin ? new Date(member.lastLogin).toLocaleDateString() : 'Never';
                 const position = member.position || getDefaultPosition(member.role);
-                
+
                 html += `
                     <tr>
                         <td><strong>${escapeHtml(member.name)}</strong></td>
@@ -964,9 +1030,9 @@ C3 Team`;
         // ========== ADD MEMBER ==========
         document.getElementById('addMemberForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const useCustomEmail = document.getElementById('useCustomEmail').checked;
-            
+
             const memberData = {
                 name: document.getElementById('memberName').value,
                 email: document.getElementById('memberEmail').value,
@@ -975,8 +1041,7 @@ C3 Team`;
                 role: document.getElementById('memberRole').value,
                 profileImage: document.getElementById('memberImage').value
             };
-            
-            // Add custom email if enabled
+
             if (useCustomEmail) {
                 memberData.customEmail = {
                     useCustom: true,
@@ -987,16 +1052,16 @@ C3 Team`;
                     includeLoginButton: document.getElementById('includeLoginButton').checked
                 };
             }
-            
+
             if (!memberData.name || !memberData.email || !memberData.role) {
                 showToast('❌ Please fill required fields', 'error');
                 return;
             }
-            
+
             const submitBtn = e.target.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
-            
+
             try {
                 const response = await fetch(`${API_BASE_URL}/api/team/team-members`, {
                     method: 'POST',
@@ -1006,21 +1071,16 @@ C3 Team`;
                     },
                     body: JSON.stringify(memberData)
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (!response.ok) throw new Error(data.message || 'Failed to add member');
-                
-                showToast(
-                    '✅ Member added successfully! ' + 
-                    (useCustomEmail ? 'Custom email sent.' : 'Welcome email sent.'), 
-                    'success'
-                );
-                
+
+                showToast('✅ Member added successfully!', 'success');
                 e.target.reset();
                 document.getElementById('customEmailSection').style.display = 'none';
                 loadMembers();
-                
+
             } catch (error) {
                 showToast('❌ ' + error.message, 'error');
             } finally {
@@ -1030,59 +1090,60 @@ C3 Team`;
         });
 
         // ========== EDIT PERMISSIONS ==========
-        window.editPermissions = async function(memberId) {
-            console.log('Fetching member:', memberId);
+        window.editPermissions = async function (memberId) {
             try {
                 const response = await fetch(`${API_BASE_URL}/api/team/team-member/${memberId}`, {
                     headers: { 'Authorization': 'Bearer ' + adminToken }
                 });
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`HTTP ${response.status}: ${errorText}`);
-                }
-                
+
+                if (!response.ok) throw new Error('Failed to load');
+
                 const member = await response.json();
                 currentEditingMember = member;
                 document.getElementById('permMemberId').value = memberId;
-                
+
                 const perms = member.permissions || {};
-                
+
                 document.getElementById('permEventsCreate').checked = perms.events?.create || false;
                 document.getElementById('permEventsEdit').checked = perms.events?.edit || false;
                 document.getElementById('permEventsDelete').checked = perms.events?.delete || false;
-                
+
                 document.getElementById('permNotifCreate').checked = perms.notifications?.create || false;
                 document.getElementById('permNotifDelete').checked = perms.notifications?.delete || false;
-                
+
                 document.getElementById('permGalleryUpload').checked = perms.gallery?.upload || false;
                 document.getElementById('permGalleryDelete').checked = perms.gallery?.delete || false;
-                
+
                 document.getElementById('permMembersView').checked = perms.members?.view || false;
                 document.getElementById('permMembersDelete').checked = perms.members?.delete || false;
-                
+
                 document.getElementById('permCatsCreate').checked = perms.categories?.create || false;
                 document.getElementById('permCatsEdit').checked = perms.categories?.edit || false;
                 document.getElementById('permCatsDelete').checked = perms.categories?.delete || false;
-                
+
                 document.getElementById('permNavCreate').checked = perms.navItems?.create || false;
                 document.getElementById('permNavEdit').checked = perms.navItems?.edit || false;
                 document.getElementById('permNavDelete').checked = perms.navItems?.delete || false;
-                
+
                 document.getElementById('permCertUpload').checked = perms.certificates?.upload || false;
                 document.getElementById('permCertDelete').checked = perms.certificates?.delete || false;
-                
+
+                // ✅ NEW: Winners
+                document.getElementById('permWinnersCreate').checked = perms.winners?.create || false;
+                document.getElementById('permWinnersEdit').checked = perms.winners?.edit || false;
+                document.getElementById('permWinnersDelete').checked = perms.winners?.delete || false;
+
                 document.getElementById('permissionModal').classList.add('active');
-                
+
             } catch (error) {
                 console.error('Permission error:', error);
-                showToast('❌ Failed to load member permissions: ' + error.message, 'error');
+                showToast('❌ Failed to load permissions: ' + error.message, 'error');
             }
         };
 
-        window.savePermissions = async function() {
+        window.savePermissions = async function () {
             const memberId = document.getElementById('permMemberId').value;
-            
+
             const permissions = {
                 events: {
                     create: document.getElementById('permEventsCreate').checked,
@@ -1115,12 +1176,18 @@ C3 Team`;
                     upload: document.getElementById('permCertUpload').checked,
                     delete: document.getElementById('permCertDelete').checked
                 },
+                // ✅ NEW: Winners
+                winners: {
+                    create: document.getElementById('permWinnersCreate').checked,
+                    edit: document.getElementById('permWinnersEdit').checked,
+                    delete: document.getElementById('permWinnersDelete').checked
+                },
                 teamManagement: {
                     view: false,
                     edit: false
                 }
             };
-            
+
             try {
                 const response = await fetch(`${API_BASE_URL}/api/team/team-members/${memberId}`, {
                     method: 'PUT',
@@ -1130,25 +1197,25 @@ C3 Team`;
                     },
                     body: JSON.stringify({ permissions: permissions })
                 });
-                
+
                 if (!response.ok) throw new Error('Failed to save permissions');
-                
+
                 showToast('✅ Permissions saved successfully!', 'success');
                 closePermissionModal();
                 loadMembers();
-                
+
             } catch (error) {
                 showToast('❌ ' + error.message, 'error');
             }
         };
 
-        window.editMember = async function(memberId) {
+        window.editMember = async function (memberId) {
             const newName = prompt('Enter new name:');
             if (!newName) return;
-            
+
             const newPosition = prompt('Enter position:', 'Team Member');
             const newRole = prompt('Enter role (senior_coordinator/core_member/coordinator/sub_coordinator):', 'sub_coordinator');
-            
+
             try {
                 const response = await fetch(`${API_BASE_URL}/api/team/team-members/${memberId}`, {
                     method: 'PUT',
@@ -1158,42 +1225,41 @@ C3 Team`;
                     },
                     body: JSON.stringify({ name: newName, position: newPosition, role: newRole })
                 });
-                
+
                 if (!response.ok) throw new Error('Failed to update');
-                
+
                 showToast('✅ Member updated!', 'success');
                 loadMembers();
-                
+
             } catch (error) {
                 showToast('❌ ' + error.message, 'error');
             }
         };
 
-        window.deleteMember = async function(memberId) {
+        window.deleteMember = async function (memberId) {
             if (!confirm('⚠️ Are you sure you want to delete this member?')) return;
-            
+
             try {
                 const response = await fetch(`${API_BASE_URL}/api/team/team-members/${memberId}`, {
                     method: 'DELETE',
                     headers: { 'Authorization': 'Bearer ' + adminToken }
                 });
-                
+
                 if (!response.ok) throw new Error('Failed to delete');
-                
+
                 showToast('✅ Member deleted successfully', 'success');
                 loadMembers();
-                
+
             } catch (error) {
                 showToast('❌ ' + error.message, 'error');
             }
         };
 
-        window.closePermissionModal = function() {
+        window.closePermissionModal = function () {
             document.getElementById('permissionModal').classList.remove('active');
         };
 
-        // Close modals on outside click
-        window.addEventListener('click', function(e) {
+        window.addEventListener('click', function (e) {
             if (e.target.classList.contains('modal')) {
                 e.target.classList.remove('active');
             }
@@ -1206,8 +1272,8 @@ C3 Team`;
             return div.innerHTML;
         }
 
-        // Load members on page load
         loadMembers();
     </script>
 </body>
+
 </html>

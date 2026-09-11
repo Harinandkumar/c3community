@@ -247,67 +247,10 @@
         </div>
     </section>
 
-    
-
-    <!-- Winners Section -->
+    <!-- ========== WINNERS SECTION (DYNAMIC) ========== -->
     <section class="section" id="results">
-        <div class="section-title">
-            <h2>🏆 Competition Winners</h2>
-        </div>
-        <div class="winners-section">
-            <h3 class="winners-title">👑 Coders of the Month</h3>
-            <div class="winners-grid">
-                <div class="winner-card gold-border">
-                    <div class="winner-img"><img src="assets/img/coder_Clash_oct.jpg" alt="Tanveer"></div>
-                    <h4>Tanveer Kumar</h4>
-                    <p>S25ME31</p><span class="winner-badge">1st - QUIZ CLASH</span>
-                </div>
-                <div class="winner-card gold-border">
-                    <div class="winner-img"><img src="assets/img/CODER_UI_OCT.jpg" alt="Narendra"></div>
-                    <h4>Narendra Kumar</h4>
-                    <p>S24CS65</p><span class="winner-badge">1st - UI/UX ARENA</span>
-                </div>
-            </div>
-        </div>
-        <div class="winners-section">
-            <h3 class="winners-title">🏆 UI-UX ARENA - Top 3</h3>
-            <div class="winners-grid three-col">
-                <div class="winner-card gold">
-                    <div class="winner-rank">🥇</div>
-                    <h4>Narendra Kumar</h4>
-                    <p>S24CS65</p>
-                </div>
-                <div class="winner-card silver">
-                    <div class="winner-rank">🥈</div>
-                    <h4>Kajal Kumari</h4>
-                    <p>S24AIML22</p>
-                </div>
-                <div class="winner-card bronze">
-                    <div class="winner-rank">🥉</div>
-                    <h4>Shivam Raj</h4>
-                    <p>S24AIML46</p>
-                </div>
-            </div>
-        </div>
-        <div class="winners-section">
-            <h3 class="winners-title">⚡ QUIZ CLASH - Top 3</h3>
-            <div class="winners-grid three-col">
-                <div class="winner-card gold">
-                    <div class="winner-rank">🥇</div>
-                    <h4>Tanveer Kumar</h4>
-                    <p>S25ME31</p>
-                </div>
-                <div class="winner-card silver">
-                    <div class="winner-rank">🥈</div>
-                    <h4>Muskan Kumari</h4>
-                    <p>S25ECE42</p>
-                </div>
-                <div class="winner-card bronze">
-                    <div class="winner-rank">🥉</div>
-                    <h4>Anamika Kumari</h4>
-                    <p>S25AIML05</p>
-                </div>
-            </div>
+        <div id="winnersContainer">
+            <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading winners...</div>
         </div>
     </section>
 
@@ -514,6 +457,71 @@
                 } catch (error) { alert(error.message); }
             });
         }
+
+        // ========== FETCH WINNERS (DYNAMIC) ==========
+        async function fetchWinners() {
+            const container = document.getElementById('winnersContainer');
+            if (!container) return;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/public/winners`);
+                if (!response.ok) throw new Error('Failed to fetch');
+                
+                const sections = await response.json();
+                
+                if (!sections || sections.length === 0) {
+                    container.innerHTML = '';
+                    container.parentElement.style.display = 'none';
+                    return;
+                }
+                
+                let html = '';
+                sections.forEach(section => {
+                    html += `
+                        <div class="section-title">
+                            <h2>🏆 ${escapeHtml(section.heading)} 🏆</h2>
+                            ${section.subtitle ? `<p class="section-description">${escapeHtml(section.subtitle)}</p>` : ''}
+                        </div>
+                        <div class="winners-section">
+                            <div class="winners-grid ${section.winners.length === 3 ? 'three-col' : ''}">
+                                ${section.winners.map(w => {
+                                    const rankClass = w.rank === '1st' ? 'gold' : w.rank === '2nd' ? 'silver' : w.rank === '3rd' ? 'bronze' : 'gold-border';
+                                    const rankIcon = w.rank === '1st' ? '🥇' : w.rank === '2nd' ? '🥈' : w.rank === '3rd' ? '🥉' : '⭐';
+                                    return `
+                                        <div class="winner-card ${rankClass}">
+                                            <div class="winner-img">
+                                                <img src="${w.photo}" alt="${escapeHtml(w.name)}" loading="lazy" onerror="this.src='assets/img/default-avatar.png'">
+                                            </div>
+                                            <div class="winner-rank">${rankIcon}</div>
+                                            <h4>${escapeHtml(w.name)}</h4>
+                                            <p>${escapeHtml(w.rollno)}</p>
+                                            <span class="winner-badge">${w.rank} - ${escapeHtml(w.eventName)}</span>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Error fetching winners:', error);
+                container.innerHTML = '';
+                if (container.parentElement) container.parentElement.style.display = 'none';
+            }
+        }
+
+        // Helper function
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Call on page load
+        document.addEventListener('DOMContentLoaded', fetchWinners);
     </script>
 </body>
 
