@@ -116,7 +116,8 @@
         }
 
         .form-group input,
-        .form-group select {
+        .form-group select,
+        .form-group textarea {
             width: 100%;
             padding: 12px 14px;
             background: var(--bg);
@@ -125,6 +126,11 @@
             color: var(--text);
             font-family: inherit;
             font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
         }
 
         .btn {
@@ -149,6 +155,11 @@
 
         .btn-warning {
             background: var(--warning);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
             color: white;
         }
 
@@ -222,6 +233,7 @@
             z-index: 1000;
             justify-content: center;
             align-items: center;
+            backdrop-filter: blur(4px);
         }
 
         .modal.active {
@@ -236,6 +248,10 @@
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
+        }
+
+        .modal-content.large {
+            max-width: 700px;
         }
 
         .modal-header {
@@ -279,9 +295,258 @@
             margin: 20px 0;
         }
 
+        /* ========== CUSTOM EMAIL STYLES ========== */
+        .custom-email-section {
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            background: rgba(0, 240, 255, 0.03);
+        }
+
+        .custom-email-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .custom-email-header h4 {
+            color: var(--primary);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 26px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        .placeholder-hint {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            font-family: monospace;
+            background: rgba(0, 240, 255, 0.05);
+            padding: 6px 10px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .email-options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .email-option-card {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .email-option-card:hover {
+            border-color: var(--primary);
+        }
+
+        .email-option-card input[type="checkbox"] {
+            width: auto;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .email-option-card span {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .preview-btn-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        /* ========== EMAIL PREVIEW ========== */
+        .email-preview-container {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .email-preview-subject {
+            background: rgba(0, 240, 255, 0.1);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .email-preview-subject-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .email-preview-subject-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-top: 4px;
+        }
+
+        .email-preview-body {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .email-preview-body .body-text {
+            color: var(--text);
+            line-height: 1.7;
+            margin-bottom: 20px;
+            white-space: pre-wrap;
+        }
+
+        .email-preview-permissions {
+            background: rgba(0, 240, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+            border-left: 3px solid var(--primary);
+        }
+
+        .email-preview-permissions h4 {
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .email-preview-permissions .perm-item {
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+        }
+
+        .email-preview-login {
+            background: rgba(0, 240, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .email-preview-login h4 {
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .email-preview-login ol {
+            margin-left: 20px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .email-preview-btn {
+            text-align: center;
+            padding: 12px;
+        }
+
+        .email-preview-btn a {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* ========== TOAST ========== */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+        }
+
+        .toast-success { background: var(--success); }
+        .toast-error { background: var(--danger); }
+        .toast-info { background: var(--primary); color: var(--bg); }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
         @media (max-width: 768px) {
             .container { padding: 16px; }
             .form-grid { grid-template-columns: 1fr; }
+            .email-options-grid { grid-template-columns: 1fr; }
+            .custom-email-header { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
@@ -327,7 +592,83 @@
                         <input type="text" id="memberImage" placeholder="https://...">
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Add Member</button>
+
+                <!-- ========== NEW: CUSTOM EMAIL SECTION ========== -->
+                <div class="custom-email-section">
+                    <div class="custom-email-header">
+                        <h4><i class="fas fa-envelope"></i> Welcome Email Settings</h4>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="useCustomEmail" onchange="toggleCustomEmail()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
+                        <i class="fas fa-info-circle"></i> 
+                        By default, a standard welcome email will be sent. Enable the toggle to customize it.
+                    </p>
+
+                    <div id="customEmailSection" style="display: none;">
+                        <div class="form-group">
+                            <label><i class="fas fa-heading"></i> Email Subject</label>
+                            <input type="text" id="emailSubject" 
+                                   value="🎉 Welcome to C3 Admin Team, {name}!"
+                                   placeholder="Enter email subject">
+                            <div class="placeholder-hint">
+                                Placeholders: {name} {email} {role} {position} {addedBy}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-align-left"></i> Email Body</label>
+                            <textarea id="emailBody" rows="8" style="font-family: monospace; font-size: 13px;">Hi {name},
+
+Welcome to the Creative Coding Community team! 🎉
+
+You have been added as {role} by {addedBy}.
+
+We're excited to have you on board. Please use the login instructions below to access the admin panel.
+
+If you have any questions, feel free to reach out to us.
+
+Best regards,
+C3 Team</textarea>
+                            <div class="placeholder-hint">
+                                Placeholders: {name} {email} {role} {position} {addedBy}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-list-check"></i> Include in Email</label>
+                            <div class="email-options-grid">
+                                <label class="email-option-card">
+                                    <input type="checkbox" id="includePermissions" checked>
+                                    <span>📋 Permissions List</span>
+                                </label>
+                                <label class="email-option-card">
+                                    <input type="checkbox" id="includeLoginInstructions" checked>
+                                    <span>🔐 Login Instructions</span>
+                                </label>
+                                <label class="email-option-card">
+                                    <input type="checkbox" id="includeLoginButton" checked>
+                                    <span>🔗 Login Button</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="preview-btn-container">
+                            <button type="button" class="btn btn-warning" onclick="previewEmail()">
+                                <i class="fas fa-eye"></i> Preview Email
+                            </button>
+                            <button type="button" class="btn btn-sm" style="background:transparent;border:1px solid var(--border);color:var(--text-secondary);" onclick="resetEmailTemplate()">
+                                <i class="fas fa-undo"></i> Reset to Default
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="margin-top: 16px;">
+                    <i class="fas fa-save"></i> Add Member
+                </button>
             </form>
         </div>
 
@@ -347,7 +688,7 @@
                     </tr>
                 </thead>
                 <tbody id="membersTableBody">
-                    <tr><td colspan="7" class="loading"><i class="fas fa-spinner fa-spin"></i> Loading team members...<\/td><\/tr>
+                    <tr><td colspan="7" class="loading"><i class="fas fa-spinner fa-spin"></i> Loading team members...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -395,7 +736,6 @@
                     <div class="permission-item"><input type="checkbox" id="permNavEdit"> <label>Edit</label></div>
                     <div class="permission-item"><input type="checkbox" id="permNavDelete"> <label>Delete</label></div>
                 </div>
-                <!-- ✅ NEW: Certificates Permission -->
                 <div class="permission-group">
                     <h4>📜 Certificates</h4>
                     <div class="permission-item"><input type="checkbox" id="permCertUpload"> <label>Upload Certificate</label></div>
@@ -403,6 +743,19 @@
                 </div>
                 <hr>
                 <button class="btn btn-primary" onclick="savePermissions()"><i class="fas fa-save"></i> Save Permissions</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Preview Modal -->
+    <div id="emailPreviewModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3><i class="fas fa-envelope"></i> Email Preview</h3>
+                <span class="close-modal" onclick="closeEmailPreview()">&times;</span>
+            </div>
+            <div id="emailPreviewContent">
+                <!-- Preview content will be inserted here -->
             </div>
         </div>
     </div>
@@ -421,10 +774,125 @@
         const savedTheme = localStorage.getItem('theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
 
-        // Load team members
+        // ========== TOAST ==========
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.className = 'toast toast-' + type;
+            toast.innerHTML = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+
+        // ========== CUSTOM EMAIL FUNCTIONS ==========
+        function toggleCustomEmail() {
+            const useCustom = document.getElementById('useCustomEmail').checked;
+            const section = document.getElementById('customEmailSection');
+            section.style.display = useCustom ? 'block' : 'none';
+        }
+
+        function resetEmailTemplate() {
+            if (!confirm('Reset email template to default?')) return;
+            
+            document.getElementById('emailSubject').value = '🎉 Welcome to C3 Admin Team, {name}!';
+            document.getElementById('emailBody').value = `Hi {name},
+
+Welcome to the Creative Coding Community team! 🎉
+
+You have been added as {role} by {addedBy}.
+
+We're excited to have you on board. Please use the login instructions below to access the admin panel.
+
+If you have any questions, feel free to reach out to us.
+
+Best regards,
+C3 Team`;
+            document.getElementById('includePermissions').checked = true;
+            document.getElementById('includeLoginInstructions').checked = true;
+            document.getElementById('includeLoginButton').checked = true;
+            
+            showToast('✅ Template reset to default', 'success');
+        }
+
+        function previewEmail() {
+            const name = document.getElementById('memberName').value || 'John Doe';
+            const email = document.getElementById('memberEmail').value || 'john@example.com';
+            const role = document.getElementById('memberRole').value || 'core_member';
+            const position = document.getElementById('memberPosition').value || 'Core Member';
+            
+            const subject = document.getElementById('emailSubject').value
+                .replace(/{name}/g, name)
+                .replace(/{email}/g, email)
+                .replace(/{role}/g, role)
+                .replace(/{position}/g, position)
+                .replace(/{addedBy}/g, 'Admin');
+            
+            const body = document.getElementById('emailBody').value
+                .replace(/{name}/g, name)
+                .replace(/{email}/g, email)
+                .replace(/{role}/g, role)
+                .replace(/{position}/g, position)
+                .replace(/{addedBy}/g, 'Admin');
+            
+            const includePermissions = document.getElementById('includePermissions').checked;
+            const includeLoginInstructions = document.getElementById('includeLoginInstructions').checked;
+            const includeLoginButton = document.getElementById('includeLoginButton').checked;
+            
+            let html = `
+                <div class="email-preview-container">
+                    <div class="email-preview-subject">
+                        <div class="email-preview-subject-label">Subject</div>
+                        <div class="email-preview-subject-value">${escapeHtml(subject)}</div>
+                    </div>
+                    
+                    <div class="email-preview-body">
+                        <div class="body-text">${escapeHtml(body)}</div>
+                        
+                        ${includePermissions ? `
+                            <div class="email-preview-permissions">
+                                <h4>📋 Access Rights</h4>
+                                <div class="perm-item">📅 <strong>Events:</strong> ✅ Create | ✅ Edit | ✅ Delete</div>
+                                <div class="perm-item">🔔 <strong>Notifications:</strong> ✅ Create | ✅ Delete</div>
+                                <div class="perm-item">📸 <strong>Gallery:</strong> ✅ Upload | ✅ Delete</div>
+                                <div class="perm-item">👥 <strong>Members:</strong> ✅ View</div>
+                                <div class="perm-item">🏷️ <strong>Categories:</strong> ✅ Create | ✅ Edit | ✅ Delete</div>
+                                <div class="perm-item">📋 <strong>Nav Items:</strong> ✅ Create | ✅ Edit | ✅ Delete</div>
+                            </div>
+                        ` : ''}
+                        
+                        ${includeLoginInstructions ? `
+                            <div class="email-preview-login">
+                                <h4>🔐 How to Login</h4>
+                                <ol>
+                                    <li>Go to: <strong>https://c3community.netlify.app/admin-login.html</strong></li>
+                                    <li>Click on <strong>"📧 OTP Login"</strong></li>
+                                    <li>Enter your email: <strong>${escapeHtml(email)}</strong></li>
+                                    <li>Click <strong>"Send OTP"</strong></li>
+                                    <li>Enter OTP and login</li>
+                                </ol>
+                            </div>
+                        ` : ''}
+                        
+                        ${includeLoginButton ? `
+                            <div class="email-preview-btn">
+                                <a href="#">🔐 Login Now</a>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('emailPreviewContent').innerHTML = html;
+            document.getElementById('emailPreviewModal').classList.add('active');
+        }
+
+        function closeEmailPreview() {
+            document.getElementById('emailPreviewModal').classList.remove('active');
+        }
+
+        // ========== LOAD MEMBERS ==========
         async function loadMembers() {
             const tbody = document.getElementById('membersTableBody');
-            tbody.innerHTML = '<td><td colspan="7" class="loading"><i class="fas fa-spinner fa-spin"></i> Loading team members...<\/td><\/tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="loading"><i class="fas fa-spinner fa-spin"></i> Loading team members...</td></tr>';
             
             try {
                 const response = await fetch(`${API_BASE_URL}/api/team/team-members`, {
@@ -437,14 +905,14 @@
                 const members = data.members || (Array.isArray(data) ? data : []);
                 
                 if (members.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" class="loading">No team members found. Add your first member above!<\/td><\/tr>';
+                    tbody.innerHTML = '<tr><td colspan="7" class="loading">No team members found. Add your first member above!</td></tr>';
                     return;
                 }
                 
                 displayMembers(members);
             } catch (error) {
                 console.error('Error:', error);
-                tbody.innerHTML = `<tr><td colspan="7" class="loading">Failed to load members: ${error.message}<\/td><\/tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="loading">Failed to load members: ${error.message}</td></tr>`;
             }
         }
 
@@ -478,9 +946,11 @@
             tbody.innerHTML = html;
         }
 
-        // Add member
+        // ========== ADD MEMBER ==========
         document.getElementById('addMemberForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            const useCustomEmail = document.getElementById('useCustomEmail').checked;
             
             const memberData = {
                 name: document.getElementById('memberName').value,
@@ -491,8 +961,20 @@
                 profileImage: document.getElementById('memberImage').value
             };
             
+            // Add custom email if enabled
+            if (useCustomEmail) {
+                memberData.customEmail = {
+                    useCustom: true,
+                    subject: document.getElementById('emailSubject').value,
+                    body: document.getElementById('emailBody').value,
+                    includePermissions: document.getElementById('includePermissions').checked,
+                    includeLoginInstructions: document.getElementById('includeLoginInstructions').checked,
+                    includeLoginButton: document.getElementById('includeLoginButton').checked
+                };
+            }
+            
             if (!memberData.name || !memberData.email || !memberData.role) {
-                alert('Please fill required fields');
+                showToast('❌ Please fill required fields', 'error');
                 return;
             }
             
@@ -514,19 +996,25 @@
                 
                 if (!response.ok) throw new Error(data.message || 'Failed to add member');
                 
-                alert('✅ Member added successfully!');
+                showToast(
+                    '✅ Member added successfully! ' + 
+                    (useCustomEmail ? 'Custom email sent.' : 'Welcome email sent.'), 
+                    'success'
+                );
+                
                 e.target.reset();
+                document.getElementById('customEmailSection').style.display = 'none';
                 loadMembers();
                 
             } catch (error) {
-                alert('❌ ' + error.message);
+                showToast('❌ ' + error.message, 'error');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-save"></i> Add Member';
             }
         });
 
-        // Edit permissions
+        // ========== EDIT PERMISSIONS ==========
         window.editPermissions = async function(memberId) {
             console.log('Fetching member:', memberId);
             try {
@@ -545,34 +1033,27 @@
                 
                 const perms = member.permissions || {};
                 
-                // Events
                 document.getElementById('permEventsCreate').checked = perms.events?.create || false;
                 document.getElementById('permEventsEdit').checked = perms.events?.edit || false;
                 document.getElementById('permEventsDelete').checked = perms.events?.delete || false;
                 
-                // Notifications
                 document.getElementById('permNotifCreate').checked = perms.notifications?.create || false;
                 document.getElementById('permNotifDelete').checked = perms.notifications?.delete || false;
                 
-                // Gallery
                 document.getElementById('permGalleryUpload').checked = perms.gallery?.upload || false;
                 document.getElementById('permGalleryDelete').checked = perms.gallery?.delete || false;
                 
-                // Members
                 document.getElementById('permMembersView').checked = perms.members?.view || false;
                 document.getElementById('permMembersDelete').checked = perms.members?.delete || false;
                 
-                // Categories
                 document.getElementById('permCatsCreate').checked = perms.categories?.create || false;
                 document.getElementById('permCatsEdit').checked = perms.categories?.edit || false;
                 document.getElementById('permCatsDelete').checked = perms.categories?.delete || false;
                 
-                // Nav Items
                 document.getElementById('permNavCreate').checked = perms.navItems?.create || false;
                 document.getElementById('permNavEdit').checked = perms.navItems?.edit || false;
                 document.getElementById('permNavDelete').checked = perms.navItems?.delete || false;
                 
-                // ✅ NEW: Certificates
                 document.getElementById('permCertUpload').checked = perms.certificates?.upload || false;
                 document.getElementById('permCertDelete').checked = perms.certificates?.delete || false;
                 
@@ -580,7 +1061,7 @@
                 
             } catch (error) {
                 console.error('Permission error:', error);
-                alert('❌ Failed to load member permissions: ' + error.message);
+                showToast('❌ Failed to load member permissions: ' + error.message, 'error');
             }
         };
 
@@ -637,12 +1118,12 @@
                 
                 if (!response.ok) throw new Error('Failed to save permissions');
                 
-                alert('✅ Permissions saved successfully!');
+                showToast('✅ Permissions saved successfully!', 'success');
                 closePermissionModal();
                 loadMembers();
                 
             } catch (error) {
-                alert('❌ ' + error.message);
+                showToast('❌ ' + error.message, 'error');
             }
         };
 
@@ -665,11 +1146,11 @@
                 
                 if (!response.ok) throw new Error('Failed to update');
                 
-                alert('✅ Member updated!');
+                showToast('✅ Member updated!', 'success');
                 loadMembers();
                 
             } catch (error) {
-                alert('❌ ' + error.message);
+                showToast('❌ ' + error.message, 'error');
             }
         };
 
@@ -684,17 +1165,24 @@
                 
                 if (!response.ok) throw new Error('Failed to delete');
                 
-                alert('✅ Member deleted successfully');
+                showToast('✅ Member deleted successfully', 'success');
                 loadMembers();
                 
             } catch (error) {
-                alert('❌ ' + error.message);
+                showToast('❌ ' + error.message, 'error');
             }
         };
 
         window.closePermissionModal = function() {
             document.getElementById('permissionModal').classList.remove('active');
         };
+
+        // Close modals on outside click
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        });
 
         function escapeHtml(text) {
             if (!text) return '';
