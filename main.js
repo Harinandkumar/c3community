@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initLoadingScreen();
     initMatrixBackground();
     initCodeBackground();
+    initGalleryCarousel();  // ✅ NEW: Gallery Carousel
     
     // Read More button event listener for priority notices
     document.addEventListener('click', function(e) {
@@ -744,3 +745,314 @@ window.addEventListener('load', () => {
     setTimeout(initScrollReveal, 1500);
 });
 window.loadDynamicNavItems = loadDynamicNavItems;
+
+// ==========================================
+// ========== GALLERY CAROUSEL (NEW) ==========
+// ==========================================
+
+let carouselState = {
+    slides: [],
+    currentIndex: 0,
+    autoplayInterval: null,
+    progressInterval: null,
+    progress: 0,
+    autoplayDuration: 5000,
+    isPaused: false,
+    touchStartX: 0,
+    touchEndX: 0,
+    isInitialized: false
+};
+
+async function initGalleryCarousel() {
+    const track = document.getElementById('carouselTrack');
+    const container = document.getElementById('carouselContainer');
+    
+    if (!track || !container || carouselState.isInitialized) return;
+    
+    try {
+        console.log('🖼️ Loading gallery carousel...');
+        
+        const response = await fetch(`${API_BASE_URL}/api/public/gallery`);
+        
+        const contentType = response.headers.get('content-type');
+        if (!response.ok || !contentType || !contentType.includes('application/json')) {
+            console.warn('⚠️ Gallery API not available');
+            showCarouselEmpty(track);
+            return;
+        }
+        
+        const images = await response.json();
+        
+        if (!images || images.length === 0) {
+            console.warn('No gallery images found');
+            showCarouselEmpty(track);
+            return;
+        }
+        
+        // Get latest 10 images
+        const latestImages = images
+            .sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate))
+            .slice(0, 10);
+        
+        carouselState.slides = latestImages;
+        carouselState.isInitialized = true;
+        
+        renderCarouselSlides(track, latestImages);
+        setupCarouselControls();
+        setupCarouselSwipe(container);
+        setupCarouselKeyboard();
+        startCarouselAutoplay();
+        
+        container.addEventListener('mouseenter', pauseCarousel);
+        container.addEventListener('mouseleave', resumeCarousel);
+        
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                pauseCarousel();
+            } else {
+                resumeCarousel();
+            }
+        });
+        
+        console.log(`✅ Carousel loaded with ${latestImages.length} slides`);
+        
+    } catch (error) {
+        console.error('❌ Error loading carousel:', error);
+        showCarouselEmpty(track);
+    }
+}
+
+function showCarouselEmpty(track) {
+    track.innerHTML = `
+        <div class="carousel-empty">
+            <i class="fas fa-images"></i>
+            <p>No images in gallery yet</p>
+        </div>
+    `;
+    const prevBtn = document.getElementById('carouselPrev');
+    const nextBtn = document.getElementById('carouselNext');
+    const dots = document.getElementById('carouselDots');
+    const progress = document.querySelector('.carousel-progress');
+    if (prevBtn) prevBtn.style.display = 'none';
+    if (nextBtn) nextBtn.style.display = 'none';
+    if (dots) dots.style.display = 'none';
+    if (progress) progress.style.display = 'none';
+}
+
+function renderCarouselSlides(track, images) {
+    const slidesHTML = images.map((img, index) => {
+        const uploadDate = img.uploadDate 
+            ? new Date(img.uploadDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+            : 'Recent';
+        
+        return `
+            <div class="carousel-slide ${index === 0 ? 'active' : ''}" data-index="${index}">
+                <img 
+                    src="${img.cloudinaryUrl}" 
+                    alt="${escapeHtmlCarousel(img.title || 'Gallery Image')}" 
+                    loading="${index < 2 ? 'eager' : 'lazy'}"
+                    onerror="this.src='assets/img/default-event.jpg'"
+                >
+                <div class="carousel-slide-info">
+                    <h3>${escapeHtmlCarousel(img.title || 'Untitled')}</h3>
+                    <div class="slide-meta">
+                        <span class="slide-category-badge">${escapeHtmlCarousel(img.category || 'events')}</span>
+                        <span><i class="far fa-calendar-alt"></i> ${uploadDate}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    track.innerHTML = slidesHTML;
+    
+    const dotsContainer = document.getElementById('carouselDots');
+    if (dotsContainer) {
+        dotsContainer.innerHTML = images.map((_, index) => `
+            <button 
+                class="carousel-dot ${index === 0 ? 'active' : ''}" 
+                data-index="${index}"
+                aria-label="Go to slide ${index + 1}"
+            ></button>
+        `).join('');
+    }
+}
+
+function setupCarouselControls() {
+    const prevBtn = document.getElementById('carouselPrev');
+    const nextBtn = document.getElementById('carouselNext');
+    const dotsContainer = document.getElementById('carouselDots');
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            goToCarouselSlide(carouselState.currentIndex - 1);
+            resetCarouselProgress();
+        });
+    }
+    
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            goToCarouselSlide(carouselState.currentIndex + 1);
+            resetCarouselProgress();
+        });
+    }
+    
+    if (dotsContainer) {
+        dotsContainer.addEventListener('click', (e) => {
+            const dot = e.target.closest('.carousel-dot');
+            if (dot) {
+                const index = parseInt(dot.dataset.index);
+                goToCarouselSlide(index);
+                resetCarouselProgress();
+            }
+        });
+    }
+}
+
+function goToCarouselSlide(index) {
+    const track = document.getElementById('carouselTrack');
+    const slides = document.querySelectorAll('.carousel-slide');
+    const dots = document.querySelectorAll('.carousel-dot');
+    
+    if (!track || slides.length === 0) return;
+    
+    if (index < 0) {
+        index = slides.length - 1;
+    } else if (index >= slides.length) {
+        index = 0;
+    }
+    
+    carouselState.currentIndex = index;
+    track.style.transform = `translateX(-${index * 100}%)`;
+    
+    slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+    });
+    
+    dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+    });
+}
+
+function startCarouselAutoplay() {
+    if (carouselState.slides.length <= 1) return;
+    
+    stopCarouselAutoplay();
+    
+    carouselState.autoplayInterval = setInterval(() => {
+        if (!carouselState.isPaused) {
+            goToCarouselSlide(carouselState.currentIndex + 1);
+            resetCarouselProgress();
+        }
+    }, carouselState.autoplayDuration);
+    
+    startCarouselProgress();
+}
+
+function stopCarouselAutoplay() {
+    if (carouselState.autoplayInterval) {
+        clearInterval(carouselState.autoplayInterval);
+        carouselState.autoplayInterval = null;
+    }
+    stopCarouselProgress();
+}
+
+function startCarouselProgress() {
+    stopCarouselProgress();
+    
+    const progressBar = document.getElementById('carouselProgressBar');
+    if (!progressBar) return;
+    
+    carouselState.progress = 0;
+    progressBar.style.width = '0%';
+    
+    const updateInterval = 50;
+    const step = (updateInterval / carouselState.autoplayDuration) * 100;
+    
+    carouselState.progressInterval = setInterval(() => {
+        if (!carouselState.isPaused) {
+            carouselState.progress += step;
+            if (carouselState.progress >= 100) {
+                carouselState.progress = 0;
+            }
+            progressBar.style.width = carouselState.progress + '%';
+        }
+    }, updateInterval);
+}
+
+function stopCarouselProgress() {
+    if (carouselState.progressInterval) {
+        clearInterval(carouselState.progressInterval);
+        carouselState.progressInterval = null;
+    }
+}
+
+function resetCarouselProgress() {
+    carouselState.progress = 0;
+    const progressBar = document.getElementById('carouselProgressBar');
+    if (progressBar) {
+        progressBar.style.width = '0%';
+    }
+}
+
+function pauseCarousel() {
+    carouselState.isPaused = true;
+}
+
+function resumeCarousel() {
+    carouselState.isPaused = false;
+}
+
+function setupCarouselSwipe(container) {
+    container.addEventListener('touchstart', (e) => {
+        carouselState.touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    
+    container.addEventListener('touchend', (e) => {
+        carouselState.touchEndX = e.changedTouches[0].screenX;
+        handleCarouselSwipe();
+    }, { passive: true });
+}
+
+function handleCarouselSwipe() {
+    const swipeThreshold = 50;
+    const diff = carouselState.touchStartX - carouselState.touchEndX;
+    
+    if (Math.abs(diff) < swipeThreshold) return;
+    
+    if (diff > 0) {
+        goToCarouselSlide(carouselState.currentIndex + 1);
+    } else {
+        goToCarouselSlide(carouselState.currentIndex - 1);
+    }
+    
+    resetCarouselProgress();
+}
+
+function setupCarouselKeyboard() {
+    document.addEventListener('keydown', (e) => {
+        const container = document.getElementById('carouselContainer');
+        if (!container) return;
+        
+        const rect = container.getBoundingClientRect();
+        const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+        if (!isVisible) return;
+        
+        if (e.key === 'ArrowLeft') {
+            goToCarouselSlide(carouselState.currentIndex - 1);
+            resetCarouselProgress();
+        } else if (e.key === 'ArrowRight') {
+            goToCarouselSlide(carouselState.currentIndex + 1);
+            resetCarouselProgress();
+        }
+    });
+}
+
+function escapeHtmlCarousel(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+window.initGalleryCarousel = initGalleryCarousel;

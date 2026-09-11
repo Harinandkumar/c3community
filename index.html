@@ -292,6 +292,46 @@
         </div>
     </section>
 
+    <!-- ========== GALLERY CAROUSEL SECTION (NEW) ========== -->
+    <section class="gallery-carousel-section" id="gallery-carousel">
+        <div class="section-title">
+            <h2>📸 Glimpses of Our Journey</h2>
+            <p class="section-description">Moments captured from our events, workshops, and celebrations</p>
+        </div>
+
+        <div class="carousel-wrapper">
+            <div class="carousel-container" id="carouselContainer">
+                <div class="carousel-track" id="carouselTrack">
+                    <div class="carousel-loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading gallery...</p>
+                    </div>
+                </div>
+
+                <button class="carousel-arrow carousel-prev" id="carouselPrev" aria-label="Previous slide">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="carousel-arrow carousel-next" id="carouselNext" aria-label="Next slide">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+
+                <div class="carousel-progress">
+                    <div class="carousel-progress-bar" id="carouselProgressBar"></div>
+                </div>
+
+                <div class="carousel-dots" id="carouselDots"></div>
+            </div>
+
+            <div class="carousel-cta">
+                <a href="gallery.html" class="view-gallery-btn">
+                    <i class="fas fa-images"></i>
+                    <span>View Full Gallery</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer id="contact">
         <div class="footer-container">
@@ -458,7 +498,7 @@
             });
         }
 
-        // ========== FETCH WINNERS (DYNAMIC) ==========
+        // ========== FETCH WINNERS (DYNAMIC - FIXED VERSION) ==========
         async function fetchWinners() {
             const container = document.getElementById('winnersContainer');
             if (!container) return;
@@ -471,31 +511,41 @@
                 
                 if (!sections || sections.length === 0) {
                     container.innerHTML = '';
-                    container.parentElement.style.display = 'none';
+                    if (container.parentElement) container.parentElement.style.display = 'none';
                     return;
                 }
                 
                 let html = '';
                 sections.forEach(section => {
+                    // Determine grid class based on winner count
+                    let gridClass = 'winners-grid';
+                    if (section.winners.length === 1) gridClass += ' one-col';
+                    else if (section.winners.length === 2) gridClass += ' two-col';
+                    else if (section.winners.length === 3) gridClass += ' three-col';
+                    
                     html += `
                         <div class="section-title">
                             <h2>🏆 ${escapeHtml(section.heading)} 🏆</h2>
                             ${section.subtitle ? `<p class="section-description">${escapeHtml(section.subtitle)}</p>` : ''}
                         </div>
                         <div class="winners-section">
-                            <div class="winners-grid ${section.winners.length === 3 ? 'three-col' : ''}">
+                            <div class="${gridClass}">
                                 ${section.winners.map(w => {
-                                    const rankClass = w.rank === '1st' ? 'gold' : w.rank === '2nd' ? 'silver' : w.rank === '3rd' ? 'bronze' : 'gold-border';
+                                    const rankClass = w.rank === '1st' ? 'gold' : w.rank === '2nd' ? 'silver' : w.rank === '3rd' ? 'bronze' : 'special';
                                     const rankIcon = w.rank === '1st' ? '🥇' : w.rank === '2nd' ? '🥈' : w.rank === '3rd' ? '🥉' : '⭐';
+                                    const rankLabel = w.rank === '1st' ? '1st Place' : w.rank === '2nd' ? '2nd Place' : w.rank === '3rd' ? '3rd Place' : 'Special';
+                                    
                                     return `
                                         <div class="winner-card ${rankClass}">
+                                            <div class="winner-rank-badge">${rankIcon}</div>
                                             <div class="winner-img">
                                                 <img src="${w.photo}" alt="${escapeHtml(w.name)}" loading="lazy" onerror="this.src='assets/img/default-avatar.png'">
                                             </div>
-                                            <div class="winner-rank">${rankIcon}</div>
-                                            <h4>${escapeHtml(w.name)}</h4>
-                                            <p>${escapeHtml(w.rollno)}</p>
-                                            <span class="winner-badge">${w.rank} - ${escapeHtml(w.eventName)}</span>
+                                            <div class="winner-info">
+                                                <h4>${escapeHtml(w.name)}</h4>
+                                                <p class="winner-rollno">${escapeHtml(w.rollno)}</p>
+                                                <span class="winner-badge">${escapeHtml(w.eventName)} • ${rankLabel}</span>
+                                            </div>
                                         </div>
                                     `;
                                 }).join('')}
