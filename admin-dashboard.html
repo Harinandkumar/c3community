@@ -1512,7 +1512,7 @@
             if (hasPermission('winners', 'create') || hasPermission('winners', 'edit') || hasPermission('winners', 'delete') || isSuperAdmin) {
                 menuHtml += '<div class="menu-item" data-panel="winners"><i class="fas fa-trophy"></i> Winners Manager</div>';
             }
-
+menuHtml += '<div class="menu-item" data-panel="chat-manager"><i class="fas fa-comments"></i> Chat Manager</div>';
             if (isSuperAdmin) {
                 menuHtml += '<div class="menu-item" data-panel="team-public"><i class="fas fa-user-plus"></i> Team Public</div>';
                 menuHtml += '<div class="menu-item" data-panel="alumni"><i class="fas fa-graduation-cap"></i> Alumni</div>';
@@ -1531,7 +1531,11 @@
                         window.location.href = 'admin-form-builder.html';
                         return;
                     }
-
+// ✅ Chat Manager Redirect
+if (panelId === 'chat-manager') {
+    window.location.href = 'admin-chat.html';
+    return;
+}
                     switchPanel(panelId, panelName);
                     if (panelId === 'events') loadEvents();
                     if (panelId === 'members') loadMembers();

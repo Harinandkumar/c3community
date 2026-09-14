@@ -451,43 +451,157 @@ function initChatbot() {
     const chatbotSend = document.getElementById('chatbotSend');
     const chatbotInput = document.getElementById('chatbotInput');
     const chatbotMessages = document.getElementById('chatbotMessages');
-    
-    if (chatbotToggle && chatbotWindow) {
-        chatbotToggle.addEventListener('click', () => { chatbotWindow.classList.toggle('active'); });
-        if (chatbotMinimize) chatbotMinimize.addEventListener('click', () => { chatbotWindow.classList.remove('active'); });
+
+    // ✅ Generate/Load visitor ID
+    let visitorId = localStorage.getItem('chatVisitorId');
+    if (!visitorId) {
+        visitorId = 'visitor_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('chatVisitorId', visitorId);
     }
-    
+
+    // ✅ User info
+    const userData = JSON.parse(localStorage.getItem('user') || '{}');
+    const userName = userData.name || 'Guest';
+    const userEmail = userData.email || '';
+    const userId = userData.id || null;
+
+    // ✅ Socket connection
+    let socket = null;
+    let isChatOpen = false;
+
+    function connectSocket() {
+        if (socket && socket.connected) return;
+        
+        socket = io(API_BASE_URL, {
+            transports: ['websocket', 'polling']
+        });
+
+        socket.on('connect', () => {
+            console.log('✅ Chat connected');
+            socket.emit('join-chat', {
+                visitorId,
+                userName,
+                userEmail,
+                userId
+            });
+        });
+
+        // ✅ Admin reply receive
+        socket.on('admin-message', (data) => {
+            addMessage(data.message, 'admin', data.senderName || 'Admin');
+            // Play sound
+            playNotificationSound();
+        });
+
+        // ✅ Bot reply
+        socket.on('bot-message', (data) => {
+            addMessage(data.message, 'bot', 'C3 Assistant');
+        });
+
+        socket.on('disconnect', () => {
+            console.log('❌ Chat disconnected');
+        });
+    }
+
+    if (chatbotToggle && chatbotWindow) {
+        chatbotToggle.addEventListener('click', () => {
+            isChatOpen = !isChatOpen;
+            chatbotWindow.classList.toggle('active');
+            if (isChatOpen) connectSocket();
+        });
+        
+        if (chatbotMinimize) {
+            chatbotMinimize.addEventListener('click', () => {
+                chatbotWindow.classList.remove('active');
+                isChatOpen = false;
+            });
+        }
+    }
+
     function sendMessage() {
         if (!chatbotInput || !chatbotMessages) return;
         const message = chatbotInput.value.trim();
         if (!message) return;
+
         addMessage(message, 'user');
         chatbotInput.value = '';
+
+        // ✅ Send to backend
+        if (socket && socket.connected) {
+            socket.emit('send-message', {
+                visitorId,
+                message,
+                sender: 'user',
+                userName,
+                userEmail,
+                userId
+            });
+        }
+
+        // ✅ Bot reply (local)
         setTimeout(() => {
             const reply = getBotReply(message);
-            addMessage(reply, 'bot');
+            if (reply) {
+                addMessage(reply, 'bot', 'C3 Assistant');
+                
+                // Save bot message to backend
+                if (socket && socket.connected) {
+                    socket.emit('send-message', {
+                        visitorId,
+                        message: reply,
+                        sender: 'bot',
+                        userName: 'C3 Assistant'
+                    });
+                }
+            }
         }, 500);
     }
-    
-    function addMessage(text, sender) {
+
+    function addMessage(text, sender, senderName) {
         const msgDiv = document.createElement('div');
         msgDiv.className = `message ${sender}`;
-        msgDiv.innerHTML = `<div class="message-avatar">${sender === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>'}</div><div class="message-bubble">${escapeHtml(text)}</div>`;
+        
+        let avatar = 'C3';
+        if (sender === 'user') avatar = '<i class="fas fa-user"></i>';
+        else if (sender === 'admin') avatar = '<i class="fas fa-headset"></i>';
+        else if (sender === 'bot') avatar = '<i class="fas fa-robot"></i>';
+        
+        msgDiv.innerHTML = `
+            <div class="message-avatar">${avatar}</div>
+            <div class="message-bubble">${escapeHtml(text)}</div>
+        `;
         chatbotMessages.appendChild(msgDiv);
         chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
     }
-    
+
     function getBotReply(message) {
         const msg = message.toLowerCase();
-        if (msg.includes('c3') || msg.includes('what is')) return 'C3 is a student-led coding club at GEC Samastipur focused on building and learning together! 🚀';
-        if (msg.includes('join') || msg.includes('register')) return 'To join C3, click the Login button and create an account!';
-        if (msg.includes('event')) return 'Check our Events section for hackathons, workshops, and competitions!';
-        if (msg.includes('contact')) return 'Email: creativecodingcodingcommunity@gmail.com | Instagram: @creativecoding_community';
-        return 'Hello! I\'m the C3 assistant. Ask me about events, joining, or contact info! 😊';
+        if (msg.includes('c3') || msg.includes('what is')) 
+            return 'C3 is a student-led coding club at GEC Samastipur focused on building and learning together! 🚀';
+        if (msg.includes('join') || msg.includes('register')) 
+            return 'To join C3, click the Login button and create an account!';
+        if (msg.includes('event')) 
+            return 'Check our Events section for hackathons, workshops, and competitions!';
+        if (msg.includes('contact')) 
+            return 'Email: creativecodingcodingcommunity@gmail.com | Instagram: @creativecoding_community';
+        if (msg.includes('hi') || msg.includes('hello')) 
+            return 'Hello! 👋 How can I help you today?';
+        if (msg.includes('thank')) 
+            return 'You\'re welcome! 😊 Feel free to ask anything else.';
+        
+        return null; // Let admin handle
     }
-    
+
+    function playNotificationSound() {
+        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT');
+        audio.volume = 0.5;
+        audio.play().catch(() => {});
+    }
+
     if (chatbotSend) chatbotSend.addEventListener('click', sendMessage);
-    if (chatbotInput) chatbotInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+    if (chatbotInput) chatbotInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
 }
 
 // Upload Button
