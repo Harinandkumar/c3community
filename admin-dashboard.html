@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Admin Dashboard - C3 Community</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?uu=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #00f0ff;
@@ -1395,6 +1395,87 @@
         </div>
     </div>
 
+    <!-- ========== ✅ NEW: Edit Winners Section Modal ========== -->
+    <div id="editWinnersSectionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Edit Winners Section</h3>
+                <span class="close-modal" onclick="closeEditWinnersSectionModal()">&times;</span>
+            </div>
+            <form id="editWinnersSectionForm">
+                <input type="hidden" id="editWinnersSectionId">
+                <div class="form-group">
+                    <label>Section Heading *</label>
+                    <input type="text" id="editWinnersHeading" required>
+                </div>
+                <div class="form-group">
+                    <label>Subtitle (Optional)</label>
+                    <input type="text" id="editWinnersSubtitle">
+                </div>
+                <div class="form-group" style="display:flex;align-items:center;gap:10px;">
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                        <input type="checkbox" id="editWinnersShowOnHomepage"> Show on Homepage
+                    </label>
+                </div>
+                <div class="form-group" style="display:flex;align-items:center;gap:10px;">
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                        <input type="checkbox" id="editWinnersIsPublished"> Published
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========== ✅ NEW: Edit Winner Modal ========== -->
+    <div id="editWinnerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-edit"></i> Edit Winner</h3>
+                <span class="close-modal" onclick="closeEditWinnerModal()">&times;</span>
+            </div>
+            <form id="editWinnerForm" enctype="multipart/form-data">
+                <input type="hidden" id="editWinnerSectionId">
+                <input type="hidden" id="editWinnerId">
+
+                <div class="form-group">
+                    <label>Name *</label>
+                    <input type="text" id="editWinnerName" required>
+                </div>
+                <div class="form-group">
+                    <label>Roll/Regno *</label>
+                    <input type="text" id="editWinnerRollno" required>
+                </div>
+                <div class="form-group">
+                    <label>Event Name *</label>
+                    <input type="text" id="editWinnerEvent" required>
+                </div>
+                <div class="form-group">
+                    <label>Rank *</label>
+                    <select id="editWinnerRank" required>
+                        <option value="1st">🥇 1st Place</option>
+                        <option value="2nd">🥈 2nd Place</option>
+                        <option value="3rd">🥉 3rd Place</option>
+                        <option value="special">⭐ Special</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Photo (Optional — leave empty to keep current)</label>
+                    <input type="file" id="editWinnerPhoto" accept="image/*">
+                </div>
+                <div id="editWinnerPhotoPreview" style="margin:15px 0;display:none;">
+                    <img id="editWinnerPhotoPreviewImg"
+                        style="max-width:150px;border-radius:12px;border:2px solid var(--primary);">
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+
     <script>
         var API_BASE_URL = 'https://backend-glo6.onrender.com';
         var adminToken = localStorage.getItem('adminToken');
@@ -1512,7 +1593,7 @@
             if (hasPermission('winners', 'create') || hasPermission('winners', 'edit') || hasPermission('winners', 'delete') || isSuperAdmin) {
                 menuHtml += '<div class="menu-item" data-panel="winners"><i class="fas fa-trophy"></i> Winners Manager</div>';
             }
-menuHtml += '<div class="menu-item" data-panel="chat-manager"><i class="fas fa-comments"></i> Chat Manager</div>';
+            menuHtml += '<div class="menu-item" data-panel="chat-manager"><i class="fas fa-comments"></i> Chat Manager</div>';
             if (isSuperAdmin) {
                 menuHtml += '<div class="menu-item" data-panel="team-public"><i class="fas fa-user-plus"></i> Team Public</div>';
                 menuHtml += '<div class="menu-item" data-panel="alumni"><i class="fas fa-graduation-cap"></i> Alumni</div>';
@@ -1531,11 +1612,11 @@ menuHtml += '<div class="menu-item" data-panel="chat-manager"><i class="fas fa-c
                         window.location.href = 'admin-form-builder.html';
                         return;
                     }
-// ✅ Chat Manager Redirect
-if (panelId === 'chat-manager') {
-    window.location.href = 'admin-chat.html';
-    return;
-}
+                    // ✅ Chat Manager Redirect
+                    if (panelId === 'chat-manager') {
+                        window.location.href = 'admin-chat.html';
+                        return;
+                    }
                     switchPanel(panelId, panelName);
                     if (panelId === 'events') loadEvents();
                     if (panelId === 'members') loadMembers();
@@ -2869,6 +2950,7 @@ if (panelId === 'chat-manager') {
                     '</div>' +
                     '<div class="action-buttons">' +
                     (canCreate ? '<button class="btn btn-primary btn-sm" onclick="openAddWinnerModal(\'' + section._id + '\')"><i class="fas fa-plus"></i> Add Winner</button>' : '') +
+                    (canEdit ? '<button class="btn btn-success btn-sm" onclick="openEditWinnersSection(\'' + section._id + '\')"><i class="fas fa-edit"></i> Edit Section</button>' : '') +
                     (canEdit ? '<button class="btn btn-warning btn-sm" onclick="toggleWinnersPublish(\'' + section._id + '\', ' + section.isPublished + ')">' + (section.isPublished ? '📥 Unpublish' : '📤 Publish') + '</button>' : '') +
                     (canDelete ? '<button class="btn btn-danger btn-sm" onclick="deleteWinnersSection(\'' + section._id + '\')"><i class="fas fa-trash"></i> Delete</button>' : '') +
                     '</div>' +
@@ -2884,7 +2966,10 @@ if (panelId === 'chat-manager') {
                             '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px;">' + escapeHtml(w.rollno) + '</div>' +
                             '<div style="font-size:12px;color:var(--primary);">🎯 ' + escapeHtml(w.eventName) + '</div>' +
                             '<div style="font-size:12px;margin-top:8px;">' + rankIcon + ' ' + w.rank + '</div>' +
-                            (canDelete ? '<button class="btn btn-danger btn-sm" style="margin-top:8px;width:100%;" onclick="deleteWinnerItem(\'' + section._id + '\', \'' + w._id + '\')"><i class="fas fa-trash"></i> Delete</button>' : '') +
+                            '<div style="display:flex;gap:6px;margin-top:8px;">' +
+                            (canEdit ? '<button class="btn btn-warning btn-sm" style="flex:1;" onclick="openEditWinnerModal(\'' + section._id + '\', \'' + w._id + '\')"><i class="fas fa-edit"></i> Edit</button>' : '') +
+                            (canDelete ? '<button class="btn btn-danger btn-sm" style="flex:1;" onclick="deleteWinnerItem(\'' + section._id + '\', \'' + w._id + '\')"><i class="fas fa-trash"></i> Delete</button>' : '') +
+                            '</div>' +
                             '</div>';
                     });
                     html += '</div>';
@@ -3020,6 +3105,181 @@ if (panelId === 'chat-manager') {
                 if (response.ok) { alert('✅ Winner deleted!'); loadWinnersSections(); }
             } catch (error) { alert('❌ ' + error.message); }
         }
+
+        // ========== ✅ NEW: EDIT WINNERS SECTION ==========
+        async function openEditWinnersSection(sectionId) {
+            if (!hasPermission('winners', 'edit') && !isSuperAdmin) { alert('No permission'); return; }
+
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/winners/' + sectionId, {
+                    headers: { 'Authorization': 'Bearer ' + adminToken }
+                });
+
+                if (!response.ok) throw new Error('Failed to load section');
+
+                var section = await response.json();
+
+                document.getElementById('editWinnersSectionId').value = section._id;
+                document.getElementById('editWinnersHeading').value = section.heading || '';
+                document.getElementById('editWinnersSubtitle').value = section.subtitle || '';
+                document.getElementById('editWinnersShowOnHomepage').checked = section.showOnHomepage !== false;
+                document.getElementById('editWinnersIsPublished').checked = section.isPublished || false;
+
+                document.getElementById('editWinnersSectionModal').classList.add('active');
+            } catch (error) {
+                alert('❌ ' + error.message);
+            }
+        }
+
+        function closeEditWinnersSectionModal() {
+            document.getElementById('editWinnersSectionModal').classList.remove('active');
+        }
+
+        document.getElementById('editWinnersSectionForm')?.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            if (!hasPermission('winners', 'edit') && !isSuperAdmin) { alert('No permission'); return; }
+
+            var sectionId = document.getElementById('editWinnersSectionId').value;
+            var heading = document.getElementById('editWinnersHeading').value.trim();
+            var subtitle = document.getElementById('editWinnersSubtitle').value.trim();
+            var showOnHomepage = document.getElementById('editWinnersShowOnHomepage').checked;
+            var isPublished = document.getElementById('editWinnersIsPublished').checked;
+
+            if (!heading) { alert('Heading is required'); return; }
+
+            var btn = this.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/winners/' + sectionId, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': 'Bearer ' + adminToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ heading: heading, subtitle: subtitle, showOnHomepage: showOnHomepage, isPublished: isPublished })
+                });
+
+                if (response.ok) {
+                    alert('✅ Section updated!');
+                    closeEditWinnersSectionModal();
+                    loadWinnersSections();
+                } else {
+                    var err = await response.json();
+                    alert('❌ ' + err.message);
+                }
+            } catch (error) {
+                alert('❌ ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+            }
+        });
+
+        // ========== ✅ NEW: EDIT WINNER ==========
+        async function openEditWinnerModal(sectionId, winnerId) {
+            if (!hasPermission('winners', 'edit') && !isSuperAdmin) { alert('No permission'); return; }
+
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/winners/' + sectionId, {
+                    headers: { 'Authorization': 'Bearer ' + adminToken }
+                });
+
+                if (!response.ok) throw new Error('Failed to load section');
+
+                var section = await response.json();
+                var winner = section.winners.find(function (w) { return w._id === winnerId; });
+
+                if (!winner) throw new Error('Winner not found');
+
+                document.getElementById('editWinnerSectionId').value = sectionId;
+                document.getElementById('editWinnerId').value = winnerId;
+                document.getElementById('editWinnerName').value = winner.name || '';
+                document.getElementById('editWinnerRollno').value = winner.rollno || '';
+                document.getElementById('editWinnerEvent').value = winner.eventName || '';
+                document.getElementById('editWinnerRank').value = winner.rank || '1st';
+                document.getElementById('editWinnerPhoto').value = '';
+
+                // Show current photo preview
+                var preview = document.getElementById('editWinnerPhotoPreview');
+                var previewImg = document.getElementById('editWinnerPhotoPreviewImg');
+                if (winner.photo) {
+                    previewImg.src = winner.photo;
+                    preview.style.display = 'block';
+                } else {
+                    preview.style.display = 'none';
+                }
+
+                document.getElementById('editWinnerModal').classList.add('active');
+            } catch (error) {
+                alert('❌ ' + error.message);
+            }
+        }
+
+        function closeEditWinnerModal() {
+            document.getElementById('editWinnerModal').classList.remove('active');
+            document.getElementById('editWinnerForm').reset();
+            document.getElementById('editWinnerPhotoPreview').style.display = 'none';
+        }
+
+        document.getElementById('editWinnerPhoto')?.addEventListener('change', function () {
+            var preview = document.getElementById('editWinnerPhotoPreview');
+            var img = document.getElementById('editWinnerPhotoPreviewImg');
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) { img.src = e.target.result; preview.style.display = 'block'; };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        document.getElementById('editWinnerForm')?.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            if (!hasPermission('winners', 'edit') && !isSuperAdmin) { alert('No permission'); return; }
+
+            var sectionId = document.getElementById('editWinnerSectionId').value;
+            var winnerId = document.getElementById('editWinnerId').value;
+            var name = document.getElementById('editWinnerName').value.trim();
+            var rollno = document.getElementById('editWinnerRollno').value.trim();
+            var eventName = document.getElementById('editWinnerEvent').value.trim();
+            var rank = document.getElementById('editWinnerRank').value;
+            var photoFile = document.getElementById('editWinnerPhoto').files[0];
+
+            if (!name || !rollno || !eventName) { alert('Fill all required fields'); return; }
+
+            var fd = new FormData();
+            fd.append('name', name);
+            fd.append('rollno', rollno);
+            fd.append('eventName', eventName);
+            fd.append('rank', rank);
+            if (photoFile) fd.append('photo', photoFile);
+
+            var btn = this.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            try {
+                var response = await fetch(API_BASE_ADMIN + '/winners/' + sectionId + '/edit-winner/' + winnerId, {
+                    method: 'PUT',
+                    headers: { 'Authorization': 'Bearer ' + adminToken },
+                    body: fd
+                });
+
+                if (response.ok) {
+                    alert('✅ Winner updated!');
+                    closeEditWinnerModal();
+                    loadWinnersSections();
+                } else {
+                    var err = await response.json();
+                    alert('❌ ' + err.message);
+                }
+            } catch (error) {
+                alert('❌ ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+            }
+        });
 
         // ========== UTILITY ==========
         function escapeHtml(text) {
