@@ -656,6 +656,7 @@
             <a href="#work" class="toc-link"><i class="fas fa-tasks"></i> Work / Tasks</a>
             <a href="#certificates" class="toc-link"><i class="fas fa-certificate"></i> Certificates</a>
             <a href="#winners" class="toc-link"><i class="fas fa-trophy"></i> Winners Manager</a>
+            <a href="#sections-builder" class="toc-link"><i class="fas fa-paint-brush"></i> Sections Builder</a>
             <a href="#chat" class="toc-link"><i class="fas fa-comments"></i> Chat Manager</a>
             <a href="#faq" class="toc-link"><i class="fas fa-question-circle"></i> FAQ</a>
         </nav>
@@ -1172,10 +1173,129 @@
                 </div>
             </div>
 
-            <!-- ========== 13. CHAT MANAGER ========== -->
+            <!-- ========== 13. SECTIONS BUILDER (NEW) ========== -->
+            <div class="doc-section" id="sections-builder" data-title="sections builder custom page block heading paragraph image video button gallery list quote divider card cta html spacer drag drop publish">
+                <div class="doc-section-header" onclick="toggleSection(this)">
+                    <h3><i class="fas fa-paint-brush section-icon"></i> 13. Sections Builder</h3>
+                    <div class="doc-toggle"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="doc-section-body">
+                    <div class="doc-section-body-inner">
+
+                        <div class="doc-subtitle"><i class="fas fa-info-circle"></i> What is Sections Builder?</div>
+                        <p>Sections Builder lets you create custom sections for the homepage without any coding. You can build sections using drag-and-drop blocks — like heading, paragraph, image, video, button, gallery, and more. Perfect for creating "About Us", "Achievements", "Sponsors", or any custom content section.</p>
+
+                        <div class="info-box info">
+                            <i class="fas fa-lightbulb"></i>
+                            <div>This is a permission-based feature. If you don't see <strong>"🎨 Sections Builder"</strong> in the sidebar, contact the admin team to grant you access.</div>
+                        </div>
+
+                        <div class="doc-subtitle"><i class="fas fa-plus-circle"></i> Step 1: Create a Section</div>
+                        <ol>
+                            <li>Click <strong>"🎨 Sections Builder"</strong> in the sidebar.</li>
+                            <li>Click the <strong>"+ New Section"</strong> button (top-right).</li>
+                            <li>Fill the form:
+                                <ul>
+                                    <li><strong>Section Title</strong> — Display name (e.g., "Our Achievements")</li>
+                                    <li><strong>Internal Name</strong> — Unique ID (lowercase, no spaces, e.g., "achievements")</li>
+                                    <li><strong>Description</strong> — Short subtitle (optional)</li>
+                                    <li><strong>Icon</strong> — Any emoji (e.g., 🏆)</li>
+                                    <li><strong>Background</strong> — Default / Gradient / Dark / Light</li>
+                                </ul>
+                            </li>
+                            <li>Click <strong>"Create Section"</strong>.</li>
+                        </ol>
+
+                        <div class="doc-subtitle"><i class="fas fa-cubes"></i> Step 2: Add Blocks</div>
+                        <p>Once the section is created, it opens automatically. From the <strong>left palette</strong>, click any block to add it to the canvas.</p>
+
+                        <p><strong>Available block types (14):</strong></p>
+
+                        <table class="doc-table">
+                            <thead>
+                                <tr>
+                                    <th>Block</th>
+                                    <th>What It Does</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><strong>Heading</strong></td><td>Big title (H1–H4 sizes, left/center/right align)</td></tr>
+                                <tr><td><strong>Subheading</strong></td><td>Smaller heading</td></tr>
+                                <tr><td><strong>Paragraph</strong></td><td>Text content (multi-line, alignment options)</td></tr>
+                                <tr><td><strong>Image</strong></td><td>Single image (upload or URL, optional caption)</td></tr>
+                                <tr><td><strong>Video</strong></td><td>YouTube or embedded video</td></tr>
+                                <tr><td><strong>Button</strong></td><td>Call-to-action button (primary / secondary / outline)</td></tr>
+                                <tr><td><strong>Gallery</strong></td><td>Grid of multiple images (2, 3, or 4 columns)</td></tr>
+                                <tr><td><strong>List</strong></td><td>Bullet or numbered list</td></tr>
+                                <tr><td><strong>Quote</strong></td><td>Highlighted quote with optional author</td></tr>
+                                <tr><td><strong>Divider</strong></td><td>Horizontal line separator (solid / dashed / dotted)</td></tr>
+                                <tr><td><strong>Card</strong></td><td>Icon + title + description + link</td></tr>
+                                <tr><td><strong>CTA</strong></td><td>Call-to-action box with heading, text, and button</td></tr>
+                                <tr><td><strong>HTML</strong></td><td>Raw HTML (for advanced users)</td></tr>
+                                <tr><td><strong>Spacer</strong></td><td>Empty vertical space</td></tr>
+                            </tbody>
+                        </table>
+
+                        <div class="info-box tip">
+                            <i class="fas fa-check-circle"></i>
+                            <div>You can drag blocks up/down using the <strong>⋮⋮ handle</strong> to reorder them. Click the pencil or trash icon to edit/delete a block.</div>
+                        </div>
+
+                        <div class="doc-subtitle"><i class="fas fa-save"></i> Step 3: Save Changes</div>
+                        <ol>
+                            <li>Whenever you change something, a <strong>"Unsaved changes"</strong> bar appears at the bottom.</li>
+                            <li>Click <strong>"Save"</strong> to save all blocks and section metadata.</li>
+                            <li>A green toast message confirms: <strong>✅ Saved successfully!</strong></li>
+                        </ol>
+
+                        <div class="info-box warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div>If you close the page with unsaved changes, the browser will warn you. Don't forget to click Save!</div>
+                        </div>
+
+                        <div class="doc-subtitle"><i class="fas fa-upload"></i> Step 4: Publish the Section</div>
+                        <ol>
+                            <li>At the top of the canvas, you'll see three checkboxes:
+                                <ul>
+                                    <li><strong>Show on Homepage</strong> — Display on the public homepage</li>
+                                    <li><strong>Show in Navbar</strong> — (Reserved for future use)</li>
+                                    <li><strong>Published</strong> — Make it visible to visitors</li>
+                                </ul>
+                            </li>
+                            <li>Tick <strong>"Show on Homepage"</strong> and <strong>"Published"</strong>.</li>
+                            <li>Click <strong>"Save"</strong> (bottom bar).</li>
+                            <li>Open the public homepage (index.html) → <strong>hard refresh</strong> (Ctrl + Shift + R) → your section will appear.</li>
+                        </ol>
+
+                        <div class="doc-subtitle"><i class="fas fa-edit"></i> Editing & Deleting</div>
+                        <ul>
+                            <li><strong>Edit section:</strong> Click on the section in the left sidebar to reopen it, then modify blocks and save.</li>
+                            <li><strong>Delete block:</strong> Click the trash icon on any block's header.</li>
+                            <li><strong>Delete section:</strong> (Not in UI yet — contact admin if you need to delete a section.)</li>
+                        </ul>
+
+                        <div class="doc-subtitle"><i class="fas fa-lightbulb"></i> Best Practices</div>
+                        <ul>
+                            <li><strong>Draft first:</strong> Keep "Published" unchecked while building. Only publish when ready.</li>
+                            <li><strong>Keep it clean:</strong> Don't add too many blocks — 5–8 blocks per section is ideal.</li>
+                            <li><strong>Mobile check:</strong> Always check your section on mobile (gallery blocks become 1 column).</li>
+                            <li><strong>Optimize images:</strong> Use compressed images (under 500 KB) for faster loading.</li>
+                            <li><strong>Consistent style:</strong> Use matching icons/colors for a professional look.</li>
+                        </ul>
+
+                        <div class="info-box tip">
+                            <i class="fas fa-rocket"></i>
+                            <div><strong>Example section idea:</strong> "Our Achievements" — Heading + Paragraph + Gallery + 3 Cards + CTA Button. Try it!</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 14. CHAT MANAGER ========== -->
             <div class="doc-section" id="chat" data-title="chat manager reply user real time socket resolve online">
                 <div class="doc-section-header" onclick="toggleSection(this)">
-                    <h3><i class="fas fa-comments section-icon"></i> 13. Chat Manager</h3>
+                    <h3><i class="fas fa-comments section-icon"></i> 14. Chat Manager</h3>
                     <div class="doc-toggle"><i class="fas fa-chevron-down"></i></div>
                 </div>
                 <div class="doc-section-body">
@@ -1207,10 +1327,10 @@
                 </div>
             </div>
 
-            <!-- ========== 14. FAQ ========== -->
-            <div class="doc-section" id="faq" data-title="faq problems questions permission denied session expired upload failed login error">
+            <!-- ========== 15. FAQ ========== -->
+            <div class="doc-section" id="faq" data-title="faq problems questions permission denied session expired upload failed login error sections builder">
                 <div class="doc-section-header" onclick="toggleSection(this)">
-                    <h3><i class="fas fa-question-circle section-icon"></i> 14. FAQ — Common Problems</h3>
+                    <h3><i class="fas fa-question-circle section-icon"></i> 15. FAQ — Common Problems</h3>
                     <div class="doc-toggle"><i class="fas fa-chevron-down"></i></div>
                 </div>
                 <div class="doc-section-body">
@@ -1252,6 +1372,17 @@
                             <li>Check your internet — Socket.io needs a stable connection.</li>
                             <li>Try switching tabs — sometimes the connection resumes.</li>
                         </ul>
+
+                        <div class="doc-subtitle"><i class="fas fa-times-circle"></i> Sections Builder — Section not showing on homepage</div>
+                        <ul>
+                            <li>Check if <strong>"Published"</strong> checkbox is ticked.</li>
+                            <li>Check if <strong>"Show on Homepage"</strong> checkbox is ticked.</li>
+                            <li>Click <strong>"Save"</strong> in the bottom bar.</li>
+                            <li>Hard refresh the homepage (Ctrl + Shift + R).</li>
+                        </ul>
+
+                        <div class="doc-subtitle"><i class="fas fa-times-circle"></i> Sections Builder — Unsaved changes warning</div>
+                        <p>Whenever you edit blocks or section metadata, a yellow "Unsaved changes" bar appears at the bottom. Click <strong>"Save"</strong> to persist your changes. If you navigate away without saving, the browser will warn you.</p>
 
                         <div class="info-box tip">
                             <i class="fas fa-life-ring"></i>
