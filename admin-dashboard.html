@@ -1594,6 +1594,7 @@
                 menuHtml += '<div class="menu-item" data-panel="winners"><i class="fas fa-trophy"></i> Winners Manager</div>';
             }
             menuHtml += '<div class="menu-item" data-panel="chat-manager"><i class="fas fa-comments"></i> Chat Manager</div>';
+            menuHtml += '<div class="menu-item" data-panel="documentation"><i class="fas fa-book"></i> Documentation</div>';
             if (isSuperAdmin) {
                 menuHtml += '<div class="menu-item" data-panel="team-public"><i class="fas fa-user-plus"></i> Team Public</div>';
                 menuHtml += '<div class="menu-item" data-panel="alumni"><i class="fas fa-graduation-cap"></i> Alumni</div>';
@@ -1617,6 +1618,11 @@
                         window.location.href = 'admin-chat.html';
                         return;
                     }
+                    if (panelId === 'documentation') {
+    window.open('documentation.html', '_blank');
+    return;
+}
+
                     switchPanel(panelId, panelName);
                     if (panelId === 'events') loadEvents();
                     if (panelId === 'members') loadMembers();

@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Documentation - C3 Admin Panel</title>
+    <link rel="shortcut icon" href="assets/img/logowithoutname.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f0ff;
+            --secondary: #ff2d75;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text: #ffffff;
+            --text-secondary: #a0a0b0;
+            --bg: #0a0e17;
+            --card-bg: #1a1f2d;
+            --sidebar-bg: #111118;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="light"] {
+            --primary: #0066ff;
+            --secondary: #ff3366;
+            --text: #333333;
+            --text-secondary: #666666;
+            --bg: #f5f7fe;
+            --card-bg: #ffffff;
+            --sidebar-bg: #ffffff;
+            --border: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 100px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        /* ========== TOP HEADER ========== */
+        .doc-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 24px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            backdrop-filter: blur(10px);
+        }
+
+        .doc-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .doc-logo {
+            width: 38px;
+            height: 38px;
+        }
+
+        .doc-header-left h1 {
+            font-size: 17px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+        }
+
+        .doc-header-left p {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .doc-header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .search-box input {
+            padding: 9px 14px 9px 34px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13px;
+            width: 220px;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+        }
+
+        .theme-btn {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .theme-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 16px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* ========== LAYOUT ========== */
+        .doc-container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 90px 24px 40px;
+            gap: 30px;
+        }
+
+        /* ========== SIDEBAR (TOC) ========== */
+        .doc-toc {
+            width: 260px;
+            position: sticky;
+            top: 90px;
+            height: calc(100vh - 110px);
+            overflow-y: auto;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px 16px;
+            flex-shrink: 0;
+        }
+
+        .doc-toc h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .doc-toc a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 13px;
+            transition: all 0.2s;
+            margin-bottom: 2px;
+            border-left: 3px solid transparent;
+        }
+
+        .doc-toc a:hover {
+            background: rgba(0, 240, 255, 0.08);
+            color: var(--primary);
+        }
+
+        .doc-toc a.active {
+            background: rgba(0, 240, 255, 0.12);
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        .doc-toc a i {
+            width: 16px;
+            font-size: 13px;
+        }
+
+        .doc-toc::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .doc-toc::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .doc-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .doc-intro {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.08), rgba(255, 45, 117, 0.05));
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .doc-intro h2 {
+            font-size: 22px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .doc-intro p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Section Card */
+        .doc-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .doc-section.hidden-by-search {
+            display: none;
+        }
+
+        .doc-section-header {
+            padding: 18px 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .doc-section-header:hover {
+            background: rgba(0, 240, 255, 0.04);
+        }
+
+        .doc-section-header h3 {
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .doc-section-header h3 i.section-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(0, 240, 255, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .doc-toggle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 12px;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .doc-section.open .doc-toggle {
+            transform: rotate(180deg);
+            background: var(--primary);
+            color: var(--bg);
+            border-color: var(--primary);
+        }
+
+        .doc-section-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .doc-section.open .doc-section-body {
+            max-height: 5000px;
+        }
+
+        .doc-section-body-inner {
+            padding: 0 22px 22px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Content styling */
+        .doc-section-body-inner p {
+            margin-bottom: 12px;
+        }
+
+        .doc-section-body-inner strong {
+            color: var(--text);
+        }
+
+        .doc-section-body-inner ol,
+        .doc-section-body-inner ul {
+            margin: 10px 0 16px 22px;
+        }
+
+        .doc-section-body-inner li {
+            margin-bottom: 6px;
+        }
+
+        .doc-section-body-inner code {
+            background: var(--bg);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: var(--primary);
+            border: 1px solid var(--border);
+        }
+
+        .doc-subtitle {
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 16px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .doc-subtitle i {
+            color: var(--primary);
+            font-size: 13px;
+        }
+
+        /* Info boxes */
+        .info-box {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin: 14px 0;
+            font-size: 13px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            line-height: 1.6;
+        }
+
+        .info-box i {
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .info-box.tip {
+            background: rgba(16, 185, 129, 0.08);
+            border-left: 3px solid var(--success);
+            color: var(--text);
+        }
+
+        .info-box.tip i {
+            color: var(--success);
+        }
+
+        .info-box.warning {
+            background: rgba(245, 158, 11, 0.08);
+            border-left: 3px solid var(--warning);
+            color: var(--text);
+        }
+
+        .info-box.warning i {
+            color: var(--warning);
+        }
+
+        .info-box.danger {
+            background: rgba(239, 68, 68, 0.08);
+            border-left: 3px solid var(--danger);
+            color: var(--text);
+        }
+
+        .info-box.danger i {
+            color: var(--danger);
+        }
+
+        .info-box.info {
+            background: rgba(0, 240, 255, 0.06);
+            border-left: 3px solid var(--primary);
+            color: var(--text);
+        }
+
+        .info-box.info i {
+            color: var(--primary);
+        }
+
+        /* Table */
+        .doc-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 14px 0;
+            font-size: 13px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .doc-table th,
+        .doc-table td {
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .doc-table th {
+            background: rgba(0, 240, 255, 0.06);
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .doc-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .doc-table td code {
+            font-size: 11px;
+        }
+
+        /* No results */
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+            display: none;
+        }
+
+        .no-results i {
+            font-size: 48px;
+            opacity: 0.3;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        /* Footer */
+        .doc-footer {
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .doc-footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* ========== MOBILE ========== */
+        @media (max-width: 900px) {
+            .doc-container {
+                flex-direction: column;
+                padding-top: 130px;
+            }
+
+            .doc-toc {
+                width: 100%;
+                position: static;
+                height: auto;
+                max-height: 280px;
+                order: 2;
+            }
+
+            .doc-content {
+                order: 1;
+            }
+
+            .doc-header-left h1 {
+                font-size: 15px;
+            }
+
+            .doc-header-left p {
+                display: none;
+            }
+
+            .search-box input {
+                width: 150px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .doc-header {
+                padding: 10px 14px;
+            }
+
+            .doc-header-left h1 {
+                font-size: 13px;
+            }
+
+            .doc-logo {
+                width: 32px;
+                height: 32px;
+            }
+
+            .search-box input {
+                width: 120px;
+                padding: 7px 10px 7px 30px;
+                font-size: 11px;
+            }
+
+            .back-btn {
+                padding: 7px 12px;
+                font-size: 11px;
+            }
+
+            .theme-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+            }
+
+            .doc-container {
+                padding: 120px 14px 30px;
+            }
+
+            .doc-section-header {
+                padding: 14px 16px;
+            }
+
+            .doc-section-header h3 {
+                font-size: 14px;
+            }
+
+            .doc-section-header h3 i.section-icon {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+
+            .doc-section-body-inner {
+                padding: 0 16px 16px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ========== HEADER ========== -->
+    <header class="doc-header">
+        <div class="doc-header-left">
+            <img src="assets/img/logowithoutname.png" alt="C3" class="doc-logo"
+                onerror="this.style.display='none'">
+            <div>
+                <h1>📖 C3 Admin Documentation</h1>
+                <p>Complete user guide for admin panel</p>
+            </div>
+        </div>
+        <div class="doc-header-right">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="docSearch" placeholder="Search documentation...">
+            </div>
+            <button class="theme-btn" id="themeBtn" title="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="back-btn" onclick="window.location.href='admin-dashboard.html'">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+        </div>
+    </header>
+
+    <!-- ========== CONTAINER ========== -->
+    <div class="doc-container">
+
+        <!-- ========== TABLE OF CONTENTS ========== -->
+        <nav class="doc-toc">
+            <h3>Contents</h3>
+            <a href="#intro" class="toc-link active"><i class="fas fa-info-circle"></i> Introduction</a>
+            <a href="#login" class="toc-link"><i class="fas fa-sign-in-alt"></i> Login & Roles</a>
+            <a href="#dashboard" class="toc-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="#events" class="toc-link"><i class="fas fa-calendar-alt"></i> Events</a>
+            <a href="#notifications" class="toc-link"><i class="fas fa-bell"></i> Notifications</a>
+            <a href="#gallery" class="toc-link"><i class="fas fa-images"></i> Gallery</a>
+            <a href="#categories" class="toc-link"><i class="fas fa-tags"></i> Categories</a>
+            <a href="#nav-manager" class="toc-link"><i class="fas fa-bars"></i> Nav Manager</a>
+            <a href="#members" class="toc-link"><i class="fas fa-users"></i> Members</a>
+            <a href="#work" class="toc-link"><i class="fas fa-tasks"></i> Work / Tasks</a>
+            <a href="#certificates" class="toc-link"><i class="fas fa-certificate"></i> Certificates</a>
+            <a href="#winners" class="toc-link"><i class="fas fa-trophy"></i> Winners Manager</a>
+            <a href="#chat" class="toc-link"><i class="fas fa-comments"></i> Chat Manager</a>
+            <a href="#faq" class="toc-link"><i class="fas fa-question-circle"></i> FAQ</a>
+        </nav>
+
+        <!-- ========== MAIN CONTENT ========== -->
+        <main class="doc-content">
+
+            <!-- Intro Banner -->
+            <div class="doc-intro">
+                <h2>👋 Welcome to C3 Admin Panel</h2>
+                <p>This guide explains every feature of the admin panel in simple steps. Click on any section below to expand it, or use the search bar to find what you need.</p>
+            </div>
+
+            <!-- No results message -->
+            <div class="no-results" id="noResults">
+                <i class="fas fa-search"></i>
+                <p>No sections found matching your search.</p>
+            </div>
+
+            <!-- ========== 1. INTRODUCTION ========== -->
+            <div class="doc-section open" id="intro" data-title="introduction welcome about c3 admin panel">
+                <div class="doc-section-header" onclick="toggleSection(this)">
+                    <h3><i class="fas fa-info-circle section-icon"></i> 1. Introduction</h3>
+                    <div class="doc-toggle"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="doc-section-body">
+                    <div class="doc-section-body-inner">
+                        <div class="doc-subtitle"><i class="fas fa-question-circle"></i> What is C3 Admin Panel?</div>
+                        <p>The C3 Admin Panel is a private dashboard used by the Creative Coding Community team to manage the public website. From here, you can create events, upload gallery photos, post notices, manage team members, and much more.</p>
+
+                        <div class="doc-subtitle"><i class="fas fa-user-shield"></i> Who can use it?</div>
+                        <p>Only team members with valid email addresses can log in. Each member has a role and specific permissions that decide what they can see and do.</p>
+
+                        <div class="info-box info">
+                            <i class="fas fa-lightbulb"></i>
+                            <div>Everything you do here is visible to the public website visitors (unless marked as draft). So make sure the content is correct before saving.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 2. LOGIN & ROLES ========== -->
+            <div class="doc-section" id="login" data-title="login otp password roles coordinator member">
+                <div class="doc-section-header" onclick="toggleSection(this)">
+                    <h3><i class="fas fa-sign-in-alt section-icon"></i> 2. Login & Roles</h3>
+                    <div class="doc-toggle"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="doc-section-body">
+                    <div class="doc-section-body-inner">
+
+                        <div class="doc-subtitle"><i class="fas fa-sign-in-alt"></i> How to Login</div>
+                        <p>Open <code>admin-login.html</code> page. You can log in using one of two methods:</p>
+                        <ol>
+                            <li><strong>Password Login</strong> — Enter email and password (only for old admins).</li>
+                            <li><strong>OTP Login</strong> — Enter your team email, click "Send OTP", then type the 6-digit code received in your email. This is the recommended method.</li>
+                        </ol>
+
+                        <div class="info-box tip">
+                            <i class="fas fa-check-circle"></i>
+                            <div>The OTP is valid for <strong>5 minutes</strong>. If it expires, click "Resend OTP".</div>
+                        </div>
+
+                        <div class="doc-subtitle"><i class="fas fa-user-tag"></i> Team Roles</div>
+                        <p>Team members have different roles. Each role decides what sections they can see and use:</p>
+
+                        <table class="doc-table">
+                            <thead>
+                                <tr>
+                                    <th>Role</th>
+                                    <th>What They Can Do</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>⭐ <strong>Senior Coordinator</strong></td>
+                                    <td>Manage events, notifications, gallery, categories, certificates, winners.</td>
+                                </tr>
+                                <tr>
+                                    <td>🔷 <strong>Core Member</strong></td>
+                                    <td>Full access to events, notifications, gallery, categories, nav items.</td>
+                                </tr>
+                                <tr>
+                                    <td>🟢 <strong>Coordinator</strong></td>
+                                    <td>Can create notifications, upload gallery images, view members.</td>
+                                </tr>
+                                <tr>
+                                    <td>🔵 <strong>Sub-Coordinator</strong></td>
+                                    <td>Limited access — mostly read-only.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="info-box warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div>If a menu item is not visible to you, it means your role doesn't have permission for it. Contact the admin team to update your permissions.</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 3. DASHBOARD ========== -->
+            <div class="doc-section" id="dashboard" data-title="dashboard statistics members events verified">
+                <div class="doc-section-header" onclick="toggleSection(this)">
+                    <h3><i class="fas fa-tachometer-alt section-icon"></i> 3. Dashboard</h3>
+                    <div class="doc-toggle"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="doc-section-body">
+                    <div class="doc-section-body-inner">
+                        <p>The Dashboard is the first screen you see after logging in. It shows four quick statistics:</p>
+
+                        <ul>
+                            <li><strong>Total Members</strong> — Number of registered users on the website.</li>
+                            <li><strong>Total Events</strong> — Number of all events (open + closed).</li>
+                            <li><strong>Verified Members</strong> — Users who have verified their email.</li>
+                            <li><strong>Active Events</strong> — Events that are currently open for registration.</li>
+                        </ul>
+
+                        <div class="info-box tip">
+                            <i class="fas fa-check-circle"></i>
+                            <div>These numbers update in real time whenever you add or delete something.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 4. EVENTS ========== -->
+            <div class="doc-section" id="events" data-title="events create edit delete open close participants">
+                <div class="doc-section-header" onclick="toggleSection(this)">
+                    <h3><i class="fas fa-calendar-alt section-icon"></i> 4. Events</h3>
+                    <div class="doc-toggle"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="doc-section-body">
+                    <div class="doc-section-body-inner">
+
+                        <div class="doc-subtitle"><i class="fas fa-plus-circle"></i> How to Create an Event</div>
+                        <ol>
+                            <li>Click <strong>"Events"</strong> in the sidebar.</li>
+                            <li>Fill the form at the top of the page:
+                                <ul>
+                                    <li><strong>Event Name</strong> — Title of the event</li>
+                                    <li><strong>Image URL</strong> — Link to event banner image</li>
+                                    <li><strong>Date</strong> — Event date</li>
+                                    <li><strong>Location</strong> — Venue name</li>
+                                    <li><strong>Prize</strong> — Prize details</li>
+                                    <li><strong>PDF Link</strong> — Link to rules PDF (Google Drive link)</li>
+                                    <li><strong>Description</strong> — Full description</li>
+                                    <li><strong>Status</strong> — Open (registration allowed) or Closed</li>
+                                </ul>
+                            </li>
+                            <li>Click <strong>"Create Event"</strong>.</li>
+                        </ol>
+
+                        <div class="doc-subtitle"><i class="fas fa-edit"></i> How to Change Event Status</div>
+                        <p>Click the <strong>"Close"</strong> or <strong>"Open"</strong> button in the Actions column to toggle the event status.</p>
+
+                        <div class="doc-subtitle"><i class="fas fa-trash"></i> How to Delete an Event</div>
+                        <ol>
+                            <li>Find the event in the table.</li>
+                            <li>Click <strong>"Delete"</strong> in the Actions column.</li>
+                            <li>Confirm the popup.</li>
+                        </ol>
+
+                        <div class="info-box danger">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <div>Deleting an event will also remove it from all users who joined it. This cannot be undone.</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 5. NOTIFICATIONS ========== -->
+            <div class="doc-section" id="notifications" data-title="notifications notice badge live new upcoming priority buttons">
+                <div class="doc-section-header" onclick="toggleSection(this)">
+                    <h3><i class="fas fa-bell section-icon"></i> 5. Notifications</h3>
+                    <div class="doc-toggle"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="doc-section-body">
+                    <div class="doc-section-body-inner">
+
+                        <div class="doc-subtitle"><i class="fas fa-bullhorn"></i> What are Notifications?</div>
+                        <p>Notifications are the notices shown on the homepage under the "Latest Notices" section. You can post announcements, recruitment notices, results, etc.</p>
+
+                        <div class="doc-subtitle"><i class="fas fa-plus-circle"></i> How to Send a Notification</div>
+                        <ol>
+                            <li>Click <strong>"Notifications"</strong> in the sidebar.</li>
+                            <li>Fill the form:
+                                <ul>
+                                    <li><strong>Title</strong> — Short heading</li>
+                                    <li><strong>Message</strong> — Full notice text</li>
+                                    <li><strong>Priority</strong> — Normal or Priority (priority notices appear big and highlighted)</li>
+                                    <li><strong>Badge Type</strong> — None / LIVE / NEW / UPCOMING</li>
+                                    <li><strong>Button 1 & 2</strong> — Optional action buttons (e.g., "Apply Now" link)</li>
+                                </ul>
+                            </li>
+                            <li>Click <strong>"Send Notification"</strong>.</li>
+                        </ol>
+
+                        <div class="doc-subtitle"><i class="fas fa-tag"></i> Badge Types Explained</div>
+                        <table class="doc-table">
+                            <thead>
+                                <tr>
+                                    <th>Badge</th>
+                                    <th>Meaning</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>🔴 <strong>LIVE</strong></td><td>Event is happening right now / urgent notice</td></tr>
+                                <tr><td>🟢 <strong>NEW</strong></td><td>Recently posted</td></tr>
+                                <tr><td>🟡 <strong>UPCOMING</strong></td><td>Coming soon</td></tr>
+                                <tr><td>⚪ <strong>None</strong></td><td>Normal notice</td></tr>
+                            </tbody>
+                        </table>
+
+                        <div class="doc-subtitle"><i class="fas fa-trash"></i> How to Delete a Notification</div>
+                        <p>Click <strong>"Delete"</strong> button in the Actions column of the notifications table. Confirm the popup.</p>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 6. GALLERY ========== -->
+            <div class="doc-section" id="gallery" data-title="gallery upload image edit title category delete photo">
+                <div class="doc-section-header" onclick="toggleSection(this)">
+                    <h3><i class="fas fa-images section-icon"></i> 6. Gallery</h3>
+                    <div class="doc-toggle"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="doc-section-body">
+                    <div class="doc-section-body-inner">
+
+                        <div class="doc-subtitle"><i class="fas fa-cloud-upload-alt"></i> How to Upload an Image</div>
+                        <ol>
+                            <li>Click <strong>"Gallery"</strong> in the sidebar.</li>
+                            <li>Enter an <strong>Image Title</strong> (this becomes the SEO-friendly file name).</li>
+                            <li>Select a <strong>Category</strong> (events, workshops, etc.).</li>
+                            <li>Choose an image file (max 10MB).</li>
+                            <li>Click <strong>"Upload to Cloudinary"</strong>.</li>
+                        </ol>
+
+                        <div class="doc-subtitle"><i class="fas fa-edit"></i> How to Edit Image Title/Category</div>
+                        <ol>
+                            <li>Find the image in the gallery grid.</li>
+                            <li>Change the title or category in the input fields.</li>
+                            <li>Click <strong>"Update"</strong>.</li>
+                        </ol>
+
+                        <div class="doc-subtitle"><i class="fas fa-trash"></i> How to Delete an Image</div>
+                        <p>Click the red <strong>"Delete"</strong> button below the image. Confirm the popup. The image will be removed from both Cloudinary and the website.</p>
+
+                        <div class="info-box tip">
+                            <i class="fas fa-check-circle"></i>
+                            <div>Images are automatically renamed with SEO-friendly names (like <code>event-name-category-c3-community-123456</code>) for better Google ranking.</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 7. CATEGORIES ========== -->
+            <div class="doc-section" id="categories" data-title="categories add icon color edit delete gallery">
+                <div class="doc-section-header" onclick="toggleSection(this)">
+                    <h3><i class="fas fa-tags section-icon"></i> 7. Categories</h3>
+                    <div class="doc-toggle"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="doc-section-body">
+                    <div class="doc-section-body-inner">
+
+                        <div class="doc-subtitle"><i class="fas fa-plus-circle"></i> How to Add a Category</div>
+                        <ol>
+                            <li>Click <strong>"Categories"</strong> in the sidebar.</li>
+                            <li>Enter:
+                                <ul>
+                                    <li><strong>Name</strong> — e.g., "Workshops"</li>
+                                    <li><strong>Icon</strong> — Any emoji (e.g., 💻)</li>
+                                    <li><strong>Color</strong> — Pick a hex color for the badge</li>
+                                </ul>
+                            </li>
+                            <li>Click <strong>"Add Category"</strong>.</li>
+                        </ol>
+
+                        <div class="doc-subtitle"><i class="fas fa-edit"></i> Edit or Delete</div>
+                        <p>Each category card has editable fields (name, icon, color) and an Update button. Below it is a Delete button.</p>
+
+                        <div class="info-box warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div>You cannot delete a category if any gallery images are using it. First update those images to a different category.</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 8. NAV MANAGER ========== -->
+            <div class="doc-section" id="nav-manager" data-title="nav manager navigation menu custom link badge icon new tab">
+                <div class="doc-section-header" onclick="toggleSection(this)">
+                    <h3><i class="fas fa-bars section-icon"></i> 8. Nav Manager</h3>
+                    <div class="doc-toggle"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="doc-section-body">
+                    <div class="doc-section-body-inner">
+
+                        <div class="doc-subtitle"><i class="fas fa-plus-circle"></i> What is Nav Manager?</div>
+                        <p>This lets you add custom links to the website's top navigation bar (e.g., "Apply Now", "Syllabus", "Sponsors").</p>
+
+                        <div class="doc-subtitle"><i class="fas fa-plus-circle"></i> How to Add a Nav Item</div>
+                        <ol>
+                            <li>Click <strong>"Nav Manager"</strong> in the sidebar.</li>
+                            <li>Enter:
+                                <ul>
+                                    <li><strong>Item Name</strong> — Text shown in menu</li>
+                                    <li><strong>Link URL</strong> — Full URL (https://... or /page.html)</li>
+                                    <li><strong>Icon</strong> — Choose from Font Awesome list</li>
+                                    <li><strong>Badge Effect</strong> — None / LIVE / NEW / UPCOMING</li>
+                                    <li><strong>Open in</strong> — Same Tab or New Tab</li>
+                                </ul>
+                            </li>
+                            <li>Click <strong>"Add Nav Item"</strong>.</li>
+                        </ol>
+
+                        <div class="doc-subtitle"><i class="fas fa-edit"></i> How to Edit or Delete</div>
+                        <p>Click the <strong>"Edit"</strong> button to update (a series of prompts will appear). Click <strong>"Delete"</strong> to remove.</p>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 9. MEMBERS ========== -->
+            <div class="doc-section" id="members" data-title="members users view search delete registered">
+                <div class="doc-section-header" onclick="toggleSection(this)">
+                    <h3><i class="fas fa-users section-icon"></i> 9. Members</h3>
+                    <div class="doc-toggle"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="doc-section-body">
+                    <div class="doc-section-body-inner">
+                        <p>This shows all registered users of the website with their name, email, branch, batch, registration number, and verification status.</p>
+
+                        <div class="doc-subtitle"><i class="fas fa-search"></i> Search Users</div>
+                        <p>Type in the search box — it filters users by name, email, or registration number in real time.</p>
+
+                        <div class="doc-subtitle"><i class="fas fa-user-check"></i> Verified Status</div>
+                        <p>A ✅ green checkmark means the user has verified their email. A ❌ red cross means they haven't verified yet.</p>
+
+                        <div class="info-box info">
+                            <i class="fas fa-info-circle"></i>
+                            <div>This section is for viewing and searching user data. For editing permissions or managing users, contact the admin team.</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 10. WORK / TASKS ========== -->
+            <div class="doc-section" id="work" data-title="work tasks assign priority status pending in progress completed">
+                <div class="doc-section-header" onclick="toggleSection(this)">
+                    <h3><i class="fas fa-tasks section-icon"></i> 10. Work / Tasks</h3>
+                    <div class="doc-toggle"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="doc-section-body">
+                    <div class="doc-section-body-inner">
+
+                        <div class="doc-subtitle"><i class="fas fa-info-circle"></i> What is this section?</div>
+                        <p>This shows all tasks assigned to you by the admin team. Each task has a title, description, priority, due date, and status.</p>
+
+                        <div class="doc-subtitle"><i class="fas fa-play-circle"></i> Task Status Flow</div>
+                        <p>Every task moves through these stages:</p>
+                        <ul>
+                            <li><strong>⏳ Pending</strong> → Click <strong>"Start"</strong> to begin working on it</li>
+                            <li><strong>🔄 In Progress</strong> → Click <strong>"Complete"</strong> when done</li>
+                            <li><strong>✅ Completed</strong> → Task finished, no further action</li>
+                        </ul>
+
+                        <div class="doc-subtitle"><i class="fas fa-flag"></i> Priority Levels</div>
+                        <ul>
+                            <li><strong>🔴 High</strong> — Urgent, do it first</li>
+                            <li><strong>🟡 Medium</strong> — Normal priority</li>
+                            <li><strong>🟢 Low</strong> — Can be done later</li>
+                        </ul>
+
+                        <div class="info-box tip">
+                            <i class="fas fa-envelope"></i>
+                            <div>Whenever a new task is assigned to you, you automatically receive an email notification.</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 11. CERTIFICATES ========== -->
+            <div class="doc-section" id="certificates" data-title="certificates upload pdf roll number regno download user">
+                <div class="doc-section-header" onclick="toggleSection(this)">
+                    <h3><i class="fas fa-certificate section-icon"></i> 11. Certificates</h3>
+                    <div class="doc-toggle"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="doc-section-body">
+                    <div class="doc-section-body-inner">
+
+                        <div class="doc-subtitle"><i class="fas fa-cloud-upload-alt"></i> How to Upload a Certificate</div>
+                        <ol>
+                            <li>Click <strong>"Certificates"</strong> in the sidebar.</li>
+                            <li>Fill the form:
+                                <ul>
+                                    <li><strong>Certificate Title</strong> — e.g., "Hackathon 2024 Winner"</li>
+                                    <li><strong>Event Name</strong> — Optional</li>
+                                    <li><strong>Identifier Type</strong> — Roll Number or Registration Number</li>
+                                    <li><strong>Identifier Value</strong> — The actual roll/reg number of the student</li>
+                                    <li><strong>PDF File</strong> — The certificate PDF</li>
+                                </ul>
+                            </li>
+                            <li>Click <strong>"Upload Certificate"</strong>.</li>
+                        </ol>
+
+                        <div class="doc-subtitle"><i class="fas fa-download"></i> How Users Download</div>
+                        <p>Users log in to their dashboard, go to the "Certificates" tab, and they see all certificates matching their roll number or registration number. They can download them directly.</p>
+
+                        <div class="doc-subtitle"><i class="fas fa-trash"></i> How to Delete a Certificate</div>
+                        <p>Click <strong>"Delete"</strong> in the Actions column. The PDF is removed from Cloudinary too.</p>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 12. WINNERS MANAGER ========== -->
+            <div class="doc-section" id="winners" data-title="winners manager section create edit winner rank first second third special publish">
+                <div class="doc-section-header" onclick="toggleSection(this)">
+                    <h3><i class="fas fa-trophy section-icon"></i> 12. Winners Manager</h3>
+                    <div class="doc-toggle"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="doc-section-body">
+                    <div class="doc-section-body-inner">
+
+                        <div class="doc-subtitle"><i class="fas fa-info-circle"></i> What is Winners Manager?</div>
+                        <p>Winners Manager lets you display winners of past events on the homepage. Each "Section" is a group of winners (e.g., "QUIZ CLASH WINNERS — October 2024").</p>
+
+                        <div class="doc-subtitle"><i class="fas fa-plus-circle"></i> Step 1: Create a Section</div>
+                        <ol>
+                            <li>Click <strong>"Winners Manager"</strong> in the sidebar.</li>
+                            <li>Fill the form:
+                                <ul>
+                                    <li><strong>Section Heading</strong> — e.g., "QUIZ CLASH WINNERS"</li>
+                                    <li><strong>Subtitle</strong> — e.g., "October 2024" (optional)</li>
+                                    <li><strong>Show on Homepage</strong> — Tick to display publicly</li>
+                                    <li><strong>Publish Immediately</strong> — Tick to go live instantly</li>
+                                </ul>
+                            </li>
+                            <li>Click <strong>"Create Section"</strong>.</li>
+                        </ol>
+
+                        <div class="doc-subtitle"><i class="fas fa-user-plus"></i> Step 2: Add Winners to a Section</div>
+                        <ol>
+                            <li>Find the section you created.</li>
+                            <li>Click <strong>"Add Winner"</strong> button.</li>
+                            <li>Fill in:
+                                <ul>
+                                    <li><strong>Name</strong> — Winner's full name</li>
+                                    <li><strong>Roll/Regno</strong> — Roll or registration number</li>
+                                    <li><strong>Event Name</strong> — Which event they won</li>
+                                    <li><strong>Rank</strong> — 1st / 2nd / 3rd / Special</li>
+                                    <li><strong>Photo</strong> — Winner's picture</li>
+                                </ul>
+                            </li>
+                            <li>Click <strong>"Add Winner"</strong>.</li>
+                        </ol>
+
+                        <div class="doc-subtitle"><i class="fas fa-edit"></i> Step 3: Edit a Section ✏️</div>
+                        <ol>
+                            <li>Find the section header.</li>
+                            <li>Click <strong>"Edit Section"</strong> button (green).</li>
+                            <li>A modal opens with:
+                                <ul>
+                                    <li>Section Heading (editable)</li>
+                                    <li>Subtitle (editable)</li>
+                                    <li>Show on Homepage (checkbox)</li>
+                                    <li>Published (checkbox)</li>
+                                </ul>
+                            </li>
+                            <li>Change what you need and click <strong>"Save Changes"</strong>.</li>
+                        </ol>
+
+                        <div class="doc-subtitle"><i class="fas fa-user-edit"></i> Step 4: Edit a Winner ✏️</div>
+                        <ol>
+                            <li>Find the winner card inside a section.</li>
+                            <li>Click the yellow <strong>"Edit"</strong> button on the card.</li>
+                            <li>A modal opens with:
+                                <ul>
+                                    <li>Name, Roll/Regno, Event Name (editable)</li>
+                                    <li>Rank dropdown (1st / 2nd / 3rd / Special)</li>
+                                    <li>Photo upload (optional — leave empty to keep current)</li>
+                                </ul>
+                            </li>
+                            <li>Change what you need and click <strong>"Save Changes"</strong>.</li>
+                        </ol>
+
+                        <div class="info-box tip">
+                            <i class="fas fa-lightbulb"></i>
+                            <div>You don't need to re-upload the photo if you're only changing the name or event. Just leave the photo field empty.</div>
+                        </div>
+
+                        <div class="doc-subtitle"><i class="fas fa-upload"></i> Publish / Unpublish a Section</div>
+                        <p>Click the <strong>"📤 Publish"</strong> or <strong>"📥 Unpublish"</strong> button on the section header. Unpublished sections are hidden from the homepage but still visible to you here.</p>
+
+                        <div class="doc-subtitle"><i class="fas fa-trash"></i> Delete a Winner or Section</div>
+                        <ul>
+                            <li><strong>Delete a winner:</strong> Click the red "Delete" button on the winner card. Confirm.</li>
+                            <li><strong>Delete a section:</strong> Click the red "Delete" button on the section header. Confirm. <strong>Warning:</strong> This also deletes all winners inside that section.</li>
+                        </ul>
+
+                        <div class="info-box warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div>Deleting a section is permanent. If you only want to hide it temporarily, use "Unpublish" instead.</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 13. CHAT MANAGER ========== -->
+            <div class="doc-section" id="chat" data-title="chat manager reply user real time socket resolve online">
+                <div class="doc-section-header" onclick="toggleSection(this)">
+                    <h3><i class="fas fa-comments section-icon"></i> 13. Chat Manager</h3>
+                    <div class="doc-toggle"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="doc-section-body">
+                    <div class="doc-section-body-inner">
+
+                        <div class="doc-subtitle"><i class="fas fa-info-circle"></i> What is Chat Manager?</div>
+                        <p>Real-time chat between website visitors and admin team. When a visitor sends a message through the chatbot on the homepage, it appears here for admins to reply.</p>
+
+                        <div class="doc-subtitle"><i class="fas fa-reply"></i> How to Reply</div>
+                        <ol>
+                            <li>Click <strong>"Chat Manager"</strong> in the sidebar (opens in new page).</li>
+                            <li>Left sidebar shows all chat sessions (visitor names + last message time).</li>
+                            <li>Click a session to open the conversation.</li>
+                            <li>Type your reply in the input box and press Enter (or click the send icon).</li>
+                        </ol>
+
+                        <div class="info-box tip">
+                            <i class="fas fa-bolt"></i>
+                            <div>Replies are delivered to the visitor instantly via Socket.io. If they're online, they'll see it right away.</div>
+                        </div>
+
+                        <div class="doc-subtitle"><i class="fas fa-filter"></i> Filter Sessions</div>
+                        <p>Use the tabs at the top — <strong>All</strong>, <strong>Unread</strong>, <strong>Open</strong>, <strong>Resolved</strong> — to filter chats.</p>
+
+                        <div class="doc-subtitle"><i class="fas fa-check-circle"></i> Mark as Resolved</div>
+                        <p>Click the ✅ checkmark icon in the chat header to mark a conversation as resolved.</p>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 14. FAQ ========== -->
+            <div class="doc-section" id="faq" data-title="faq problems questions permission denied session expired upload failed login error">
+                <div class="doc-section-header" onclick="toggleSection(this)">
+                    <h3><i class="fas fa-question-circle section-icon"></i> 14. FAQ — Common Problems</h3>
+                    <div class="doc-toggle"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="doc-section-body">
+                    <div class="doc-section-body-inner">
+
+                        <div class="doc-subtitle"><i class="fas fa-times-circle"></i> "Permission denied" error</div>
+                        <p>Your role doesn't have permission for that action. Contact the admin team to update your permissions.</p>
+
+                        <div class="doc-subtitle"><i class="fas fa-times-circle"></i> "Session expired" or logged out automatically</div>
+                        <p>Your JWT token expired (7-day limit). Please log in again.</p>
+
+                        <div class="doc-subtitle"><i class="fas fa-times-circle"></i> Image upload fails</div>
+                        <ul>
+                            <li>Check file size (max 10MB for gallery, 5MB for others).</li>
+                            <li>Make sure it's a valid image (jpg, png, webp).</li>
+                            <li>Check your internet connection.</li>
+                        </ul>
+
+                        <div class="doc-subtitle"><i class="fas fa-times-circle"></i> OTP not received</div>
+                        <ul>
+                            <li>Check spam/junk folder.</li>
+                            <li>Wait 30 seconds, then click "Resend OTP".</li>
+                            <li>Verify your email is registered as a team member.</li>
+                        </ul>
+
+                        <div class="doc-subtitle"><i class="fas fa-times-circle"></i> Changes not reflecting on website</div>
+                        <ul>
+                            <li>Refresh the public page (Ctrl + Shift + R for hard refresh).</li>
+                            <li>Check if the item is marked as "Published" (not Draft).</li>
+                            <li>Wait 30 seconds — some changes may take a moment to propagate.</li>
+                        </ul>
+
+                        <div class="doc-subtitle"><i class="fas fa-times-circle"></i> "Cannot delete category — images are using it"</div>
+                        <p>First change all images in that category to a different one, then delete the category.</p>
+
+                        <div class="doc-subtitle"><i class="fas fa-times-circle"></i> Chat messages not appearing</div>
+                        <ul>
+                            <li>Refresh the page.</li>
+                            <li>Check your internet — Socket.io needs a stable connection.</li>
+                            <li>Try switching tabs — sometimes the connection resumes.</li>
+                        </ul>
+
+                        <div class="info-box tip">
+                            <i class="fas fa-life-ring"></i>
+                            <div>If a problem persists, contact the admin team or email <strong>creativecodingcommunity.cs@gmail.com</strong>.</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="doc-footer">
+                <p>© 2025 Creative Coding Community — Admin Documentation</p>
+                <p style="margin-top:8px;">Developed with ❤️ by C3 Team</p>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ========== SCRIPTS ========== -->
+    <script>
+        // ========== THEME TOGGLE ==========
+        var savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+
+        document.getElementById('themeBtn').addEventListener('click', function () {
+            var current = document.documentElement.getAttribute('data-theme');
+            var newTheme = current === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+
+        function updateThemeIcon(theme) {
+            var icon = document.querySelector('#themeBtn i');
+            if (icon) icon.className = theme === 'light' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        // ========== ACCORDION TOGGLE ==========
+        function toggleSection(header) {
+            var section = header.parentElement;
+            section.classList.toggle('open');
+        }
+
+        // ========== SEARCH ==========
+        var searchInput = document.getElementById('docSearch');
+        searchInput.addEventListener('input', function () {
+            var query = this.value.toLowerCase().trim();
+            var sections = document.querySelectorAll('.doc-section');
+            var visibleCount = 0;
+
+            sections.forEach(function (section) {
+                var title = section.getAttribute('data-title') || '';
+                var headerText = section.querySelector('.doc-section-header h3').textContent.toLowerCase();
+
+                if (!query || title.includes(query) || headerText.includes(query)) {
+                    section.classList.remove('hidden-by-search');
+                    visibleCount++;
+                    if (query) section.classList.add('open');
+                } else {
+                    section.classList.add('hidden-by-search');
+                }
+            });
+
+            document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+        });
+
+        // ========== TOC ACTIVE HIGHLIGHT ==========
+        var tocLinks = document.querySelectorAll('.toc-link');
+        var sections = document.querySelectorAll('.doc-section');
+
+        window.addEventListener('scroll', function () {
+            var scrollPos = window.scrollY + 150;
+            var currentId = '';
+
+            sections.forEach(function (section) {
+                if (section.offsetTop <= scrollPos) {
+                    currentId = section.id;
+                }
+            });
+
+            tocLinks.forEach(function (link) {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + currentId) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // ========== SMOOTH SCROLL FOR TOC ==========
+        tocLinks.forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                var targetId = this.getAttribute('href').substring(1);
+                var target = document.getElementById(targetId);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    if (!target.classList.contains('open')) {
+                        target.classList.add('open');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
