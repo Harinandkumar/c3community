@@ -1183,7 +1183,7 @@ async function initCustomSections() {
     try {
         console.log('🎨 Loading custom sections...');
 
-        const response = await fetch(`${API_BASE_URL}/api/public/custom-sections`);
+        const response = await fetch(`${API_BASE_URL}/api/team/public/custom-sections`);
 
         if (!response.ok) {
             console.warn('⚠️ Custom sections API not available');
