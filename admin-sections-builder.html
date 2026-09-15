@@ -148,7 +148,7 @@
             display: flex;
             height: calc(100vh - 60px);
             margin-top: 60px;
-            overflow: hidden;   /* ✅ NEW: Prevent outer overflow */
+            overflow: hidden;
         }
 
         /* ========== LEFT: PALETTE ========== */
@@ -160,7 +160,7 @@
             flex-direction: column;
             overflow: hidden;
             flex-shrink: 0;
-            min-height: 0;   /* ✅ NEW: Allow flex child to scroll */
+            min-height: 0;
         }
 
         .left-tabs {
@@ -192,23 +192,24 @@
             flex: 1;
             overflow-y: auto;
             padding: 12px;
-            min-height: 0;   /* ✅ NEW */
+            min-height: 0;
         }
 
         .left-content::-webkit-scrollbar { width: 4px; }
         .left-content::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 
+        /* ✅ UPDATED: Section list item with delete button */
         .section-list-item {
-            padding: 10px 12px;
+            padding: 0;
             border-radius: 8px;
-            cursor: pointer;
             margin-bottom: 4px;
             font-size: 13px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
             transition: all 0.2s;
             border-left: 3px solid transparent;
+            gap: 2px;
         }
 
         .section-list-item:hover {
@@ -222,10 +223,20 @@
             border-left-color: var(--primary);
         }
 
-        .section-list-item .icon { font-size: 16px; }
-        .section-list-item .name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .section-item-inner {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            padding: 10px 12px;
+            min-width: 0;
+            cursor: pointer;
+        }
 
-        .section-list-item .status-dot {
+        .section-item-inner .icon { font-size: 16px; flex-shrink: 0; }
+        .section-item-inner .name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .section-item-inner .status-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
@@ -234,9 +245,33 @@
             flex-shrink: 0;
         }
 
-        .section-list-item .status-dot.published {
+        .section-item-inner .status-dot.published {
             background: var(--success);
             opacity: 1;
+        }
+
+        /* ✅ NEW: Section delete button (hover pe dikhega) */
+        .section-delete-btn {
+            background: transparent;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            transition: all 0.2s;
+            opacity: 0;
+            flex-shrink: 0;
+            margin-right: 4px;
+        }
+
+        .section-list-item:hover .section-delete-btn {
+            opacity: 1;
+        }
+
+        .section-delete-btn:hover {
+            background: rgba(239, 68, 68, 0.15);
+            transform: scale(1.1);
         }
 
         /* Block Palette */
@@ -290,9 +325,9 @@
             background: var(--bg);
             display: flex;
             justify-content: center;
-            align-items: flex-start;   /* ✅ NEW: Align to top */
-            height: 100%;              /* ✅ NEW: Full height */
-            min-height: 0;             /* ✅ NEW: Flex scroll fix */
+            align-items: flex-start;
+            height: 100%;
+            min-height: 0;
             -webkit-overflow-scrolling: touch;
         }
 
@@ -441,7 +476,7 @@
             flex-direction: column;
             overflow: hidden;
             flex-shrink: 0;
-            min-height: 0;   /* ✅ NEW */
+            min-height: 0;
         }
 
         .right-header {
@@ -462,7 +497,7 @@
             flex: 1;
             overflow-y: auto;
             padding: 16px;
-            min-height: 0;   /* ✅ NEW */
+            min-height: 0;
         }
 
         .right-content::-webkit-scrollbar { width: 4px; }

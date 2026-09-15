@@ -28,7 +28,7 @@ var BLOCK_TYPES = [
     { type: 'video', icon: 'fas fa-video', label: 'Video' },
     { type: 'button', icon: 'fas fa-mouse-pointer', label: 'Button' },
     { type: 'gallery', icon: 'fas fa-images', label: 'Gallery' },
-    { type: 'cardgrid', icon: 'fas fa-th-large', label: 'Card Grid' }, // ✅ NEW
+    { type: 'cardgrid', icon: 'fas fa-th-large', label: 'Card Grid' },
     { type: 'list', icon: 'fas fa-list', label: 'List' },
     { type: 'quote', icon: 'fas fa-quote-left', label: 'Quote' },
     { type: 'divider', icon: 'fas fa-minus', label: 'Divider' },
@@ -127,13 +127,59 @@ function displaySectionsList(sections) {
     sections.forEach(function (s) {
         var dotClass = s.isPublished ? 'published' : '';
         var activeClass = (currentSection && currentSection._id === s._id) ? 'active' : '';
-        html += '<div class="section-list-item ' + activeClass + '" onclick="openSection(\'' + s._id + '\')">' +
+        html += '<div class="section-list-item ' + activeClass + '">' +
+            '<div class="section-item-inner" onclick="openSection(\'' + s._id + '\')">' +
             '<span class="icon">' + (s.icon || '📦') + '</span>' +
             '<span class="name">' + escapeHtml(s.title) + '</span>' +
             '<span class="status-dot ' + dotClass + '"></span>' +
+            '</div>' +
+            (canDelete ? '<button class="section-delete-btn" onclick="event.stopPropagation();deleteSection(\'' + s._id + '\', \'' + escapeHtml(s.title).replace(/'/g, "\\'") + '\')" title="Delete Section"><i class="fas fa-trash"></i></button>' : '') +
             '</div>';
     });
     container.innerHTML = html;
+}
+
+// ========== ✅ NEW: DELETE SECTION ==========
+async function deleteSection(sectionId, sectionTitle) {
+    if (!canDelete) {
+        showToast('You don\'t have delete permission', 'error');
+        return;
+    }
+
+    if (!confirm('⚠️ Delete section "' + sectionTitle + '"?\n\nThis will permanently delete all blocks and images inside it.')) {
+        return;
+    }
+
+    try {
+        var response = await fetch(API_BASE_ADMIN + '/custom-sections/' + sectionId, {
+            method: 'DELETE',
+            headers: { 'Authorization': 'Bearer ' + adminToken }
+        });
+
+        if (!response.ok) {
+            var err = await response.json();
+            throw new Error(err.message || 'Failed to delete');
+        }
+
+        showToast('✅ Section deleted successfully!', 'success');
+
+        // Agar current open section delete hua, toh preview clear karo
+        if (currentSection && currentSection._id === sectionId) {
+            currentSection = null;
+            blocks = [];
+            selectedBlockIndex = -1;
+            document.getElementById('previewEmpty').style.display = 'block';
+            document.getElementById('previewContent').style.display = 'none';
+            renderSettings();
+        }
+
+        isDirty = false;
+        document.getElementById('saveBar').classList.remove('show');
+
+        loadSections();
+    } catch (error) {
+        showToast('❌ ' + error.message, 'error');
+    }
 }
 
 // ========== BLOCK PALETTE ==========
@@ -221,7 +267,6 @@ function addBlock(type) {
     renderSettings();
     markUnsaved();
 
-    // Auto-switch to sections tab on mobile
     if (window.innerWidth < 900) {
         switchLeftTab('sections');
     }
@@ -232,14 +277,14 @@ function getDefaultContent(type) {
         case 'heading': return { text: 'Your Heading Here', size: 'h2', align: 'left' };
         case 'subheading': return { text: 'Subheading text', align: 'left' };
         case 'paragraph': return { text: 'Write your paragraph here...', align: 'left' };
-        case 'image': return { url: '', caption: '', alt: '' };
+        case 'image': return { url: '', publicId: '', caption: '', alt: '' };
         case 'video': return { url: '', caption: '' };
         case 'button': return { text: 'Click Me', url: '#', style: 'primary', target: '_self', align: 'left' };
         case 'gallery': return { images: [], columns: 3 };
         case 'cardgrid': return { columns: 3, cards: [
-            { image: '', title: 'Card 1', subtitle: '', description: 'Description', link: '', linkText: 'Learn More' },
-            { image: '', title: 'Card 2', subtitle: '', description: 'Description', link: '', linkText: 'Learn More' },
-            { image: '', title: 'Card 3', subtitle: '', description: 'Description', link: '', linkText: 'Learn More' }
+            { image: '', publicId: '', title: 'Card 1', subtitle: '', description: 'Description', link: '', linkText: 'Learn More' },
+            { image: '', publicId: '', title: 'Card 2', subtitle: '', description: 'Description', link: '', linkText: 'Learn More' },
+            { image: '', publicId: '', title: 'Card 3', subtitle: '', description: 'Description', link: '', linkText: 'Learn More' }
         ]};
         case 'list': return { items: ['Item 1', 'Item 2', 'Item 3'], listType: 'bullet' };
         case 'quote': return { text: 'Your quote here', author: '' };
@@ -266,7 +311,6 @@ function renderPreview() {
         var selected = (index === selectedBlockIndex) ? 'selected' : '';
         html += '<div class="preview-block ' + selected + '" data-index="' + index + '" onclick="selectBlock(' + index + ')">';
 
-        // Action buttons (on hover)
         html += '<div class="preview-block-actions">' +
             '<span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>' +
             '<button onclick="event.stopPropagation();moveBlockUp(' + index + ')" title="Move Up"><i class="fas fa-arrow-up"></i></button>' +
@@ -275,7 +319,6 @@ function renderPreview() {
             (canEdit ? '<button class="delete-btn" onclick="event.stopPropagation();deleteBlock(' + index + ')" title="Delete"><i class="fas fa-trash"></i></button>' : '') +
             '</div>';
 
-        // Block content (rendered preview)
         html += renderBlockPreview(block);
 
         html += '</div>';
@@ -283,7 +326,6 @@ function renderPreview() {
 
     container.innerHTML = html;
 
-    // Sortable
     if (typeof Sortable !== 'undefined') {
         new Sortable(container, {
             handle: '.drag-handle',
@@ -686,7 +728,7 @@ function addCard(index) {
     if (!blocks[index]) return;
     if (!blocks[index].content.cards) blocks[index].content.cards = [];
     blocks[index].content.cards.push({
-        image: '', title: 'New Card', subtitle: '', description: '', link: '', linkText: 'Learn More'
+        image: '', publicId: '', title: 'New Card', subtitle: '', description: '', link: '', linkText: 'Learn More'
     });
     renderPreview();
     renderSettings();
@@ -710,19 +752,21 @@ function updateCard(blockIndex, cardIndex, field, value) {
     markUnsaved();
 }
 
-// ========== IMAGE UPLOADS ==========
+// ========== ✅ UPDATED: IMAGE UPLOADS (Ab custom-sections endpoint use karega) ==========
 async function uploadBlockImage(input, index) {
     if (!input.files || !input.files[0]) return;
-    await uploadSingleImage(input.files[0], function (url) {
+    await uploadSingleImage(input.files[0], function (url, publicId) {
         updateBlockContent('url', url);
+        updateBlockContent('publicId', publicId);
         renderSettings();
     });
 }
 
 async function uploadCardImage(input, blockIndex, cardIndex) {
     if (!input.files || !input.files[0]) return;
-    await uploadSingleImage(input.files[0], function (url) {
+    await uploadSingleImage(input.files[0], function (url, publicId) {
         updateCard(blockIndex, cardIndex, 'image', url);
+        updateCard(blockIndex, cardIndex, 'publicId', publicId);
         renderSettings();
     });
 }
@@ -735,8 +779,8 @@ async function uploadGalleryImages(input, index) {
     showToast('⏳ Uploading ' + files.length + ' image(s)...', 'info');
 
     for (var i = 0; i < files.length; i++) {
-        await uploadSingleImage(files[i], function (url) {
-            blocks[index].content.images.push({ url: url, publicId: '' });
+        await uploadSingleImage(files[i], function (url, publicId) {
+            blocks[index].content.images.push({ url: url, publicId: publicId });
         });
     }
 
@@ -750,10 +794,10 @@ async function uploadSingleImage(file, callback) {
     var fd = new FormData();
     fd.append('image', file);
     fd.append('title', 'section-image-' + Date.now());
-    fd.append('category', 'other');
 
     try {
-        var response = await fetch(API_BASE_ADMIN + '/gallery/upload', {
+        // ✅ Custom Sections endpoint — Gallery collection mein entry NAHI banayega
+        var response = await fetch(API_BASE_ADMIN + '/custom-sections/upload-image', {
             method: 'POST',
             headers: { 'Authorization': 'Bearer ' + adminToken },
             body: fd
@@ -762,8 +806,9 @@ async function uploadSingleImage(file, callback) {
         if (!response.ok) throw new Error('Upload failed');
 
         var data = await response.json();
-        var url = data.image?.cloudinaryUrl || '';
-        callback(url);
+        var url = data.url || '';
+        var publicId = data.publicId || '';
+        callback(url, publicId);
         showToast('✅ Image uploaded', 'success');
     } catch (error) {
         showToast('❌ Upload failed: ' + error.message, 'error');
@@ -799,7 +844,7 @@ async function saveAllChanges() {
             },
             body: JSON.stringify({
                 title: document.getElementById('previewTitle').textContent.replace(/^[^\s]+\s/, ''),
-                isPublished: document.getElementById('previewTitle').dataset.published === 'true'
+                isPublished: currentSection.isPublished === true
             })
         });
 
