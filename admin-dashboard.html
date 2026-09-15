@@ -1595,6 +1595,9 @@
             }
             menuHtml += '<div class="menu-item" data-panel="chat-manager"><i class="fas fa-comments"></i> Chat Manager</div>';
             menuHtml += '<div class="menu-item" data-panel="documentation"><i class="fas fa-book"></i> Documentation</div>';
+            if (isSuperAdmin || (userPermissions && userPermissions.customSections && (userPermissions.customSections.create || userPermissions.customSections.edit))) {
+    menuHtml += '<div class="menu-item" data-panel="sections-builder"><i class="fas fa-paint-brush"></i> Sections Builder</div>';
+}
             if (isSuperAdmin) {
                 menuHtml += '<div class="menu-item" data-panel="team-public"><i class="fas fa-user-plus"></i> Team Public</div>';
                 menuHtml += '<div class="menu-item" data-panel="alumni"><i class="fas fa-graduation-cap"></i> Alumni</div>';
@@ -1622,7 +1625,10 @@
     window.open('documentation.html', '_blank');
     return;
 }
-
+if (panelId === 'sections-builder') {
+    window.location.href = 'admin-sections-builder.html';
+    return;
+}
                     switchPanel(panelId, panelName);
                     if (panelId === 'events') loadEvents();
                     if (panelId === 'members') loadMembers();

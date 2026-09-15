@@ -19,7 +19,8 @@ document.addEventListener('DOMContentLoaded', function() {
     initLoadingScreen();
     initMatrixBackground();
     initCodeBackground();
-    initGalleryCarousel();  // ✅ NEW: Gallery Carousel
+    initGalleryCarousel();  // ✅ Gallery Carousel
+    initCustomSections();   // ✅ NEW: Custom Sections from Admin Panel
     
     // Read More button event listener for priority notices
     document.addEventListener('click', function(e) {
@@ -861,7 +862,7 @@ window.addEventListener('load', () => {
 window.loadDynamicNavItems = loadDynamicNavItems;
 
 // ==========================================
-// ========== GALLERY CAROUSEL (NEW) ==========
+// ========== GALLERY CAROUSEL ==========
 // ==========================================
 
 let carouselState = {
@@ -1170,3 +1171,220 @@ function escapeHtmlCarousel(text) {
 }
 
 window.initGalleryCarousel = initGalleryCarousel;
+
+// ==========================================
+// ========== ✅ NEW: CUSTOM SECTIONS ==========
+// ==========================================
+
+async function initCustomSections() {
+    const container = document.getElementById('customSectionsContainer');
+    if (!container) return;
+
+    try {
+        console.log('🎨 Loading custom sections...');
+
+        const response = await fetch(`${API_BASE_URL}/api/public/custom-sections`);
+
+        if (!response.ok) {
+            console.warn('⚠️ Custom sections API not available');
+            return;
+        }
+
+        const sections = await response.json();
+
+        if (!sections || sections.length === 0) {
+            console.log('ℹ️ No custom sections to display');
+            return;
+        }
+
+        // Filter: only show sections that are published + showOnHomepage
+        const visibleSections = sections.filter(s => s.isPublished && s.showOnHomepage !== false);
+
+        if (visibleSections.length === 0) {
+            console.log('ℹ️ No published sections');
+            return;
+        }
+
+        // Render all sections
+        let html = '';
+        visibleSections.forEach(section => {
+            html += renderCustomSection(section);
+        });
+
+        container.innerHTML = html;
+        console.log(`✅ Rendered ${visibleSections.length} custom section(s)`);
+
+    } catch (error) {
+        console.error('❌ Error loading custom sections:', error);
+    }
+}
+
+function renderCustomSection(section) {
+    const bgClass = getSectionBgClass(section.background);
+    const maxWidth = section.maxWidth || '1400px';
+    const padding = section.padding || '90px 28px';
+
+    let html = `
+        <section class="custom-section ${bgClass}" id="custom-${escapeHtmlCarousel(section.name)}">
+            <div class="custom-section-inner" style="max-width:${maxWidth};padding:${padding};">
+    `;
+
+    // Section title (if not hidden)
+    if (section.title) {
+        html += `
+            <div class="section-title">
+                <h2>${section.icon ? section.icon + ' ' : ''}${escapeHtmlCarousel(section.title)}</h2>
+                ${section.description ? `<p class="section-description">${escapeHtmlCarousel(section.description)}</p>` : ''}
+            </div>
+        `;
+    }
+
+    // Render blocks
+    if (section.blocks && section.blocks.length > 0) {
+        const sortedBlocks = [...section.blocks].sort((a, b) => (a.order || 0) - (b.order || 0));
+        sortedBlocks.forEach(block => {
+            html += renderBlock(block);
+        });
+    }
+
+    html += `
+            </div>
+        </section>
+    `;
+
+    return html;
+}
+
+function getSectionBgClass(bg) {
+    switch (bg) {
+        case 'gradient': return 'bg-gradient';
+        case 'dark': return 'bg-dark';
+        case 'light': return 'bg-light';
+        case 'custom': return 'bg-custom';
+        default: return 'bg-default';
+    }
+}
+
+function renderBlock(block) {
+    const c = block.content || {};
+
+    switch (block.type) {
+        case 'heading':
+            const hTag = c.size || 'h2';
+            return `<${hTag} class="custom-heading" style="text-align:${c.align || 'left'};">${escapeHtmlCarousel(c.text || '')}</${hTag}>`;
+
+        case 'subheading':
+            return `<h3 class="custom-subheading" style="text-align:${c.align || 'left'};">${escapeHtmlCarousel(c.text || '')}</h3>`;
+
+        case 'paragraph':
+            return `<p class="custom-paragraph" style="text-align:${c.align || 'left'};">${escapeHtmlCarousel(c.text || '').replace(/\n/g, '<br>')}</p>`;
+
+        case 'image':
+            if (!c.url) return '';
+            return `
+                <figure class="custom-image">
+                    <img src="${escapeAttr(c.url)}" alt="${escapeAttr(c.alt || c.caption || '')}" loading="lazy" onerror="this.src='assets/img/default-event.jpg'">
+                    ${c.caption ? `<figcaption>${escapeHtmlCarousel(c.caption)}</figcaption>` : ''}
+                </figure>
+            `;
+
+        case 'video':
+            if (!c.url) return '';
+            // YouTube embed
+            let videoUrl = c.url;
+            if (videoUrl.includes('youtube.com/watch?v=')) {
+                const vid = videoUrl.split('v=')[1]?.split('&')[0];
+                videoUrl = `https://www.youtube.com/embed/${vid}`;
+            } else if (videoUrl.includes('youtu.be/')) {
+                const vid = videoUrl.split('youtu.be/')[1]?.split('?')[0];
+                videoUrl = `https://www.youtube.com/embed/${vid}`;
+            }
+            return `
+                <div class="custom-video">
+                    <iframe src="${escapeAttr(videoUrl)}" frameborder="0" allowfullscreen loading="lazy"></iframe>
+                    ${c.caption ? `<p class="video-caption">${escapeHtmlCarousel(c.caption)}</p>` : ''}
+                </div>
+            `;
+
+        case 'button':
+            const btnClass = `custom-btn custom-btn-${c.style || 'primary'}`;
+            const target = c.target === '_blank' ? 'target="_blank" rel="noopener noreferrer"' : '';
+            return `
+                <div class="custom-button-wrap" style="text-align:${c.align || 'left'};">
+                    <a href="${escapeAttr(c.url || '#')}" class="${btnClass}" ${target}>
+                        ${escapeHtmlCarousel(c.text || 'Click Here')}
+                    </a>
+                </div>
+            `;
+
+        case 'gallery':
+            if (!c.images || c.images.length === 0) return '';
+            const cols = c.columns || 3;
+            return `
+                <div class="custom-gallery" style="grid-template-columns:repeat(${cols}, 1fr);">
+                    ${c.images.map(img => `
+                        <div class="gallery-img">
+                            <img src="${escapeAttr(img.url)}" alt="Gallery image" loading="lazy">
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+        case 'list':
+            if (!c.items || c.items.length === 0) return '';
+            const listTag = c.listType === 'number' ? 'ol' : 'ul';
+            return `
+                <${listTag} class="custom-list">
+                    ${c.items.map(item => `<li>${escapeHtmlCarousel(item)}</li>`).join('')}
+                </${listTag}>
+            `;
+
+        case 'quote':
+            return `
+                <blockquote class="custom-quote">
+                    <p>${escapeHtmlCarousel(c.text || '').replace(/\n/g, '<br>')}</p>
+                    ${c.author ? `<cite>— ${escapeHtmlCarousel(c.author)}</cite>` : ''}
+                </blockquote>
+            `;
+
+        case 'divider':
+            return `<hr class="custom-divider" style="border-top-style:${c.style || 'solid'};">`;
+
+        case 'card':
+            return `
+                <div class="custom-card">
+                    ${c.icon ? `<div class="card-icon">${c.icon.startsWith('fa-') ? `<i class="${c.icon}"></i>` : c.icon}</div>` : ''}
+                    ${c.title ? `<h4>${escapeHtmlCarousel(c.title)}</h4>` : ''}
+                    ${c.description ? `<p>${escapeHtmlCarousel(c.description)}</p>` : ''}
+                    ${c.url ? `<a href="${escapeAttr(c.url)}" class="card-link">Learn More <i class="fas fa-arrow-right"></i></a>` : ''}
+                </div>
+            `;
+
+        case 'cta':
+            return `
+                <div class="custom-cta">
+                    ${c.heading ? `<h3>${escapeHtmlCarousel(c.heading)}</h3>` : ''}
+                    ${c.text ? `<p>${escapeHtmlCarousel(c.text)}</p>` : ''}
+                    ${c.buttonText ? `<a href="${escapeAttr(c.buttonUrl || '#')}" class="cta-btn">${escapeHtmlCarousel(c.buttonText)}</a>` : ''}
+                </div>
+            `;
+
+        case 'html':
+            // Raw HTML — as-is render
+            return `<div class="custom-html">${c.code || ''}</div>`;
+
+        case 'spacer':
+            return `<div style="height:${c.height || 40}px;"></div>`;
+
+        default:
+            return '';
+    }
+}
+
+function escapeAttr(text) {
+    if (!text) return '';
+    return String(text).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// Expose globally for retry
+window.initCustomSections = initCustomSections;
