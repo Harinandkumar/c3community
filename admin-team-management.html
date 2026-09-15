@@ -807,13 +807,22 @@ C3 Team</textarea>
                     <div class="permission-item"><input type="checkbox" id="permCertDelete"> <label>Delete
                             Certificate</label></div>
                 </div>
-                <!-- ✅ NEW: Winners Permission -->
+                <!-- ✅ Winners Permission -->
                 <div class="permission-group">
                     <h4>🏆 Winners</h4>
                     <div class="permission-item"><input type="checkbox" id="permWinnersCreate"> <label>Create</label>
                     </div>
                     <div class="permission-item"><input type="checkbox" id="permWinnersEdit"> <label>Edit</label></div>
                     <div class="permission-item"><input type="checkbox" id="permWinnersDelete"> <label>Delete</label>
+                    </div>
+                </div>
+                <!-- ✅ NEW: Custom Sections Permission -->
+                <div class="permission-group">
+                    <h4>🎨 Custom Sections</h4>
+                    <div class="permission-item"><input type="checkbox" id="permCustomCreate"> <label>Create</label>
+                    </div>
+                    <div class="permission-item"><input type="checkbox" id="permCustomEdit"> <label>Edit</label></div>
+                    <div class="permission-item"><input type="checkbox" id="permCustomDelete"> <label>Delete</label>
                     </div>
                 </div>
                 <hr>
@@ -1128,10 +1137,15 @@ C3 Team`;
                 document.getElementById('permCertUpload').checked = perms.certificates?.upload || false;
                 document.getElementById('permCertDelete').checked = perms.certificates?.delete || false;
 
-                // ✅ NEW: Winners
+                // Winners
                 document.getElementById('permWinnersCreate').checked = perms.winners?.create || false;
                 document.getElementById('permWinnersEdit').checked = perms.winners?.edit || false;
                 document.getElementById('permWinnersDelete').checked = perms.winners?.delete || false;
+
+                // ✅ NEW: Custom Sections
+                document.getElementById('permCustomCreate').checked = perms.customSections?.create || false;
+                document.getElementById('permCustomEdit').checked = perms.customSections?.edit || false;
+                document.getElementById('permCustomDelete').checked = perms.customSections?.delete || false;
 
                 document.getElementById('permissionModal').classList.add('active');
 
@@ -1176,11 +1190,16 @@ C3 Team`;
                     upload: document.getElementById('permCertUpload').checked,
                     delete: document.getElementById('permCertDelete').checked
                 },
-                // ✅ NEW: Winners
                 winners: {
                     create: document.getElementById('permWinnersCreate').checked,
                     edit: document.getElementById('permWinnersEdit').checked,
                     delete: document.getElementById('permWinnersDelete').checked
+                },
+                // ✅ NEW: Custom Sections
+                customSections: {
+                    create: document.getElementById('permCustomCreate').checked,
+                    edit: document.getElementById('permCustomEdit').checked,
+                    delete: document.getElementById('permCustomDelete').checked
                 },
                 teamManagement: {
                     view: false,
