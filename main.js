@@ -1360,6 +1360,31 @@ function renderBlock(block) {
                 </div>
             `;
 
+        // ========== ✅ NEW: CARD GRID (multiple cards) ==========
+        case 'cardgrid':
+            if (!c.cards || c.cards.length === 0) return '';
+            const gridCols = c.columns || 3;
+            return `
+                <div class="custom-cardgrid" style="grid-template-columns:repeat(${gridCols}, 1fr);">
+                    ${c.cards.map(card => `
+                        <div class="custom-cardgrid-item">
+                            ${card.image 
+                                ? `<div class="cardgrid-image"><img src="${escapeAttr(card.image)}" alt="${escapeAttr(card.title || '')}" loading="lazy" onerror="this.style.display='none'"></div>`
+                                : `<div class="cardgrid-image cardgrid-image-placeholder"><i class="fas fa-user"></i></div>`
+                            }
+                            <div class="cardgrid-content">
+                                ${card.title ? `<h4>${escapeHtmlCarousel(card.title)}</h4>` : ''}
+                                ${card.subtitle ? `<p class="cardgrid-subtitle">${escapeHtmlCarousel(card.subtitle)}</p>` : ''}
+                                ${card.description ? `<p class="cardgrid-description">${escapeHtmlCarousel(card.description)}</p>` : ''}
+                                ${card.link ? `<a href="${escapeAttr(card.link)}" class="cardgrid-link" target="_blank" rel="noopener noreferrer">
+                                    ${escapeHtmlCarousel(card.linkText || 'Learn More')} <i class="fas fa-arrow-right"></i>
+                                </a>` : ''}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
         case 'cta':
             return `
                 <div class="custom-cta">

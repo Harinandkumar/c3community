@@ -42,37 +42,35 @@
             font-family: 'Inter', sans-serif;
             background: var(--bg);
             color: var(--text);
-            overflow-x: hidden;
+            overflow: hidden;
+            height: 100vh;
         }
 
-        /* ========== HEADER ========== */
+        /* ========== TOP HEADER ========== */
         .builder-header {
             position: fixed;
             top: 0; left: 0; right: 0;
+            height: 60px;
             background: var(--card-bg);
             border-bottom: 1px solid var(--border);
-            padding: 12px 20px;
+            padding: 0 20px;
             z-index: 100;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 15px;
-            flex-wrap: wrap;
         }
 
-        .builder-header-left {
+        .header-left {
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .builder-header-left img {
-            width: 36px;
-            height: 36px;
-        }
+        .header-left img { width: 32px; height: 32px; }
 
-        .builder-header-left h1 {
-            font-size: 17px;
+        .header-left h1 {
+            font-size: 16px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             background-clip: text;
@@ -80,24 +78,50 @@
             font-weight: 700;
         }
 
-        .builder-header-left p {
+        .header-left p {
             font-size: 11px;
             color: var(--text-secondary);
         }
 
-        .builder-header-right {
+        .header-center {
             display: flex;
             align-items: center;
             gap: 8px;
-            flex-wrap: wrap;
+            background: var(--bg);
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .view-toggle-btn {
+            padding: 6px 14px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .view-toggle-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn {
-            padding: 8px 16px;
+            padding: 7px 14px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
             font-family: inherit;
             transition: all 0.2s;
@@ -106,59 +130,69 @@
             gap: 6px;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-        }
-
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
         .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
-
         .btn-success { background: var(--success); color: white; }
-        .btn-success:hover { opacity: 0.9; }
-
         .btn-warning { background: var(--warning); color: white; }
-        .btn-warning:hover { opacity: 0.9; }
-
         .btn-danger { background: var(--danger); color: white; }
-        .btn-danger:hover { opacity: 0.9; }
-
         .btn-outline {
             background: transparent;
             border: 1px solid var(--border);
             color: var(--text);
         }
         .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+        .btn-sm { padding: 5px 10px; font-size: 11px; }
 
-        .btn-sm { padding: 5px 10px; font-size: 12px; }
-
-        /* ========== MAIN LAYOUT ========== */
+        /* ========== 3-COLUMN LAYOUT ========== */
         .builder-container {
             display: flex;
-            padding-top: 70px;
-            min-height: 100vh;
+            height: calc(100vh - 60px);
+            margin-top: 60px;
         }
 
-        /* ========== LEFT SIDEBAR (Sections List + Blocks) ========== */
+        /* ========== LEFT: PALETTE ========== */
         .builder-left {
-            width: 280px;
+            width: 260px;
             background: var(--sidebar-bg);
             border-right: 1px solid var(--border);
-            padding: 16px;
-            overflow-y: auto;
-            height: calc(100vh - 70px);
-            position: sticky;
-            top: 70px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-shrink: 0;
         }
 
-        .builder-left h3 {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-            padding-bottom: 8px;
+        .left-tabs {
+            display: flex;
             border-bottom: 1px solid var(--border);
         }
+
+        .left-tab {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .left-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .left-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        .left-content::-webkit-scrollbar { width: 4px; }
+        .left-content::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 
         .section-list-item {
             padding: 10px 12px;
@@ -193,6 +227,7 @@
             border-radius: 50%;
             background: var(--text-secondary);
             opacity: 0.5;
+            flex-shrink: 0;
         }
 
         .section-list-item .status-dot.published {
@@ -201,8 +236,13 @@
         }
 
         /* Block Palette */
-        .block-palette {
-            margin-top: 20px;
+        .palette-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            font-weight: 600;
         }
 
         .block-palette-grid {
@@ -212,12 +252,12 @@
         }
 
         .block-btn {
-            padding: 10px 8px;
+            padding: 10px 6px;
             background: var(--bg);
             border: 1px solid var(--border);
             border-radius: 8px;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 10px;
             text-align: center;
             transition: all 0.2s;
             display: flex;
@@ -235,175 +275,213 @@
             transform: translateY(-2px);
         }
 
-        .block-btn i {
-            font-size: 16px;
-        }
+        .block-btn i { font-size: 15px; }
 
-        /* ========== CENTER (Canvas) ========== */
+        /* ========== CENTER: LIVE PREVIEW ========== */
         .builder-center {
             flex: 1;
-            padding: 20px;
             overflow-y: auto;
-        }
-
-        .canvas-header {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 16px 20px;
-            margin-bottom: 16px;
-        }
-
-        .canvas-header .title-row {
+            padding: 30px;
+            background: var(--bg);
             display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 8px;
+            justify-content: center;
         }
 
-        .canvas-header .title-row input {
-            background: transparent;
-            border: none;
-            color: var(--text);
-            font-size: 20px;
-            font-weight: 600;
-            font-family: inherit;
+        .builder-center::-webkit-scrollbar { width: 6px; }
+        .builder-center::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+        .preview-frame {
             width: 100%;
-            outline: none;
-        }
-
-        .canvas-header .meta-row {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .canvas-header .meta-row label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-        }
-
-        .canvas-header .meta-row input[type="checkbox"] {
-            accent-color: var(--primary);
-            cursor: pointer;
-        }
-
-        /* Empty state */
-        .canvas-empty {
-            text-align: center;
-            padding: 80px 20px;
-            color: var(--text-secondary);
-            border: 2px dashed var(--border);
+            max-width: 1400px;
+            transition: max-width 0.3s ease;
+            background: var(--card-bg);
             border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            position: relative;
         }
 
-        .canvas-empty i {
+        .preview-frame.desktop { max-width: 1400px; }
+        .preview-frame.tablet { max-width: 768px; }
+        .preview-frame.mobile { max-width: 375px; }
+
+        .preview-empty {
+            text-align: center;
+            padding: 80px 30px;
+            color: var(--text-secondary);
+        }
+
+        .preview-empty i {
             font-size: 48px;
             opacity: 0.3;
             margin-bottom: 16px;
             display: block;
         }
 
-        /* Block Card */
-        .block-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            margin-bottom: 12px;
-            transition: all 0.2s;
-            position: relative;
+        .preview-section-title {
+            text-align: center;
+            padding: 30px 20px 10px;
         }
 
-        .block-card:hover {
-            border-color: rgba(0, 240, 255, 0.3);
+        .preview-section-title h2 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            margin-bottom: 8px;
         }
 
-        .block-card.selected {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(0, 240, 255, 0.2);
-        }
-
-        .block-card-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 14px;
-            background: rgba(0, 240, 255, 0.04);
-            border-bottom: 1px solid var(--border);
-            border-radius: var(--radius) var(--radius) 0 0;
-        }
-
-        .block-drag-handle {
-            cursor: grab;
+        .preview-section-title p {
             color: var(--text-secondary);
-            font-size: 14px;
-            padding: 2px 4px;
+            font-size: 0.9rem;
         }
 
-        .block-drag-handle:active { cursor: grabbing; }
+        .preview-blocks {
+            padding: 20px 30px 30px;
+            min-height: 300px;
+        }
 
-        .block-type-icon {
+        /* Preview Block Cards */
+        .preview-block {
+            position: relative;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border: 2px dashed transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .preview-block:hover {
+            border-color: rgba(0, 240, 255, 0.3);
+            background: rgba(0, 240, 255, 0.02);
+        }
+
+        .preview-block.selected {
+            border-color: var(--primary);
+            background: rgba(0, 240, 255, 0.05);
+        }
+
+        .preview-block-actions {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            display: none;
+            gap: 4px;
+            background: var(--card-bg);
+            padding: 4px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            z-index: 10;
+        }
+
+        .preview-block:hover .preview-block-actions,
+        .preview-block.selected .preview-block-actions {
+            display: flex;
+        }
+
+        .preview-block-actions button {
             width: 26px;
             height: 26px;
-            background: rgba(0, 240, 255, 0.1);
             border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 11px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+        }
+
+        .preview-block-actions button:hover {
+            background: rgba(0, 240, 255, 0.1);
             color: var(--primary);
         }
 
-        .block-type-name {
+        .preview-block-actions button.delete-btn:hover {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .drag-handle {
+            cursor: grab;
+            color: var(--text-secondary);
+            font-size: 12px;
+            padding: 4px 6px;
+            display: flex;
+            align-items: center;
+        }
+
+        .drag-handle:active { cursor: grabbing; }
+
+        /* ========== RIGHT: SETTINGS ========== */
+        .builder-right {
+            width: 320px;
+            background: var(--sidebar-bg);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .right-header {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
             font-size: 12px;
             font-weight: 600;
             color: var(--primary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-        }
-
-        .block-card-header .spacer { flex: 1; }
-
-        .block-actions {
             display: flex;
-            gap: 4px;
+            align-items: center;
+            gap: 8px;
         }
 
-        .block-actions button {
-            background: transparent;
-            border: none;
+        .right-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .right-content::-webkit-scrollbar { width: 4px; }
+        .right-content::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        .right-empty {
+            text-align: center;
+            padding: 40px 20px;
             color: var(--text-secondary);
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            transition: all 0.2s;
+            font-size: 13px;
         }
 
-        .block-actions button:hover {
-            background: rgba(0, 240, 255, 0.1);
-            color: var(--primary);
+        .right-empty i {
+            font-size: 32px;
+            opacity: 0.3;
+            display: block;
+            margin-bottom: 12px;
         }
 
-        .block-actions button.delete-btn:hover {
-            background: rgba(239, 68, 68, 0.15);
-            color: var(--danger);
+        .setting-group { margin-bottom: 14px; }
+
+        .setting-label {
+            display: block;
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+            font-weight: 600;
         }
 
-        .block-card-body {
-            padding: 14px;
-        }
-
-        /* Block content inputs */
-        .block-input,
-        .block-textarea,
-        .block-select {
+        .setting-input,
+        .setting-textarea,
+        .setting-select {
             width: 100%;
-            padding: 10px 12px;
+            padding: 9px 12px;
             background: var(--bg);
             border: 1px solid var(--border);
             border-radius: 8px;
@@ -411,51 +489,84 @@
             font-family: inherit;
             font-size: 13px;
             outline: none;
-            margin-bottom: 8px;
+            transition: border-color 0.2s;
         }
 
-        .block-input:focus,
-        .block-textarea:focus,
-        .block-select:focus {
+        .setting-input:focus,
+        .setting-textarea:focus,
+        .setting-select:focus {
             border-color: var(--primary);
         }
 
-        .block-textarea {
+        .setting-textarea {
             resize: vertical;
             min-height: 70px;
         }
 
-        .block-label {
-            font-size: 11px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-            display: block;
-        }
-
-        .block-row {
+        .setting-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 8px;
         }
 
-        /* Preview inside block */
-        .block-preview {
-            padding: 12px;
+        /* Cards in cardgrid */
+        .cardgrid-item {
             background: var(--bg);
-            border-radius: 8px;
-            font-size: 13px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .cardgrid-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 11px;
             color: var(--text-secondary);
-            margin-top: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
-        .block-preview img {
-            max-width: 100%;
+        .cardgrid-item-header button {
+            background: transparent;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .cardgrid-item-header button:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .cardgrid-add-btn {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            border: 2px dashed var(--border);
             border-radius: 8px;
-            margin-top: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
+        .cardgrid-add-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Image preview */
         .image-preview-box {
             margin-top: 8px;
             padding: 8px;
@@ -465,12 +576,12 @@
         }
 
         .image-preview-box img {
-            max-width: 200px;
+            max-width: 100%;
             max-height: 120px;
             border-radius: 6px;
         }
 
-        /* Save status bar */
+        /* Save bar */
         .save-bar {
             position: fixed;
             bottom: 20px;
@@ -480,15 +591,28 @@
             padding: 10px 20px;
             border-radius: 50px;
             border: 1px solid var(--border);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
             display: none;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             z-index: 200;
             font-size: 13px;
         }
 
         .save-bar.show { display: flex; }
+
+        .save-bar .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--warning);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
 
         /* Toast */
         .toast {
@@ -503,12 +627,13 @@
             z-index: 9999;
             animation: slideIn 0.3s ease;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            max-width: 320px;
+            max-width: 340px;
         }
 
         .toast-success { background: var(--success); }
         .toast-error { background: var(--danger); }
         .toast-info { background: var(--primary); color: var(--bg); }
+        .toast-warning { background: var(--warning); }
 
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
@@ -535,7 +660,7 @@
             background: var(--card-bg);
             border-radius: 16px;
             padding: 24px;
-            max-width: 460px;
+            max-width: 480px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
@@ -550,7 +675,7 @@
         }
 
         .modal-header h3 {
-            font-size: 18px;
+            font-size: 17px;
             color: var(--primary);
             display: flex;
             align-items: center;
@@ -571,41 +696,15 @@
 
         .close-modal:hover { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
 
-        .form-group {
-            margin-bottom: 14px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px 12px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text);
-            font-family: inherit;
-            font-size: 13px;
-            outline: none;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: var(--primary);
-        }
-
-        /* No permission state */
+        /* No permission */
         .no-permission {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
             text-align: center;
-            padding: 80px 20px;
+            padding: 20px;
             color: var(--text-secondary);
         }
 
@@ -614,19 +713,32 @@
             color: var(--danger);
             opacity: 0.5;
             margin-bottom: 20px;
-            display: block;
         }
 
-        /* ========== MOBILE ========== */
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1100px) {
+            .builder-right { width: 280px; }
+            .builder-left { width: 220px; }
+        }
+
         @media (max-width: 900px) {
             .builder-container { flex-direction: column; }
             .builder-left {
                 width: 100%;
                 height: auto;
-                position: static;
-                max-height: 300px;
+                max-height: 200px;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+            .builder-right {
+                width: 100%;
+                height: auto;
+                max-height: 250px;
+                border-left: none;
+                border-top: 1px solid var(--border);
             }
             .builder-center { padding: 16px; }
+            .header-center { display: none; }
         }
     </style>
 </head>
@@ -635,16 +747,29 @@
 
     <!-- ========== HEADER ========== -->
     <header class="builder-header">
-        <div class="builder-header-left">
+        <div class="header-left">
             <img src="assets/img/logowithoutname.png" alt="C3" onerror="this.style.display='none'">
             <div>
                 <h1>🎨 Sections Builder</h1>
                 <p id="userInfo">Loading...</p>
             </div>
         </div>
-        <div class="builder-header-right">
+
+        <div class="header-center">
+            <button class="view-toggle-btn active" data-view="desktop" onclick="setPreviewView('desktop')">
+                <i class="fas fa-desktop"></i> Desktop
+            </button>
+            <button class="view-toggle-btn" data-view="tablet" onclick="setPreviewView('tablet')">
+                <i class="fas fa-tablet-alt"></i> Tablet
+            </button>
+            <button class="view-toggle-btn" data-view="mobile" onclick="setPreviewView('mobile')">
+                <i class="fas fa-mobile-alt"></i> Mobile
+            </button>
+        </div>
+
+        <div class="header-right">
             <button class="btn btn-outline btn-sm" onclick="window.location.href='admin-dashboard.html'">
-                <i class="fas fa-arrow-left"></i> Back to Dashboard
+                <i class="fas fa-arrow-left"></i> Back
             </button>
             <button class="btn btn-primary btn-sm" onclick="openCreateSectionModal()" id="btnNewSection">
                 <i class="fas fa-plus"></i> New Section
@@ -652,150 +777,107 @@
         </div>
     </header>
 
-    <!-- ========== MAIN ========== -->
+    <!-- ========== MAIN 3-COLUMN LAYOUT ========== -->
     <div class="builder-container" id="mainContainer">
 
         <!-- No permission state -->
-        <div class="no-permission" id="noPermission" style="display:none; width:100%;">
+        <div class="no-permission" id="noPermission" style="display:none;">
             <i class="fas fa-lock"></i>
             <h2>Access Denied</h2>
             <p>You don't have permission to use Sections Builder.</p>
             <p style="margin-top:8px;font-size:13px;">Contact admin to grant you permission.</p>
         </div>
 
-        <!-- Left Sidebar -->
+        <!-- LEFT: Palette -->
         <aside class="builder-left" id="leftSidebar">
-            <h3>📋 Sections</h3>
-            <div id="sectionsList">
-                <div style="text-align:center;padding:20px;color:var(--text-secondary);font-size:13px;">
-                    <i class="fas fa-spinner fa-spin"></i> Loading...
-                </div>
+            <div class="left-tabs">
+                <button class="left-tab active" data-tab="sections" onclick="switchLeftTab('sections')">
+                    <i class="fas fa-layer-group"></i> Sections
+                </button>
+                <button class="left-tab" data-tab="blocks" onclick="switchLeftTab('blocks')">
+                    <i class="fas fa-plus-circle"></i> Blocks
+                </button>
             </div>
 
-            <div class="block-palette" id="blockPalette" style="display:none;">
-                <h3>➕ Add Block</h3>
-                <div class="block-palette-grid">
-                    <button class="block-btn" onclick="addBlock('heading')">
-                        <i class="fas fa-heading"></i> Heading
-                    </button>
-                    <button class="block-btn" onclick="addBlock('subheading')">
-                        <i class="fas fa-h-square"></i> Subheading
-                    </button>
-                    <button class="block-btn" onclick="addBlock('paragraph')">
-                        <i class="fas fa-align-left"></i> Paragraph
-                    </button>
-                    <button class="block-btn" onclick="addBlock('image')">
-                        <i class="fas fa-image"></i> Image
-                    </button>
-                    <button class="block-btn" onclick="addBlock('video')">
-                        <i class="fas fa-video"></i> Video
-                    </button>
-                    <button class="block-btn" onclick="addBlock('button')">
-                        <i class="fas fa-mouse-pointer"></i> Button
-                    </button>
-                    <button class="block-btn" onclick="addBlock('gallery')">
-                        <i class="fas fa-images"></i> Gallery
-                    </button>
-                    <button class="block-btn" onclick="addBlock('list')">
-                        <i class="fas fa-list"></i> List
-                    </button>
-                    <button class="block-btn" onclick="addBlock('quote')">
-                        <i class="fas fa-quote-left"></i> Quote
-                    </button>
-                    <button class="block-btn" onclick="addBlock('divider')">
-                        <i class="fas fa-minus"></i> Divider
-                    </button>
-                    <button class="block-btn" onclick="addBlock('card')">
-                        <i class="fas fa-id-card"></i> Card
-                    </button>
-                    <button class="block-btn" onclick="addBlock('cta')">
-                        <i class="fas fa-bullhorn"></i> CTA
-                    </button>
-                    <button class="block-btn" onclick="addBlock('html')">
-                        <i class="fas fa-code"></i> HTML
-                    </button>
-                    <button class="block-btn" onclick="addBlock('spacer')">
-                        <i class="fas fa-arrows-alt-v"></i> Spacer
-                    </button>
+            <div class="left-content" id="leftContent">
+                <div id="sectionsList">
+                    <div style="text-align:center;padding:20px;color:var(--text-secondary);font-size:13px;">
+                        <i class="fas fa-spinner fa-spin"></i> Loading...
+                    </div>
                 </div>
             </div>
         </aside>
 
-        <!-- Center Canvas -->
+        <!-- CENTER: Live Preview -->
         <main class="builder-center" id="centerCanvas">
-            <div class="canvas-empty" id="canvasEmpty">
-                <i class="fas fa-mouse-pointer"></i>
-                <h3>Select a section to start editing</h3>
-                <p>Or click "New Section" to create one.</p>
-            </div>
-
-            <div id="canvasContent" style="display:none;">
-                <div class="canvas-header">
-                    <div class="title-row">
-                        <input type="text" id="sectionTitle" placeholder="Section title..." onchange="markUnsaved()">
-                    </div>
-                    <div class="meta-row">
-                        <span><i class="fas fa-tag"></i> Name: <code id="sectionName" style="color:var(--primary);">-</code></span>
-                        <label>
-                            <input type="checkbox" id="sectionShowHome" onchange="markUnsaved()"> Show on Homepage
-                        </label>
-                        <label>
-                            <input type="checkbox" id="sectionShowNav" onchange="markUnsaved()"> Show in Navbar
-                        </label>
-                        <label>
-                            <input type="checkbox" id="sectionPublished" onchange="markUnsaved()"> Published
-                        </label>
-                    </div>
+            <div class="preview-frame desktop" id="previewFrame">
+                <div class="preview-empty" id="previewEmpty">
+                    <i class="fas fa-mouse-pointer"></i>
+                    <h3>Select or create a section</h3>
+                    <p>Click "New Section" or select from the left panel.</p>
                 </div>
 
-                <div id="blocksContainer"></div>
-
-                <div style="text-align:center;padding:20px;color:var(--text-secondary);font-size:12px;" id="blocksHint">
-                    <i class="fas fa-arrow-left"></i> Add blocks from left palette
+                <div id="previewContent" style="display:none;">
+                    <div class="preview-section-title" id="previewSectionTitle">
+                        <h2 id="previewTitle">Section Title</h2>
+                        <p id="previewDescription"></p>
+                    </div>
+                    <div class="preview-blocks" id="previewBlocks"></div>
                 </div>
             </div>
         </main>
+
+        <!-- RIGHT: Settings -->
+        <aside class="builder-right" id="rightSidebar">
+            <div class="right-header">
+                <i class="fas fa-cog"></i> <span id="rightTitle">Settings</span>
+            </div>
+            <div class="right-content" id="rightContent">
+                <div class="right-empty">
+                    <i class="fas fa-mouse-pointer"></i>
+                    <p>Click a block to edit its settings</p>
+                </div>
+            </div>
+        </aside>
     </div>
 
     <!-- ========== SAVE BAR ========== -->
     <div class="save-bar" id="saveBar">
-        <i class="fas fa-circle" style="color:var(--warning);font-size:8px;"></i>
+        <div class="dot"></div>
         <span>Unsaved changes</span>
-        <button class="btn btn-success btn-sm" onclick="saveBlocks()">
+        <button class="btn btn-success btn-sm" onclick="saveAllChanges()">
             <i class="fas fa-save"></i> Save
         </button>
     </div>
 
-    <!-- ========== MODAL: Create/Edit Section ========== -->
+    <!-- ========== MODAL: Create Section ========== -->
     <div class="modal" id="sectionModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fas fa-plus-circle"></i> <span id="modalTitle">New Section</span></h3>
+                <h3><i class="fas fa-plus-circle"></i> New Section</h3>
                 <span class="close-modal" onclick="closeSectionModal()">&times;</span>
             </div>
             <form id="sectionForm" onsubmit="saveSection(event)">
-                <input type="hidden" id="editSectionId">
-                <div class="form-group">
-                    <label>Section Title *</label>
-                    <input type="text" id="modalSectionTitle" required placeholder="e.g., Our Achievements">
+                <div class="setting-group">
+                    <label class="setting-label">Section Title *</label>
+                    <input type="text" class="setting-input" id="modalSectionTitle" required placeholder="e.g., Our Achievements">
                 </div>
-                <div class="form-group">
-                    <label>Internal Name * (unique, no spaces)</label>
-                    <input type="text" id="modalSectionName" required placeholder="e.g., achievements" pattern="[a-z0-9\-]+">
-                    <small style="color:var(--text-secondary);font-size:11px;">Lowercase letters, numbers, and hyphens only</small>
+                <div class="setting-group">
+                    <label class="setting-label">Internal Name * (lowercase, no spaces)</label>
+                    <input type="text" class="setting-input" id="modalSectionName" required placeholder="e.g., achievements" pattern="[a-z0-9\-]+">
                 </div>
-                <div class="form-group">
-                    <label>Description (optional)</label>
-                    <textarea id="modalSectionDescription" rows="2" placeholder="Short description..."></textarea>
+                <div class="setting-group">
+                    <label class="setting-label">Description (optional)</label>
+                    <textarea class="setting-textarea" id="modalSectionDescription" rows="2" placeholder="Short description..."></textarea>
                 </div>
-                <div class="block-row">
-                    <div class="form-group">
-                        <label>Icon (emoji)</label>
-                        <input type="text" id="modalSectionIcon" placeholder="📦" maxlength="2">
+                <div class="setting-row">
+                    <div class="setting-group">
+                        <label class="setting-label">Icon (emoji)</label>
+                        <input type="text" class="setting-input" id="modalSectionIcon" placeholder="📦" maxlength="2">
                     </div>
-                    <div class="form-group">
-                        <label>Background</label>
-                        <select id="modalSectionBg">
+                    <div class="setting-group">
+                        <label class="setting-label">Background</label>
+                        <select class="setting-select" id="modalSectionBg">
                             <option value="default">Default</option>
                             <option value="gradient">Gradient</option>
                             <option value="dark">Dark</option>
@@ -810,675 +892,8 @@
         </div>
     </div>
 
-    <!-- ========== SCRIPT ========== -->
-    <script>
-        // ========== CONFIG ==========
-        var API_BASE_URL = 'https://backend-glo6.onrender.com';
-        var API_BASE_ADMIN = API_BASE_URL + '/api/team';
-        var adminToken = localStorage.getItem('adminToken');
-
-        if (!adminToken) window.location.href = 'admin-login.html';
-
-        // ========== STATE ==========
-        var isSuperAdmin = false;
-        var userPermissions = null;
-        var canCreate = false, canEdit = false, canDelete = false;
-        var currentSection = null;
-        var blocks = [];
-        var isDirty = false;
-
-        // ========== INIT ==========
-        (async function init() {
-            await loadUserAndPermissions();
-
-            var leftSidebar = document.getElementById('leftSidebar');
-            var centerCanvas = document.getElementById('centerCanvas');
-
-            if (!canCreate && !canEdit) {
-                document.getElementById('noPermission').style.display = 'block';
-                leftSidebar.style.display = 'none';
-                centerCanvas.style.display = 'none';
-                return;
-            }
-
-            if (!canCreate) document.getElementById('btnNewSection').style.display = 'none';
-
-            loadSections();
-        })();
-
-        async function loadUserAndPermissions() {
-            try {
-                var response = await fetch(API_BASE_ADMIN + '/me', {
-                    headers: { 'Authorization': 'Bearer ' + adminToken }
-                });
-
-                if (!response.ok) {
-                    window.location.href = 'admin-login.html';
-                    return;
-                }
-
-                var member = await response.json();
-                userPermissions = member.permissions;
-                isSuperAdmin = (member.role === 'super_admin');
-
-                document.getElementById('userInfo').innerHTML = member.name + ' (' + (isSuperAdmin ? 'Super Admin' : member.role) + ')';
-
-                var cs = userPermissions?.customSections || {};
-                canCreate = isSuperAdmin || cs.create === true;
-                canEdit = isSuperAdmin || cs.edit === true;
-                canDelete = isSuperAdmin || cs.delete === true;
-            } catch (error) {
-                console.error('Permission load error:', error);
-                window.location.href = 'admin-login.html';
-            }
-        }
-
-        // ========== LOAD SECTIONS ==========
-        async function loadSections() {
-            try {
-                var response = await fetch(API_BASE_ADMIN + '/custom-sections', {
-                    headers: { 'Authorization': 'Bearer ' + adminToken }
-                });
-
-                if (!response.ok) throw new Error('Failed to load');
-
-                var sections = await response.json();
-                displaySectionsList(sections);
-            } catch (error) {
-                document.getElementById('sectionsList').innerHTML = 
-                    '<div style="text-align:center;padding:20px;color:var(--danger);font-size:13px;">Failed to load</div>';
-            }
-        }
-
-        function displaySectionsList(sections) {
-            var container = document.getElementById('sectionsList');
-
-            if (!sections || sections.length === 0) {
-                container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-secondary);font-size:13px;">No sections yet. Click "New Section".</div>';
-                return;
-            }
-
-            var html = '';
-            sections.forEach(function (s) {
-                var dotClass = s.isPublished ? 'published' : '';
-                var activeClass = (currentSection && currentSection._id === s._id) ? 'active' : '';
-                html += '<div class="section-list-item ' + activeClass + '" onclick="openSection(\'' + s._id + '\')">' +
-                    '<span class="icon">' + (s.icon || '📦') + '</span>' +
-                    '<span class="name">' + escapeHtml(s.title) + '</span>' +
-                    '<span class="status-dot ' + dotClass + '"></span>' +
-                    '</div>';
-            });
-            container.innerHTML = html;
-        }
-
-        // ========== OPEN SECTION ==========
-        async function openSection(sectionId) {
-            if (isDirty && !confirm('You have unsaved changes. Discard them?')) return;
-
-            try {
-                var response = await fetch(API_BASE_ADMIN + '/custom-sections/' + sectionId, {
-                    headers: { 'Authorization': 'Bearer ' + adminToken }
-                });
-
-                if (!response.ok) throw new Error('Failed to load');
-
-                var section = await response.json();
-                currentSection = section;
-                blocks = JSON.parse(JSON.stringify(section.blocks || []));
-
-                document.getElementById('canvasEmpty').style.display = 'none';
-                document.getElementById('canvasContent').style.display = 'block';
-                document.getElementById('blockPalette').style.display = 'block';
-
-                document.getElementById('sectionTitle').value = section.title || '';
-                document.getElementById('sectionName').textContent = section.name || '-';
-                document.getElementById('sectionShowHome').checked = section.showOnHomepage !== false;
-                document.getElementById('sectionShowNav').checked = section.showInNav === true;
-                document.getElementById('sectionPublished').checked = section.isPublished === true;
-
-                document.getElementById('sectionTitle').onchange = function () {
-                    currentSection.title = this.value;
-                    markUnsaved();
-                };
-                document.getElementById('sectionShowHome').onchange = function () {
-                    currentSection.showOnHomepage = this.checked;
-                    markUnsaved();
-                };
-                document.getElementById('sectionShowNav').onchange = function () {
-                    currentSection.showInNav = this.checked;
-                    markUnsaved();
-                };
-                document.getElementById('sectionPublished').onchange = function () {
-                    currentSection.isPublished = this.checked;
-                    markUnsaved();
-                };
-
-                renderBlocks();
-                loadSections();
-            } catch (error) {
-                showToast('❌ Failed to load section: ' + error.message, 'error');
-            }
-        }
-
-        // ========== RENDER BLOCKS ==========
-        function renderBlocks() {
-            var container = document.getElementById('blocksContainer');
-
-            if (!blocks || blocks.length === 0) {
-                container.innerHTML = '<div class="canvas-empty"><i class="fas fa-plus-circle"></i><p>No blocks yet. Add blocks from the left palette.</p></div>';
-                return;
-            }
-
-            var html = '';
-            blocks.forEach(function (block, index) {
-                html += renderBlockCard(block, index);
-            });
-            container.innerHTML = html;
-
-            if (typeof Sortable !== 'undefined') {
-                new Sortable(container, {
-                    handle: '.block-drag-handle',
-                    animation: 150,
-                    onEnd: function (evt) {
-                        var moved = blocks.splice(evt.oldIndex, 1)[0];
-                        blocks.splice(evt.newIndex, 0, moved);
-                        renderBlocks();
-                        markUnsaved();
-                    }
-                });
-            }
-        }
-
-        function renderBlockCard(block, index) {
-            var icon = getBlockIcon(block.type);
-            var bodyHtml = renderBlockBody(block, index);
-
-            var canDeleteBlock = canEdit;
-            var actionsHtml = '<div class="block-actions">' +
-                '<button onclick="event.stopPropagation();moveBlockUp(' + index + ')" title="Move Up"><i class="fas fa-arrow-up"></i></button>' +
-                '<button onclick="event.stopPropagation();moveBlockDown(' + index + ')" title="Move Down"><i class="fas fa-arrow-down"></i></button>' +
-                (canDeleteBlock ? '<button class="delete-btn" onclick="event.stopPropagation();deleteBlock(' + index + ')" title="Delete"><i class="fas fa-trash"></i></button>' : '') +
-                '</div>';
-
-            return '<div class="block-card" data-index="' + index + '">' +
-                '<div class="block-card-header">' +
-                '<span class="block-drag-handle"><i class="fas fa-grip-vertical"></i></span>' +
-                '<div class="block-type-icon"><i class="' + icon + '"></i></div>' +
-                '<span class="block-type-name">' + block.type + '</span>' +
-                '<div class="spacer"></div>' +
-                actionsHtml +
-                '</div>' +
-                '<div class="block-card-body">' + bodyHtml + '</div>' +
-                '</div>';
-        }
-
-        function getBlockIcon(type) {
-            var icons = {
-                heading: 'fas fa-heading',
-                subheading: 'fas fa-h-square',
-                paragraph: 'fas fa-align-left',
-                image: 'fas fa-image',
-                video: 'fas fa-video',
-                button: 'fas fa-mouse-pointer',
-                gallery: 'fas fa-images',
-                list: 'fas fa-list',
-                quote: 'fas fa-quote-left',
-                divider: 'fas fa-minus',
-                card: 'fas fa-id-card',
-                cta: 'fas fa-bullhorn',
-                html: 'fas fa-code',
-                spacer: 'fas fa-arrows-alt-v'
-            };
-            return icons[type] || 'fas fa-cube';
-        }
-
-        function renderBlockBody(block, index) {
-            var c = block.content || {};
-
-            switch (block.type) {
-                case 'heading':
-                    return '<label class="block-label">Heading Text</label>' +
-                        '<input type="text" class="block-input" value="' + escapeAttr(c.text || '') + '" onchange="updateBlockContent(' + index + ', \'text\', this.value)" placeholder="Enter heading...">' +
-                        '<div class="block-row">' +
-                        '<div><label class="block-label">Size</label>' +
-                        '<select class="block-select" onchange="updateBlockContent(' + index + ', \'size\', this.value)">' +
-                        ['h1', 'h2', 'h3', 'h4'].map(function (s) {
-                            return '<option value="' + s + '"' + (c.size === s ? ' selected' : '') + '>' + s.toUpperCase() + '</option>';
-                        }).join('') +
-                        '</select></div>' +
-                        '<div><label class="block-label">Align</label>' +
-                        '<select class="block-select" onchange="updateBlockContent(' + index + ', \'align\', this.value)">' +
-                        ['left', 'center', 'right'].map(function (a) {
-                            return '<option value="' + a + '"' + (c.align === a ? ' selected' : '') + '>' + a + '</option>';
-                        }).join('') +
-                        '</select></div></div>';
-
-                case 'subheading':
-                    return '<label class="block-label">Subheading Text</label>' +
-                        '<input type="text" class="block-input" value="' + escapeAttr(c.text || '') + '" onchange="updateBlockContent(' + index + ', \'text\', this.value)" placeholder="Enter subheading...">' +
-                        '<label class="block-label">Align</label>' +
-                        '<select class="block-select" onchange="updateBlockContent(' + index + ', \'align\', this.value)">' +
-                        ['left', 'center', 'right'].map(function (a) {
-                            return '<option value="' + a + '"' + (c.align === a ? ' selected' : '') + '>' + a + '</option>';
-                        }).join('') +
-                        '</select>';
-
-                case 'paragraph':
-                    return '<label class="block-label">Paragraph Text</label>' +
-                        '<textarea class="block-textarea" onchange="updateBlockContent(' + index + ', \'text\', this.value)" placeholder="Enter paragraph...">' + escapeHtml(c.text || '') + '</textarea>' +
-                        '<label class="block-label">Align</label>' +
-                        '<select class="block-select" onchange="updateBlockContent(' + index + ', \'align\', this.value)">' +
-                        ['left', 'center', 'right', 'justify'].map(function (a) {
-                            return '<option value="' + a + '"' + (c.align === a ? ' selected' : '') + '>' + a + '</option>';
-                        }).join('') +
-                        '</select>';
-
-                case 'image':
-                    return '<label class="block-label">Image</label>' +
-                        '<input type="file" class="block-input" accept="image/*" onchange="uploadBlockImage(this, ' + index + ')">' +
-                        '<label class="block-label" style="margin-top:8px;">Or paste URL</label>' +
-                        '<input type="text" class="block-input" value="' + escapeAttr(c.url || '') + '" onchange="updateBlockContent(' + index + ', \'url\', this.value)" placeholder="https://...">' +
-                        '<label class="block-label">Caption (optional)</label>' +
-                        '<input type="text" class="block-input" value="' + escapeAttr(c.caption || '') + '" onchange="updateBlockContent(' + index + ', \'caption\', this.value)">' +
-                        (c.url ? '<div class="image-preview-box"><img src="' + escapeAttr(c.url) + '" alt="preview"></div>' : '');
-
-                case 'video':
-                    return '<label class="block-label">Video URL (YouTube embed or direct)</label>' +
-                        '<input type="text" class="block-input" value="' + escapeAttr(c.url || '') + '" onchange="updateBlockContent(' + index + ', \'url\', this.value)" placeholder="https://youtube.com/embed/...">' +
-                        '<label class="block-label">Caption (optional)</label>' +
-                        '<input type="text" class="block-input" value="' + escapeAttr(c.caption || '') + '" onchange="updateBlockContent(' + index + ', \'caption\', this.value)">';
-
-                case 'button':
-                    return '<label class="block-label">Button Text</label>' +
-                        '<input type="text" class="block-input" value="' + escapeAttr(c.text || '') + '" onchange="updateBlockContent(' + index + ', \'text\', this.value)" placeholder="Click me">' +
-                        '<label class="block-label">Link URL</label>' +
-                        '<input type="text" class="block-input" value="' + escapeAttr(c.url || '') + '" onchange="updateBlockContent(' + index + ', \'url\', this.value)" placeholder="https://...">' +
-                        '<div class="block-row">' +
-                        '<div><label class="block-label">Style</label>' +
-                        '<select class="block-select" onchange="updateBlockContent(' + index + ', \'style\', this.value)">' +
-                        ['primary', 'secondary', 'outline'].map(function (s) {
-                            return '<option value="' + s + '"' + (c.style === s ? ' selected' : '') + '>' + s + '</option>';
-                        }).join('') +
-                        '</select></div>' +
-                        '<div><label class="block-label">Target</label>' +
-                        '<select class="block-select" onchange="updateBlockContent(' + index + ', \'target\', this.value)">' +
-                        '<option value="_self"' + (c.target === '_self' ? ' selected' : '') + '>Same Tab</option>' +
-                        '<option value="_blank"' + (c.target === '_blank' ? ' selected' : '') + '>New Tab</option>' +
-                        '</select></div></div>';
-
-                case 'gallery':
-                    return '<label class="block-label">Gallery Images</label>' +
-                        '<input type="file" class="block-input" accept="image/*" multiple onchange="uploadGalleryImages(this, ' + index + ')">' +
-                        '<label class="block-label">Columns</label>' +
-                        '<select class="block-select" onchange="updateBlockContent(' + index + ', \'columns\', parseInt(this.value))">' +
-                        [2, 3, 4].map(function (n) {
-                            return '<option value="' + n + '"' + (c.columns === n ? ' selected' : '') + '>' + n + ' columns</option>';
-                        }).join('') +
-                        '</select>' +
-                        (c.images && c.images.length ? '<div class="image-preview-box">' + c.images.map(function (img) {
-                            return '<img src="' + escapeAttr(img.url) + '" style="margin:4px;">';
-                        }).join('') + '</div>' : '');
-
-                case 'list':
-                    return '<label class="block-label">List Items (one per line)</label>' +
-                        '<textarea class="block-textarea" onchange="updateBlockContent(' + index + ', \'items\', this.value.split(\'\\n\').filter(function(x){return x.trim();}))" placeholder="Item 1&#10;Item 2&#10;Item 3">' + escapeHtml((c.items || []).join('\n')) + '</textarea>' +
-                        '<label class="block-label">List Type</label>' +
-                        '<select class="block-select" onchange="updateBlockContent(' + index + ', \'listType\', this.value)">' +
-                        '<option value="bullet"' + (c.listType === 'bullet' ? ' selected' : '') + '>Bullet</option>' +
-                        '<option value="number"' + (c.listType === 'number' ? ' selected' : '') + '>Number</option>' +
-                        '</select>';
-
-                case 'quote':
-                    return '<label class="block-label">Quote Text</label>' +
-                        '<textarea class="block-textarea" onchange="updateBlockContent(' + index + ', \'text\', this.value)">' + escapeHtml(c.text || '') + '</textarea>' +
-                        '<label class="block-label">Author (optional)</label>' +
-                        '<input type="text" class="block-input" value="' + escapeAttr(c.author || '') + '" onchange="updateBlockContent(' + index + ', \'author\', this.value)">';
-
-                case 'divider':
-                    return '<label class="block-label">Style</label>' +
-                        '<select class="block-select" onchange="updateBlockContent(' + index + ', \'style\', this.value)">' +
-                        ['solid', 'dashed', 'dotted'].map(function (s) {
-                            return '<option value="' + s + '"' + (c.style === s ? ' selected' : '') + '>' + s + '</option>';
-                        }).join('') +
-                        '</select>';
-
-                case 'card':
-                    return '<label class="block-label">Icon (emoji or fa-class)</label>' +
-                        '<input type="text" class="block-input" value="' + escapeAttr(c.icon || '') + '" onchange="updateBlockContent(' + index + ', \'icon\', this.value)" placeholder="🎯 or fas fa-star">' +
-                        '<label class="block-label">Title</label>' +
-                        '<input type="text" class="block-input" value="' + escapeAttr(c.title || '') + '" onchange="updateBlockContent(' + index + ', \'title\', this.value)">' +
-                        '<label class="block-label">Description</label>' +
-                        '<textarea class="block-textarea" onchange="updateBlockContent(' + index + ', \'description\', this.value)">' + escapeHtml(c.description || '') + '</textarea>' +
-                        '<label class="block-label">Link (optional)</label>' +
-                        '<input type="text" class="block-input" value="' + escapeAttr(c.url || '') + '" onchange="updateBlockContent(' + index + ', \'url\', this.value)">';
-
-                case 'cta':
-                    return '<label class="block-label">Heading</label>' +
-                        '<input type="text" class="block-input" value="' + escapeAttr(c.heading || '') + '" onchange="updateBlockContent(' + index + ', \'heading\', this.value)">' +
-                        '<label class="block-label">Text</label>' +
-                        '<textarea class="block-textarea" onchange="updateBlockContent(' + index + ', \'text\', this.value)">' + escapeHtml(c.text || '') + '</textarea>' +
-                        '<div class="block-row">' +
-                        '<div><label class="block-label">Button Text</label>' +
-                        '<input type="text" class="block-input" value="' + escapeAttr(c.buttonText || '') + '" onchange="updateBlockContent(' + index + ', \'buttonText\', this.value)"></div>' +
-                        '<div><label class="block-label">Button Link</label>' +
-                        '<input type="text" class="block-input" value="' + escapeAttr(c.buttonUrl || '') + '" onchange="updateBlockContent(' + index + ', \'buttonUrl\', this.value)"></div>' +
-                        '</div>';
-
-                case 'html':
-                    return '<label class="block-label">HTML Code</label>' +
-                        '<textarea class="block-textarea" style="font-family:monospace;font-size:12px;" onchange="updateBlockContent(' + index + ', \'code\', this.value)" placeholder="<div>Your HTML...</div>">' + escapeHtml(c.code || '') + '</textarea>' +
-                        '<div class="info-box" style="margin-top:6px;font-size:11px;color:var(--warning);"><i class="fas fa-exclamation-triangle"></i> Use carefully — HTML is rendered as-is</div>';
-
-                case 'spacer':
-                    return '<label class="block-label">Height (px)</label>' +
-                        '<input type="number" class="block-input" value="' + (c.height || 40) + '" onchange="updateBlockContent(' + index + ', \'height\', parseInt(this.value))">';
-
-                default:
-                    return '<p style="color:var(--text-secondary);">Unknown block type</p>';
-            }
-        }
-
-        function updateBlockContent(index, key, value) {
-            if (!blocks[index]) return;
-            if (!blocks[index].content) blocks[index].content = {};
-            blocks[index].content[key] = value;
-            markUnsaved();
-        }
-
-        // ========== BLOCK OPERATIONS ==========
-        function addBlock(type) {
-            if (!currentSection) {
-                showToast('Open a section first', 'error');
-                return;
-            }
-
-            var newBlock = {
-                id: 'block_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
-                type: type,
-                content: getDefaultContent(type),
-                styles: {},
-                order: blocks.length
-            };
-
-            blocks.push(newBlock);
-            renderBlocks();
-            markUnsaved();
-            showToast('✅ ' + type + ' block added', 'success');
-        }
-
-        function getDefaultContent(type) {
-            switch (type) {
-                case 'heading': return { text: 'Your Heading Here', size: 'h2', align: 'left' };
-                case 'subheading': return { text: 'Subheading text', align: 'left' };
-                case 'paragraph': return { text: 'Write your paragraph here...', align: 'left' };
-                case 'image': return { url: '', caption: '', alt: '' };
-                case 'video': return { url: '', caption: '' };
-                case 'button': return { text: 'Click Me', url: '#', style: 'primary', target: '_self' };
-                case 'gallery': return { images: [], columns: 3 };
-                case 'list': return { items: ['Item 1', 'Item 2', 'Item 3'], listType: 'bullet' };
-                case 'quote': return { text: 'Your quote here', author: '' };
-                case 'divider': return { style: 'solid' };
-                case 'card': return { icon: '⭐', title: 'Card Title', description: 'Card description', url: '' };
-                case 'cta': return { heading: 'Ready to Join?', text: 'Sign up now', buttonText: 'Get Started', buttonUrl: '#' };
-                case 'html': return { code: '<div>Your HTML here</div>' };
-                case 'spacer': return { height: 40 };
-                default: return {};
-            }
-        }
-
-        function deleteBlock(index) {
-            if (!confirm('Delete this block?')) return;
-            blocks.splice(index, 1);
-            renderBlocks();
-            markUnsaved();
-        }
-
-        function moveBlockUp(index) {
-            if (index <= 0) return;
-            var temp = blocks[index - 1];
-            blocks[index - 1] = blocks[index];
-            blocks[index] = temp;
-            renderBlocks();
-            markUnsaved();
-        }
-
-        function moveBlockDown(index) {
-            if (index >= blocks.length - 1) return;
-            var temp = blocks[index + 1];
-            blocks[index + 1] = blocks[index];
-            blocks[index] = temp;
-            renderBlocks();
-            markUnsaved();
-        }
-
-        // ========== IMAGE UPLOAD ==========
-        async function uploadBlockImage(input, index) {
-            if (!input.files || !input.files[0]) return;
-            var file = input.files[0];
-
-            var fd = new FormData();
-            fd.append('image', file);
-            fd.append('title', 'section-image-' + Date.now());
-
-            try {
-                showToast('⏳ Uploading...', 'info');
-
-                var response = await fetch(API_BASE_URL + '/api/upload/custom-section', {
-                    method: 'POST',
-                    headers: { 'Authorization': 'Bearer ' + adminToken },
-                    body: fd
-                });
-
-                if (!response.ok) {
-                    // Fallback: use Gallery upload endpoint (existing)
-                    var fd2 = new FormData();
-                    fd2.append('image', file);
-                    fd2.append('title', 'section-image-' + Date.now());
-                    fd2.append('category', 'other');
-
-                    var response2 = await fetch(API_BASE_ADMIN + '/gallery/upload', {
-                        method: 'POST',
-                        headers: { 'Authorization': 'Bearer ' + adminToken },
-                        body: fd2
-                    });
-
-                    if (!response2.ok) throw new Error('Upload failed');
-                    var data2 = await response2.json();
-
-                    updateBlockContent(index, 'url', data2.image?.cloudinaryUrl || '');
-                    updateBlockContent(index, 'publicId', data2.image?.publicId || '');
-                } else {
-                    var data = await response.json();
-                    updateBlockContent(index, 'url', data.url || '');
-                    updateBlockContent(index, 'publicId', data.publicId || '');
-                }
-
-                renderBlocks();
-                showToast('✅ Image uploaded', 'success');
-            } catch (error) {
-                showToast('❌ ' + error.message, 'error');
-            }
-        }
-
-        async function uploadGalleryImages(input, index) {
-            if (!input.files || input.files.length === 0) return;
-            var files = Array.from(input.files);
-            if (!blocks[index].content.images) blocks[index].content.images = [];
-
-            showToast('⏳ Uploading ' + files.length + ' image(s)...', 'info');
-
-            for (var i = 0; i < files.length; i++) {
-                var fd = new FormData();
-                fd.append('image', files[i]);
-                fd.append('title', 'gallery-' + Date.now() + '-' + i);
-                fd.append('category', 'other');
-
-                try {
-                    var response = await fetch(API_BASE_ADMIN + '/gallery/upload', {
-                        method: 'POST',
-                        headers: { 'Authorization': 'Bearer ' + adminToken },
-                        body: fd
-                    });
-
-                    if (response.ok) {
-                        var data = await response.json();
-                        blocks[index].content.images.push({
-                            url: data.image?.cloudinaryUrl || '',
-                            publicId: data.image?.publicId || ''
-                        });
-                    }
-                } catch (err) {
-                    console.error('Gallery upload error:', err);
-                }
-            }
-
-            renderBlocks();
-            markUnsaved();
-            showToast('✅ Gallery updated', 'success');
-        }
-
-        // ========== SAVE ==========
-        function markUnsaved() {
-            isDirty = true;
-            document.getElementById('saveBar').classList.add('show');
-        }
-
-        async function saveBlocks() {
-            if (!currentSection) return;
-
-            try {
-                showToast('💾 Saving...', 'info');
-
-                // Save metadata
-                var metaResponse = await fetch(API_BASE_ADMIN + '/custom-sections/' + currentSection._id, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': 'Bearer ' + adminToken,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        title: document.getElementById('sectionTitle').value,
-                        showOnHomepage: document.getElementById('sectionShowHome').checked,
-                        showInNav: document.getElementById('sectionShowNav').checked,
-                        isPublished: document.getElementById('sectionPublished').checked
-                    })
-                });
-
-                if (!metaResponse.ok) throw new Error('Failed to save metadata');
-
-                // Save blocks
-                var blocksResponse = await fetch(API_BASE_ADMIN + '/custom-sections/' + currentSection._id + '/blocks', {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': 'Bearer ' + adminToken,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ blocks: blocks })
-                });
-
-                if (!blocksResponse.ok) throw new Error('Failed to save blocks');
-
-                isDirty = false;
-                document.getElementById('saveBar').classList.remove('show');
-                showToast('✅ Saved successfully!', 'success');
-                loadSections();
-            } catch (error) {
-                showToast('❌ ' + error.message, 'error');
-            }
-        }
-
-        // ========== SECTION CRUD ==========
-        function openCreateSectionModal() {
-            document.getElementById('modalTitle').textContent = 'New Section';
-            document.getElementById('sectionForm').reset();
-            document.getElementById('editSectionId').value = '';
-            document.getElementById('sectionSubmitBtn').innerHTML = '<i class="fas fa-save"></i> Create Section';
-            document.getElementById('sectionModal').classList.add('active');
-        }
-
-        function closeSectionModal() {
-            document.getElementById('sectionModal').classList.remove('active');
-        }
-
-        async function saveSection(e) {
-            e.preventDefault();
-
-            var title = document.getElementById('modalSectionTitle').value.trim();
-            var name = document.getElementById('modalSectionName').value.trim().toLowerCase().replace(/\s+/g, '-');
-            var description = document.getElementById('modalSectionDescription').value.trim();
-            var icon = document.getElementById('modalSectionIcon').value.trim() || '📦';
-            var background = document.getElementById('modalSectionBg').value;
-
-            if (!title || !name) {
-                showToast('Title and name are required', 'error');
-                return;
-            }
-
-            var btn = document.getElementById('sectionSubmitBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
-
-            try {
-                var response = await fetch(API_BASE_ADMIN + '/custom-sections', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + adminToken,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ name: name, title: title, description: description, icon: icon, background: background })
-                });
-
-                if (!response.ok) {
-                    var err = await response.json();
-                    throw new Error(err.message || 'Failed to create');
-                }
-
-                var data = await response.json();
-                showToast('✅ Section created!', 'success');
-                closeSectionModal();
-                await loadSections();
-                openSection(data.section._id);
-            } catch (error) {
-                showToast('❌ ' + error.message, 'error');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save"></i> Create Section';
-            }
-        }
-
-        // ========== UTILS ==========
-        function showToast(message, type) {
-            var toast = document.createElement('div');
-            toast.className = 'toast toast-' + (type || 'info');
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(function () { toast.remove(); }, 3000);
-        }
-
-        function escapeHtml(text) {
-            if (!text) return '';
-            var div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function escapeAttr(text) {
-            if (!text) return '';
-            return String(text).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        }
-
-        // Warn before leaving with unsaved changes
-        window.addEventListener('beforeunload', function (e) {
-            if (isDirty) {
-                e.preventDefault();
-                e.returnValue = '';
-            }
-        });
-
-        // ========== THEME ==========
-        var savedTheme = localStorage.getItem('theme') || 'dark';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-    </script>
+    <!-- ========== SCRIPT placeholder ========== -->
+    <script src="sections-builder.js"></script>
 </body>
 
 </html>
