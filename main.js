@@ -19,9 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initLoadingScreen();
     initMatrixBackground();
     initCodeBackground();
-    initGalleryCarousel();  // ✅ Gallery Carousel
-    initCustomSections();   // ✅ Custom Sections from Admin Panel
-    initLatestVideos();     // ✅ NEW: Latest Videos (Reels)
+    initGalleryCarousel();
+    initCustomSections();
+    initLatestVideos();
     
     // Read More button event listener for priority notices
     document.addEventListener('click', function(e) {
@@ -454,20 +454,17 @@ function initChatbot() {
     const chatbotInput = document.getElementById('chatbotInput');
     const chatbotMessages = document.getElementById('chatbotMessages');
 
-    // ✅ Generate/Load visitor ID
     let visitorId = localStorage.getItem('chatVisitorId');
     if (!visitorId) {
         visitorId = 'visitor_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         localStorage.setItem('chatVisitorId', visitorId);
     }
 
-    // ✅ User info
     const userData = JSON.parse(localStorage.getItem('user') || '{}');
     const userName = userData.name || 'Guest';
     const userEmail = userData.email || '';
     const userId = userData.id || null;
 
-    // ✅ Socket connection
     let socket = null;
     let isChatOpen = false;
 
@@ -488,14 +485,11 @@ function initChatbot() {
             });
         });
 
-        // ✅ Admin reply receive
         socket.on('admin-message', (data) => {
             addMessage(data.message, 'admin', data.senderName || 'Admin');
-            // Play sound
             playNotificationSound();
         });
 
-        // ✅ Bot reply
         socket.on('bot-message', (data) => {
             addMessage(data.message, 'bot', 'C3 Assistant');
         });
@@ -528,7 +522,6 @@ function initChatbot() {
         addMessage(message, 'user');
         chatbotInput.value = '';
 
-        // ✅ Send to backend
         if (socket && socket.connected) {
             socket.emit('send-message', {
                 visitorId,
@@ -540,13 +533,11 @@ function initChatbot() {
             });
         }
 
-        // ✅ Bot reply (local)
         setTimeout(() => {
             const reply = getBotReply(message);
             if (reply) {
                 addMessage(reply, 'bot', 'C3 Assistant');
                 
-                // Save bot message to backend
                 if (socket && socket.connected) {
                     socket.emit('send-message', {
                         visitorId,
@@ -591,7 +582,7 @@ function initChatbot() {
         if (msg.includes('thank')) 
             return 'You\'re welcome! 😊 Feel free to ask anything else.';
         
-        return null; // Let admin handle
+        return null;
     }
 
     function playNotificationSound() {
@@ -718,60 +709,50 @@ window.fetchEvents = fetchEvents;
 window.fetchNotices = fetchNotices;
 // ========== ADVANCED SCROLL FADE-IN ==========
 function initScrollReveal() {
-    // Section titles — from bottom
     document.querySelectorAll('.section-title, .section-description').forEach(el => {
         el.classList.add('reveal', 'from-bottom');
     });
 
-    // Event cards — staggered from bottom
     document.querySelectorAll('.event-card').forEach((el, i) => {
         el.classList.add('reveal', 'from-bottom');
         if (i < 6) el.classList.add(`delay-${(i % 3) + 1}`);
     });
 
-    // Member & faculty cards — alternate left/right
     document.querySelectorAll('.member-card, .faculty-card').forEach((el, i) => {
         el.classList.add('reveal', i % 2 === 0 ? 'from-left' : 'from-right');
         if (i < 6) el.classList.add(`delay-${(i % 3) + 1}`);
     });
 
-    // Recruit cards — scale in
     document.querySelectorAll('.recruit-card').forEach((el, i) => {
         el.classList.add('reveal', 'scale-in');
         if (i < 6) el.classList.add(`delay-${(i % 6) + 1}`);
     });
 
-    // Winner cards — scale in
     document.querySelectorAll('.winner-card').forEach((el, i) => {
         el.classList.add('reveal', 'scale-in');
         if (i < 6) el.classList.add(`delay-${(i % 3) + 1}`);
     });
 
-    // Notice items — from left
     document.querySelectorAll('.notice-item').forEach((el, i) => {
         el.classList.add('reveal', 'from-left');
         if (i < 6) el.classList.add(`delay-${(i % 3) + 1}`);
     });
 
-    // Priority notices — from bottom
     document.querySelectorAll('.recruitment-notice').forEach((el, i) => {
         el.classList.add('reveal', 'from-bottom');
         el.classList.add(`delay-${i + 1}`);
     });
 
-    // Reel items — scale in
     document.querySelectorAll('.reel-item').forEach((el, i) => {
         el.classList.add('reveal', 'scale-in');
         if (i < 6) el.classList.add(`delay-${(i % 3) + 1}`);
     });
 
-    // Footer sections — from bottom
     document.querySelectorAll('.footer-about, .footer-links, .footer-contact').forEach((el, i) => {
         el.classList.add('reveal', 'from-bottom');
         el.classList.add(`delay-${i + 1}`);
     });
 
-    // Intersection Observer
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -787,7 +768,6 @@ function initScrollReveal() {
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 }
 
-// Re-run reveal on dynamic content load (events/notices loaded via API)
 function reinitReveal() {
     document.querySelectorAll('.event-card:not(.reveal), .notice-item:not(.reveal), .recruitment-notice:not(.reveal)').forEach((el, i) => {
         el.classList.add('reveal', 'from-bottom');
@@ -809,12 +789,10 @@ function updateActiveBottomNav() {
             const offsetBottom = offsetTop + element.offsetHeight;
             
             if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
-                // Remove active class from all bottom nav items
                 document.querySelectorAll('.bottom-nav-item').forEach(item => {
                     item.classList.remove('active');
                 });
                 
-                // Add active class to matching item
                 const activeLink = document.querySelector(`.bottom-nav-item[href="#${section}"]`);
                 if (activeLink) {
                     activeLink.classList.add('active');
@@ -825,18 +803,15 @@ function updateActiveBottomNav() {
     }
 }
 
-// For gallery page
 if (window.location.pathname.includes('gallery.html')) {
     const galleryBtn = document.querySelector('.bottom-nav-item[href="gallery.html"]');
     if (galleryBtn) galleryBtn.classList.add('active');
 }
 
-// Smooth scroll for bottom nav items
 document.querySelectorAll('.bottom-nav-item').forEach(item => {
     item.addEventListener('click', function(e) {
         const href = this.getAttribute('href');
         
-        // Check if it's a section link (starts with #)
         if (href && href.startsWith('#')) {
             e.preventDefault();
             const targetId = href.substring(1);
@@ -848,7 +823,6 @@ document.querySelectorAll('.bottom-nav-item').forEach(item => {
                     block: 'start'
                 });
                 
-                // Update active state
                 document.querySelectorAll('.bottom-nav-item').forEach(link => {
                     link.classList.remove('active');
                 });
@@ -858,10 +832,8 @@ document.querySelectorAll('.bottom-nav-item').forEach(item => {
     });
 });
 
-// Listen to scroll events
 window.addEventListener('scroll', updateActiveBottomNav);
 window.addEventListener('load', updateActiveBottomNav);
-// Also re-run after dynamic content loads
 const originalDisplayEvents = window.displayEvents;
 window.addEventListener('load', () => {
     setTimeout(initScrollReveal, 1500);
@@ -911,7 +883,6 @@ async function initGalleryCarousel() {
             return;
         }
         
-        // Get latest 10 images
         const latestImages = images
             .sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate))
             .slice(0, 10);
@@ -1204,7 +1175,6 @@ async function initCustomSections() {
             return;
         }
 
-        // Filter: only show sections that are published + showOnHomepage
         const visibleSections = sections.filter(s => s.isPublished && s.showOnHomepage !== false);
 
         if (visibleSections.length === 0) {
@@ -1212,7 +1182,6 @@ async function initCustomSections() {
             return;
         }
 
-        // Render all sections
         let html = '';
         visibleSections.forEach(section => {
             html += renderCustomSection(section);
@@ -1236,7 +1205,6 @@ function renderCustomSection(section) {
             <div class="custom-section-inner" style="max-width:${maxWidth};padding:${padding};">
     `;
 
-    // Section title (if not hidden)
     if (section.title) {
         html += `
             <div class="section-title">
@@ -1246,7 +1214,6 @@ function renderCustomSection(section) {
         `;
     }
 
-    // Render blocks
     if (section.blocks && section.blocks.length > 0) {
         const sortedBlocks = [...section.blocks].sort((a, b) => (a.order || 0) - (b.order || 0));
         sortedBlocks.forEach(block => {
@@ -1297,7 +1264,6 @@ function renderBlock(block) {
 
         case 'video':
             if (!c.url) return '';
-            // YouTube embed
             let videoUrl = c.url;
             if (videoUrl.includes('youtube.com/watch?v=')) {
                 const vid = videoUrl.split('v=')[1]?.split('&')[0];
@@ -1367,7 +1333,6 @@ function renderBlock(block) {
                 </div>
             `;
 
-        // ========== ✅ NEW: CARD GRID (multiple cards) ==========
         case 'cardgrid':
             if (!c.cards || c.cards.length === 0) return '';
             const gridCols = c.columns || 3;
@@ -1402,7 +1367,6 @@ function renderBlock(block) {
             `;
 
         case 'html':
-            // Raw HTML — as-is render
             return `<div class="custom-html">${c.code || ''}</div>`;
 
         case 'spacer':
@@ -1418,7 +1382,6 @@ function escapeAttr(text) {
     return String(text).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-// Expose globally for retry
 window.initCustomSections = initCustomSections;
 
 // ==========================================
@@ -1462,29 +1425,35 @@ function hideVideosSection() {
     if (section) section.style.display = 'none';
 }
 
+// ========== ✅ UPDATED: RENDER REELS WITH SINGLE VIDEO SUPPORT ==========
 function renderReels(reels) {
     const container = document.getElementById('reelsContainer');
     if (!container) return;
 
-    let html = '<div class="reels-scroll">';
+    // ✅ Single video detect karo
+    const isSingle = (reels.length === 1);
+    const scrollClass = isSingle ? 'reels-scroll single-reel' : 'reels-scroll';
 
-    reels.forEach(function (reel) {
+    let html = '<div class="' + scrollClass + '">';
+
+    reels.forEach(function (reel, idx) {
         const aspectClass = reel.aspectRatio === 'horizontal' ? 'horizontal' : (reel.aspectRatio === 'square' ? 'square' : 'vertical');
-        html += '<div class="reel-item ' + aspectClass + '" onclick="openReelModal(\'' + reel._id + '\')">' +
+        const singleClass = isSingle ? 'single' : '';
+
+        html += '<div class="reel-item ' + aspectClass + ' ' + singleClass + '" data-reel-index="' + idx + '">' +
             '<div class="reel-video-wrapper">';
 
         if (reel.videoType === 'url' && isExternalEmbed(reel.videoUrl)) {
             html += '<iframe src="' + escapeAttr(getEmbedUrl(reel.videoUrl)) + '" frameborder="0" allowfullscreen loading="lazy"></iframe>';
         } else {
+            // Video muted, autoplay, loop — scroll pe play hoga
             html += '<video src="' + escapeAttr(reel.videoUrl) + '" ' +
                 (reel.thumbnailUrl ? 'poster="' + escapeAttr(reel.thumbnailUrl) + '"' : '') +
-                ' muted loop playsinline autoplay preload="metadata"></video>';
+                ' muted loop playsinline preload="metadata" ' +
+                'class="reel-video-el"></video>';
         }
 
         html += '</div>' +
-            '<div class="reel-overlay">' +
-            '<i class="fas fa-play-circle"></i>' +
-            '</div>' +
             '<div class="reel-title">' + escapeHtmlCarousel(reel.title) + '</div>' +
             '</div>';
     });
@@ -1492,8 +1461,11 @@ function renderReels(reels) {
     html += '</div>';
     container.innerHTML = html;
 
-    // Store reels globally for modal
+    // Store reels globally
     window._c3Reels = reels;
+
+    // ✅ Auto-play setup
+    setupReelAutoplay();
 }
 
 function isExternalEmbed(url) {
@@ -1504,19 +1476,85 @@ function isExternalEmbed(url) {
 function getEmbedUrl(url) {
     if (!url) return '';
     if (url.includes('youtube.com/watch?v=')) {
-        return 'https://www.youtube.com/embed/' + url.split('v=')[1].split('&')[0] + '?autoplay=1&mute=1&loop=1';
+        return 'https://www.youtube.com/embed/' + url.split('v=')[1].split('&')[0] + '?autoplay=1&mute=1&loop=1&playlist=' + url.split('v=')[1].split('&')[0];
     }
     if (url.includes('youtu.be/')) {
-        return 'https://www.youtube.com/embed/' + url.split('youtu.be/')[1].split('?')[0] + '?autoplay=1&mute=1&loop=1';
+        var vid = url.split('youtu.be/')[1].split('?')[0];
+        return 'https://www.youtube.com/embed/' + vid + '?autoplay=1&mute=1&loop=1&playlist=' + vid;
     }
     if (url.includes('youtube.com/shorts/')) {
-        return 'https://www.youtube.com/embed/' + url.split('youtube.com/shorts/')[1].split('?')[0] + '?autoplay=1&mute=1&loop=1';
+        var vid2 = url.split('youtube.com/shorts/')[1].split('?')[0];
+        return 'https://www.youtube.com/embed/' + vid2 + '?autoplay=1&mute=1&loop=1&playlist=' + vid2;
     }
     if (url.includes('vimeo.com/')) {
-        var vid = url.split('vimeo.com/')[1].split('/')[0];
-        return 'https://player.vimeo.com/video/' + vid + '?autoplay=1&muted=1&loop=1';
+        var v = url.split('vimeo.com/')[1].split('/')[0];
+        return 'https://player.vimeo.com/video/' + v + '?autoplay=1&muted=1&loop=1';
     }
     return url;
+}
+
+// ========== ✅ NEW: AUTO-PLAY ON SCROLL ==========
+function setupReelAutoplay() {
+    var section = document.getElementById('latest-videos');
+    if (!section) return;
+
+    var videos = section.querySelectorAll('.reel-video-el');
+    if (!videos.length) return;
+
+    // Intersection Observer — detect when video comes into view
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            var video = entry.target;
+
+            if (entry.isIntersecting) {
+                // Video visible — play it
+                video.play().catch(function (err) {
+                    console.log('Autoplay blocked:', err.message);
+                });
+            } else {
+                // Video hidden — pause it
+                video.pause();
+            }
+        });
+    }, {
+        threshold: 0.5,
+        rootMargin: '0px'
+    });
+
+    videos.forEach(function (video) {
+        observer.observe(video);
+    });
+
+    // ✅ Global click = unmute all videos
+    setupGlobalUnmute();
+}
+
+// ========== ✅ NEW: GLOBAL UNMUTE (Any click anywhere unmutes) ==========
+var _c3VideosUnmuted = false;
+
+function setupGlobalUnmute() {
+    if (_c3VideosUnmuted) return;
+
+    function unmuteAll() {
+        if (_c3VideosUnmuted) return;
+        _c3VideosUnmuted = true;
+
+        document.querySelectorAll('.reel-video-el').forEach(function (video) {
+            video.muted = false;
+            video.volume = 1.0;
+        });
+
+        // Remove listeners after first unmute
+        document.removeEventListener('click', unmuteAll);
+        document.removeEventListener('touchstart', unmuteAll);
+        document.removeEventListener('keydown', unmuteAll);
+        document.removeEventListener('scroll', unmuteAll);
+    }
+
+    document.addEventListener('click', unmuteAll, { once: true });
+    document.addEventListener('touchstart', unmuteAll, { once: true });
+    document.addEventListener('keydown', unmuteAll, { once: true });
+    document.addEventListener('scroll', unmuteAll, { once: true });
 }
 
 // ========== REEL MODAL (Full-screen play with sound) ==========
