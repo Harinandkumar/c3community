@@ -122,12 +122,34 @@
                 projects with like-minded individuals.</p>
             <div class="cta-buttons">
                 <a href="#events" class="cta-button"><i class="fas fa-rocket"></i> Explore Events</a>
-                <a href="#members" class="cta-button outline"><i class="fas fa-users"></i> Meet the Team</a>
+                <a href="#members" class="cta-button outline"><i class="fas fa-users"></i> Explore Team</a>
             </div>
         </div>
     </section>
 
-    <!-- Events Section -->
+    <!-- ========== NOTICES SECTION (Moved above Events) ========== -->
+    <section class="section" id="notices">
+        <div class="section-title">
+            <h2>Latest Notices</h2>
+        </div>
+        <p class="section-description">Stay updated with the latest announcements from our community.</p>
+        <div class="notices-container" id="noticesContainer">
+            <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading notices...</div>
+        </div>
+    </section>
+
+    <!-- ========== ✅ NEW: LATEST VIDEOS (REELS) SECTION ========== -->
+    <section class="section" id="latest-videos">
+        <div class="section-title">
+            <h2>🎬 Latest Videos</h2>
+        </div>
+        <p class="section-description">Watch our latest moments, highlights and reels from the C3 community.</p>
+        <div class="reels-container" id="reelsContainer">
+            <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading videos...</div>
+        </div>
+    </section>
+
+    <!-- ========== EVENTS SECTION (Moved below Notices + Videos) ========== -->
     <section class="section" id="events">
         <div class="section-title">
             <h2>Events</h2>
@@ -136,16 +158,6 @@
             knowledge in creative coding.</p>
         <div class="events-grid" id="eventsGrid">
             <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading events...</div>
-        </div>
-    </section>
-<!-- Notices Section -->
-    <section class="section" id="notices">
-        <div class="section-title">
-            <h2>Latest Notices</h2>
-        </div>
-        <p class="section-description">Stay updated with the latest announcements from our community.</p>
-        <div class="notices-container" id="noticesContainer">
-            <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading notices...</div>
         </div>
     </section>
 
@@ -276,6 +288,14 @@
             <p>&copy; 2025 Creative Coding Community. All rights reserved. Developed with ❤️ by C3 Team</p>
         </div>
     </footer>
+
+    <!-- ========== ✅ NEW: Reel Modal (Full-screen video player) ========== -->
+    <div id="reelModal">
+        <div style="position:relative; max-width:500px; width:100%;">
+            <button class="reel-modal-close" onclick="closeReelModal()">&times;</button>
+            <div id="reelModalContent"></div>
+        </div>
+    </div>
 
     <!-- Auth Modal -->
     <div class="modal" id="authModal">

@@ -20,7 +20,8 @@ document.addEventListener('DOMContentLoaded', function() {
     initMatrixBackground();
     initCodeBackground();
     initGalleryCarousel();  // ✅ Gallery Carousel
-    initCustomSections();   // ✅ NEW: Custom Sections from Admin Panel
+    initCustomSections();   // ✅ Custom Sections from Admin Panel
+    initLatestVideos();     // ✅ NEW: Latest Videos (Reels)
     
     // Read More button event listener for priority notices
     document.addEventListener('click', function(e) {
@@ -758,6 +759,12 @@ function initScrollReveal() {
         el.classList.add(`delay-${i + 1}`);
     });
 
+    // Reel items — scale in
+    document.querySelectorAll('.reel-item').forEach((el, i) => {
+        el.classList.add('reveal', 'scale-in');
+        if (i < 6) el.classList.add(`delay-${(i % 3) + 1}`);
+    });
+
     // Footer sections — from bottom
     document.querySelectorAll('.footer-about, .footer-links, .footer-contact').forEach((el, i) => {
         el.classList.add('reveal', 'from-bottom');
@@ -1413,3 +1420,151 @@ function escapeAttr(text) {
 
 // Expose globally for retry
 window.initCustomSections = initCustomSections;
+
+// ==========================================
+// ========== ✅ NEW: LATEST VIDEOS (REELS) ==========
+// ==========================================
+
+async function initLatestVideos() {
+    const container = document.getElementById('reelsContainer');
+    if (!container) return;
+
+    try {
+        console.log('🎬 Loading latest videos...');
+
+        const response = await fetch(`${API_BASE_URL}/api/team/public/reels`);
+
+        if (!response.ok) {
+            console.warn('⚠️ Latest Videos API not available');
+            hideVideosSection();
+            return;
+        }
+
+        const reels = await response.json();
+
+        if (!reels || reels.length === 0) {
+            console.log('ℹ️ No videos to display');
+            hideVideosSection();
+            return;
+        }
+
+        renderReels(reels);
+        console.log(`✅ Rendered ${reels.length} video(s)`);
+
+    } catch (error) {
+        console.error('❌ Error loading latest videos:', error);
+        hideVideosSection();
+    }
+}
+
+function hideVideosSection() {
+    const section = document.getElementById('latest-videos');
+    if (section) section.style.display = 'none';
+}
+
+function renderReels(reels) {
+    const container = document.getElementById('reelsContainer');
+    if (!container) return;
+
+    let html = '<div class="reels-scroll">';
+
+    reels.forEach(function (reel) {
+        const aspectClass = reel.aspectRatio === 'horizontal' ? 'horizontal' : (reel.aspectRatio === 'square' ? 'square' : 'vertical');
+        html += '<div class="reel-item ' + aspectClass + '" onclick="openReelModal(\'' + reel._id + '\')">' +
+            '<div class="reel-video-wrapper">';
+
+        if (reel.videoType === 'url' && isExternalEmbed(reel.videoUrl)) {
+            html += '<iframe src="' + escapeAttr(getEmbedUrl(reel.videoUrl)) + '" frameborder="0" allowfullscreen loading="lazy"></iframe>';
+        } else {
+            html += '<video src="' + escapeAttr(reel.videoUrl) + '" ' +
+                (reel.thumbnailUrl ? 'poster="' + escapeAttr(reel.thumbnailUrl) + '"' : '') +
+                ' muted loop playsinline autoplay preload="metadata"></video>';
+        }
+
+        html += '</div>' +
+            '<div class="reel-overlay">' +
+            '<i class="fas fa-play-circle"></i>' +
+            '</div>' +
+            '<div class="reel-title">' + escapeHtmlCarousel(reel.title) + '</div>' +
+            '</div>';
+    });
+
+    html += '</div>';
+    container.innerHTML = html;
+
+    // Store reels globally for modal
+    window._c3Reels = reels;
+}
+
+function isExternalEmbed(url) {
+    if (!url) return false;
+    return url.includes('youtube.com') || url.includes('youtu.be') || url.includes('vimeo.com') || url.includes('instagram.com');
+}
+
+function getEmbedUrl(url) {
+    if (!url) return '';
+    if (url.includes('youtube.com/watch?v=')) {
+        return 'https://www.youtube.com/embed/' + url.split('v=')[1].split('&')[0] + '?autoplay=1&mute=1&loop=1';
+    }
+    if (url.includes('youtu.be/')) {
+        return 'https://www.youtube.com/embed/' + url.split('youtu.be/')[1].split('?')[0] + '?autoplay=1&mute=1&loop=1';
+    }
+    if (url.includes('youtube.com/shorts/')) {
+        return 'https://www.youtube.com/embed/' + url.split('youtube.com/shorts/')[1].split('?')[0] + '?autoplay=1&mute=1&loop=1';
+    }
+    if (url.includes('vimeo.com/')) {
+        var vid = url.split('vimeo.com/')[1].split('/')[0];
+        return 'https://player.vimeo.com/video/' + vid + '?autoplay=1&muted=1&loop=1';
+    }
+    return url;
+}
+
+// ========== REEL MODAL (Full-screen play with sound) ==========
+function openReelModal(reelId) {
+    var reels = window._c3Reels || [];
+    var reel = reels.find(function (r) { return r._id === reelId; });
+    if (!reel) return;
+
+    var modal = document.getElementById('reelModal');
+    var content = document.getElementById('reelModalContent');
+    if (!modal || !content) return;
+
+    var html = '';
+
+    if (reel.videoType === 'url' && isExternalEmbed(reel.videoUrl)) {
+        html = '<iframe src="' + escapeAttr(getEmbedUrl(reel.videoUrl).replace('mute=1', 'mute=0')) + '" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
+    } else {
+        html = '<video src="' + escapeAttr(reel.videoUrl) + '" controls autoplay playsinline' +
+            (reel.thumbnailUrl ? ' poster="' + escapeAttr(reel.thumbnailUrl) + '"' : '') +
+            '></video>';
+    }
+
+    html += '<div class="reel-modal-info">' +
+        '<h3>' + escapeHtmlCarousel(reel.title) + '</h3>' +
+        (reel.description ? '<p>' + escapeHtmlCarousel(reel.description) + '</p>' : '') +
+        '</div>';
+
+    content.innerHTML = html;
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeReelModal() {
+    var modal = document.getElementById('reelModal');
+    var content = document.getElementById('reelModalContent');
+    if (modal) modal.classList.remove('active');
+    if (content) content.innerHTML = '';
+    document.body.style.overflow = 'auto';
+}
+
+// Close on outside click
+document.addEventListener('click', function (e) {
+    if (e.target && e.target.id === 'reelModal') {
+        closeReelModal();
+    }
+});
+
+// Expose globally
+window.initLatestVideos = initLatestVideos;
+window.openReelModal = openReelModal;
+window.closeReelModal = closeReelModal;
