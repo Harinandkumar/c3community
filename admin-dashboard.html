@@ -1598,6 +1598,11 @@
             if (isSuperAdmin || (userPermissions && userPermissions.customSections && (userPermissions.customSections.create || userPermissions.customSections.edit))) {
     menuHtml += '<div class="menu-item" data-panel="sections-builder"><i class="fas fa-paint-brush"></i> Sections Builder</div>';
 }
+// ✅ NEW: Latest Videos (permission-based)
+if (isSuperAdmin || (userPermissions && userPermissions.reels && (userPermissions.reels.create || userPermissions.reels.edit))) {
+    menuHtml += '<div class="menu-item" data-panel="reels-manager"><i class="fas fa-video"></i> Latest Videos</div>';
+}
+
             if (isSuperAdmin) {
                 menuHtml += '<div class="menu-item" data-panel="team-public"><i class="fas fa-user-plus"></i> Team Public</div>';
                 menuHtml += '<div class="menu-item" data-panel="alumni"><i class="fas fa-graduation-cap"></i> Alumni</div>';
@@ -1627,6 +1632,10 @@
 }
 if (panelId === 'sections-builder') {
     window.location.href = 'admin-sections-builder.html';
+    return;
+}
+if (panelId === 'reels-manager') {
+    window.location.href = 'admin-reels.html';
     return;
 }
                     switchPanel(panelId, panelName);
