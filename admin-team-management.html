@@ -215,6 +215,12 @@
             color: #333;
         }
 
+        /* ✅ NEW: Super Admin 2 badge */
+        .role-super_admin_2 {
+            background: linear-gradient(135deg, #ff8c00, #ff5e00);
+            color: #fff;
+        }
+
         .role-senior_coordinator {
             background: linear-gradient(135deg, #ffd700, #ff8c00);
             color: #333;
@@ -634,6 +640,7 @@
                         <label>Role *</label>
                         <select id="memberRole" required>
                             <option value="">Select Role</option>
+                            <option value="super_admin_2">👑 Super Admin 2</option>
                             <option value="senior_coordinator">⭐ Senior Coordinator</option>
                             <option value="core_member">Core Member</option>
                             <option value="coordinator">Coordinator</option>
@@ -825,7 +832,7 @@ C3 Team</textarea>
                     <div class="permission-item"><input type="checkbox" id="permCustomDelete"> <label>Delete</label>
                     </div>
                 </div>
-                <!-- ✅ NEW: Latest Videos (Reels) Permission -->
+                <!-- ✅ Latest Videos (Reels) Permission -->
                 <div class="permission-group">
                     <h4>🎬 Latest Videos (Reels)</h4>
                     <div class="permission-item"><input type="checkbox" id="permReelsCreate"> <label>Create</label>
@@ -1006,6 +1013,7 @@ C3 Team`;
         function getDefaultPosition(role) {
             const positions = {
                 'super_admin': 'Super Admin',
+                'super_admin_2': 'Super Admin 2',   // ✅ NEW
                 'senior_coordinator': 'Senior Coordinator',
                 'core_member': 'Core Member',
                 'coordinator': 'Coordinator',
@@ -1020,7 +1028,12 @@ C3 Team`;
 
             for (const member of members) {
                 const roleClass = `role-${member.role}`;
-                const roleName = member.role?.replace(/_/g, ' ').toUpperCase() || 'UNKNOWN';
+                // ✅ Better role display
+                let roleName = 'UNKNOWN';
+                if (member.role === 'super_admin') roleName = 'SUPER ADMIN';
+                else if (member.role === 'super_admin_2') roleName = 'SUPER ADMIN 2';
+                else if (member.role) roleName = member.role.replace(/_/g, ' ').toUpperCase();
+                
                 const statusClass = member.isActive ? 'status-active' : 'status-inactive';
                 const statusText = member.isActive ? 'Active' : 'Inactive';
                 const lastLogin = member.lastLogin ? new Date(member.lastLogin).toLocaleDateString() : 'Never';
@@ -1156,7 +1169,7 @@ C3 Team`;
                 document.getElementById('permCustomEdit').checked = perms.customSections?.edit || false;
                 document.getElementById('permCustomDelete').checked = perms.customSections?.delete || false;
 
-                // ✅ NEW: Latest Videos (Reels)
+                // Latest Videos (Reels)
                 document.getElementById('permReelsCreate').checked = perms.reels?.create || false;
                 document.getElementById('permReelsEdit').checked = perms.reels?.edit || false;
                 document.getElementById('permReelsDelete').checked = perms.reels?.delete || false;
@@ -1214,7 +1227,6 @@ C3 Team`;
                     edit: document.getElementById('permCustomEdit').checked,
                     delete: document.getElementById('permCustomDelete').checked
                 },
-                // ✅ NEW: Latest Videos (Reels)
                 reels: {
                     create: document.getElementById('permReelsCreate').checked,
                     edit: document.getElementById('permReelsEdit').checked,
@@ -1252,7 +1264,8 @@ C3 Team`;
             if (!newName) return;
 
             const newPosition = prompt('Enter position:', 'Team Member');
-            const newRole = prompt('Enter role (senior_coordinator/core_member/coordinator/sub_coordinator):', 'sub_coordinator');
+            // ✅ Updated prompt with super_admin_2 option
+            const newRole = prompt('Enter role (super_admin_2/senior_coordinator/core_member/coordinator/sub_coordinator):', 'sub_coordinator');
 
             try {
                 const response = await fetch(`${API_BASE_URL}/api/team/team-members/${memberId}`, {

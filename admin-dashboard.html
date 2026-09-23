@@ -1485,9 +1485,11 @@
         var API_BASE_ADMIN = API_BASE_URL + '/api/team';
 
         var userPermissions = null;
-        var userRole = null;
-        var isSuperAdmin = false;
-        var userId = null;
+var userRole = null;
+var isSuperAdmin = false;
+var isSuperAdmin2 = false;         // ✅ NEW
+var hasFullAccess = false;         // ✅ NEW
+var userId = null;
 
         if (!adminToken) window.location.href = 'admin-login.html';
 
@@ -1498,12 +1500,14 @@
                 });
                 if (response.ok) {
                     var freshMember = await response.json();
-                    userPermissions = freshMember.permissions;
                     userRole = freshMember.role;
-                    isSuperAdmin = (userRole === 'super_admin');
-                    localStorage.setItem('teamMember', JSON.stringify(freshMember));
-                    document.getElementById('userNameDisplay').innerHTML = freshMember.name + ' <span style="font-size:10px">(' + (isSuperAdmin ? 'Super Admin' : userRole) + ')</span>';
-                    document.getElementById('userRoleBadge').innerHTML = isSuperAdmin ? '👑 Super Admin' : (userRole ? userRole.replace('_', ' ') : 'Team Member');
+isSuperAdmin = (userRole === 'super_admin');
+isSuperAdmin2 = (userRole === 'super_admin_2');
+hasFullAccess = isSuperAdmin || isSuperAdmin2;
+localStorage.setItem('teamMember', JSON.stringify(freshMember));
+var displayRole = isSuperAdmin ? 'Super Admin' : (isSuperAdmin2 ? 'Super Admin 2' : userRole);
+document.getElementById('userNameDisplay').innerHTML = freshMember.name + ' <span style="font-size:10px">(' + displayRole + ')</span>';
+document.getElementById('userRoleBadge').innerHTML = isSuperAdmin ? '👑 Super Admin' : (isSuperAdmin2 ? '👑 Super Admin 2' : (userRole ? userRole.replace('_', ' ') : 'Team Member'));
                     return true;
                 }
                 return false;
@@ -1513,43 +1517,59 @@
         if (teamMemberData) {
             try {
                 var member = JSON.parse(teamMemberData);
-                userPermissions = member.permissions;
-                userRole = member.role;
-                isSuperAdmin = (userRole === 'super_admin');
-                userId = member.id;
-                var nameEl = document.getElementById('userNameDisplay');
-                var badgeEl = document.getElementById('userRoleBadge');
-                if (nameEl) nameEl.innerHTML = member.name + ' <span style="font-size:10px">(' + (isSuperAdmin ? 'Super Admin' : userRole) + ')</span>';
-                if (badgeEl) badgeEl.innerHTML = isSuperAdmin ? '👑 Super Admin' : (userRole ? userRole.replace('_', ' ') : 'Team Member');
+userPermissions = member.permissions;
+userRole = member.role;
+isSuperAdmin = (userRole === 'super_admin');
+isSuperAdmin2 = (userRole === 'super_admin_2');
+hasFullAccess = isSuperAdmin || isSuperAdmin2;
+userId = member.id;
+var nameEl = document.getElementById('userNameDisplay');
+var badgeEl = document.getElementById('userRoleBadge');
+var displayRole = isSuperAdmin ? 'Super Admin' : (isSuperAdmin2 ? 'Super Admin 2' : userRole);
+if (nameEl) nameEl.innerHTML = member.name + ' <span style="font-size:10px">(' + displayRole + ')</span>';
+if (badgeEl) badgeEl.innerHTML = isSuperAdmin ? '👑 Super Admin' : (isSuperAdmin2 ? '👑 Super Admin 2' : (userRole ? userRole.replace('_', ' ') : 'Team Member'));
             } catch (e) { isSuperAdmin = true; }
         } else { isSuperAdmin = true; }
 
         function hasPermission(module, action) {
-            if (isSuperAdmin) return true;
-            if (!userPermissions) return false;
-            if (userPermissions[module] && userPermissions[module][action] === true) return true;
-            return false;
-        }
+    // Super Admin — all permissions
+    if (isSuperAdmin) return true;
+    
+    // ✅ Super Admin 2 — all permissions EXCEPT teamManagement
+    if (isSuperAdmin2) {
+        if (module === 'teamManagement') return false;
+        return true;
+    }
+    
+    // Other roles — check permissions object
+    if (!userPermissions) return false;
+    if (userPermissions[module] && userPermissions[module][action] === true) return true;
+    return false;
+}
 
         function applyPermissions() {
-            if (!hasPermission('events', 'create')) { var el = document.getElementById('createEventCard'); if (el) el.style.display = 'none'; }
-            if (!hasPermission('notifications', 'create')) { var el = document.getElementById('createNotificationCard'); if (el) el.style.display = 'none'; }
-            if (!hasPermission('gallery', 'upload')) { var el = document.getElementById('uploadImageCard'); if (el) el.style.display = 'none'; }
-            if (!hasPermission('categories', 'create')) { var el = document.getElementById('createCategoryCard'); if (el) el.style.display = 'none'; }
-            if (!hasPermission('navItems', 'create')) { var el = document.getElementById('createNavCard'); if (el) el.style.display = 'none'; }
-            if (!hasPermission('members', 'view') && !isSuperAdmin) { var el = document.getElementById('membersPanel'); if (el) el.style.display = 'none'; }
-            var assignWorkCard = document.getElementById('assignWorkCard');
-            if (assignWorkCard) assignWorkCard.style.display = isSuperAdmin ? 'block' : 'none';
-            var teamManagementLink = document.getElementById('teamManagementLink');
-            if (teamManagementLink) teamManagementLink.style.display = isSuperAdmin ? 'block' : 'none';
-            var uploadCertCard = document.getElementById('uploadCertificateCard');
-            if (uploadCertCard) uploadCertCard.style.display = hasPermission('certificates', 'upload') ? 'block' : 'none';
-            if (!hasPermission('winners', 'create') && !isSuperAdmin) {
-                var el = document.getElementById('createWinnersCard');
-                if (el) el.style.display = 'none';
-            }
-        }
-
+    if (!hasPermission('events', 'create')) { var el = document.getElementById('createEventCard'); if (el) el.style.display = 'none'; }
+    if (!hasPermission('notifications', 'create')) { var el = document.getElementById('createNotificationCard'); if (el) el.style.display = 'none'; }
+    if (!hasPermission('gallery', 'upload')) { var el = document.getElementById('uploadImageCard'); if (el) el.style.display = 'none'; }
+    if (!hasPermission('categories', 'create')) { var el = document.getElementById('createCategoryCard'); if (el) el.style.display = 'none'; }
+    if (!hasPermission('navItems', 'create')) { var el = document.getElementById('createNavCard'); if (el) el.style.display = 'none'; }
+    if (!hasPermission('members', 'view') && !hasFullAccess) { var el = document.getElementById('membersPanel'); if (el) el.style.display = 'none'; }
+    
+    // ✅ Assign Work — Super Admin + Super Admin 2 both
+    var assignWorkCard = document.getElementById('assignWorkCard');
+    if (assignWorkCard) assignWorkCard.style.display = hasFullAccess ? 'block' : 'none';
+    
+    // ✅ Team Management — ONLY Super Admin (not Super Admin 2)
+    var teamManagementLink = document.getElementById('teamManagementLink');
+    if (teamManagementLink) teamManagementLink.style.display = isSuperAdmin ? 'block' : 'none';
+    
+    var uploadCertCard = document.getElementById('uploadCertificateCard');
+    if (uploadCertCard) uploadCertCard.style.display = hasPermission('certificates', 'upload') ? 'block' : 'none';
+    if (!hasPermission('winners', 'create') && !hasFullAccess) {
+        var el = document.getElementById('createWinnersCard');
+        if (el) el.style.display = 'none';
+    }
+}
         function buildSidebarMenu() {
             var menuHtml = '';
             menuHtml += '<div class="menu-item active" data-panel="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</div>';
@@ -1559,15 +1579,14 @@
                 menuHtml += '<div class="menu-item" data-panel="events"><i class="fas fa-calendar-alt"></i> Events</div>';
             }
 
-            if (isSuperAdmin) {
-                menuHtml += '<div class="menu-item" data-panel="login-history"><i class="fas fa-history"></i> Login History</div>';
-                menuHtml += '<div class="menu-item" data-panel="activity-log"><i class="fas fa-clipboard-list"></i> Activity Log</div>';
-            }
+            if (hasFullAccess) {
+    menuHtml += '<div class="menu-item" data-panel="login-history"><i class="fas fa-history"></i> Login History</div>';
+    menuHtml += '<div class="menu-item" data-panel="activity-log"><i class="fas fa-clipboard-list"></i> Activity Log</div>';
+}
 
-            if (hasPermission('members', 'view') || isSuperAdmin) {
-                menuHtml += '<div class="menu-item" data-panel="members"><i class="fas fa-users"></i> Members</div>';
-            }
-
+if (hasPermission('members', 'view') || hasFullAccess) {
+    menuHtml += '<div class="menu-item" data-panel="members"><i class="fas fa-users"></i> Members</div>';
+}
             if (hasPermission('notifications', 'create') || hasPermission('notifications', 'delete')) {
                 menuHtml += '<div class="menu-item" data-panel="notifications"><i class="fas fa-bell"></i> Notifications</div>';
             }
@@ -1590,23 +1609,22 @@
                 menuHtml += '<div class="menu-item" data-panel="certificates"><i class="fas fa-certificate"></i> Certificates</div>';
             }
 
-            if (hasPermission('winners', 'create') || hasPermission('winners', 'edit') || hasPermission('winners', 'delete') || isSuperAdmin) {
-                menuHtml += '<div class="menu-item" data-panel="winners"><i class="fas fa-trophy"></i> Winners Manager</div>';
-            }
-            menuHtml += '<div class="menu-item" data-panel="chat-manager"><i class="fas fa-comments"></i> Chat Manager</div>';
-            menuHtml += '<div class="menu-item" data-panel="documentation"><i class="fas fa-book"></i> Documentation</div>';
-            if (isSuperAdmin || (userPermissions && userPermissions.customSections && (userPermissions.customSections.create || userPermissions.customSections.edit))) {
+            if (hasPermission('winners', 'create') || hasPermission('winners', 'edit') || hasPermission('winners', 'delete') || hasFullAccess) {
+    menuHtml += '<div class="menu-item" data-panel="winners"><i class="fas fa-trophy"></i> Winners Manager</div>';
+}
+menuHtml += '<div class="menu-item" data-panel="chat-manager"><i class="fas fa-comments"></i> Chat Manager</div>';
+menuHtml += '<div class="menu-item" data-panel="documentation"><i class="fas fa-book"></i> Documentation</div>';
+if (hasFullAccess || (userPermissions && userPermissions.customSections && (userPermissions.customSections.create || userPermissions.customSections.edit))) {
     menuHtml += '<div class="menu-item" data-panel="sections-builder"><i class="fas fa-paint-brush"></i> Sections Builder</div>';
 }
-// ✅ NEW: Latest Videos (permission-based)
-if (isSuperAdmin || (userPermissions && userPermissions.reels && (userPermissions.reels.create || userPermissions.reels.edit))) {
+if (hasFullAccess || (userPermissions && userPermissions.reels && (userPermissions.reels.create || userPermissions.reels.edit))) {
     menuHtml += '<div class="menu-item" data-panel="reels-manager"><i class="fas fa-video"></i> Latest Videos</div>';
 }
 
-            if (isSuperAdmin) {
-                menuHtml += '<div class="menu-item" data-panel="team-public"><i class="fas fa-user-plus"></i> Team Public</div>';
-                menuHtml += '<div class="menu-item" data-panel="alumni"><i class="fas fa-graduation-cap"></i> Alumni</div>';
-            }
+if (hasFullAccess) {
+    menuHtml += '<div class="menu-item" data-panel="team-public"><i class="fas fa-user-plus"></i> Team Public</div>';
+    menuHtml += '<div class="menu-item" data-panel="alumni"><i class="fas fa-graduation-cap"></i> Alumni</div>';
+}
 
             document.getElementById('sidebarMenu').innerHTML = menuHtml;
 
