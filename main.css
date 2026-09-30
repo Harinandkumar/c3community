@@ -1533,7 +1533,7 @@ footer::before {
 /* ========== CHATBOT ========== */
 .chatbot {
     position: fixed;
-    bottom: 26px; right: 26px;
+    bottom: 70px; right: 26px;
     z-index: 1000;
 }
 
@@ -1728,7 +1728,7 @@ footer::before {
     width: 48px; height: 48px;
     background: var(--card-bg);
     border-radius: 50%;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     cursor: pointer;
@@ -1736,6 +1736,7 @@ footer::before {
     border: 1px solid var(--border);
     z-index: 999;
     transition: var(--transition);
+    
 }
 
 .float-upload:hover {
