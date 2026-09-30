@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
@@ -33,33 +33,59 @@
 </head>
 
 <body>
-<!-- ========== MOBILE BOTTOM NAVIGATION ========== -->
+<!-- ========== MOBILE BOTTOM NAVIGATION (5 items + More) ========== -->
 <div class="bottom-nav">
-    <a href="#home" class="bottom-nav-item">
+    <a href="#home" class="bottom-nav-item" data-nav="home">
         <i class="fas fa-home"></i>
         <span>Home</span>
     </a>
-    <a href="#events" class="bottom-nav-item">
+    <a href="#events" class="bottom-nav-item" data-nav="events">
         <i class="fas fa-calendar-alt"></i>
         <span>Events</span>
     </a>
-    <a href="team.html" class="bottom-nav-item">
+    <a href="team.html" class="bottom-nav-item" data-nav="team">
         <i class="fas fa-users"></i>
         <span>Team</span>
     </a>
-    <a href="gallery.html" class="bottom-nav-item">
+    <a href="gallery.html" class="bottom-nav-item" data-nav="gallery">
         <i class="fas fa-images"></i>
         <span>Gallery</span>
     </a>
-    <a href="#notices" class="bottom-nav-item">
-        <i class="fas fa-bullhorn"></i>
-        <span>Notices</span>
-    </a>
-    <a href="#contact" class="bottom-nav-item">
-        <i class="fas fa-envelope"></i>
-        <span>Contact</span>
-    </a>
+    <button type="button" class="bottom-nav-item bottom-nav-more" id="bottomNavMore" aria-label="More options">
+        <i class="fas fa-ellipsis-h"></i>
+        <span>More</span>
+    </button>
 </div>
+
+<!-- ========== RADIAL / FAN MENU (More button popup) ========== -->
+<div class="radial-menu-overlay" id="radialMenuOverlay"></div>
+<div class="radial-menu" id="radialMenu" role="menu" aria-label="More navigation options">
+    <div class="radial-menu-items" id="radialMenuItems">
+        <!-- Static items + Dynamic items will be injected by JS -->
+        <a href="#notices" class="radial-item" data-nav="notices" role="menuitem">
+            <i class="fas fa-bullhorn"></i>
+            <span class="radial-item-label">Notices</span>
+        </a>
+        <a href="#results" class="radial-item" data-nav="results" role="menuitem">
+            <i class="fas fa-trophy"></i>
+            <span class="radial-item-label">Results</span>
+        </a>
+        <a href="#contact" class="radial-item" data-nav="contact" role="menuitem">
+            <i class="fas fa-envelope"></i>
+            <span class="radial-item-label">Contact</span>
+        </a>
+        <a href="#auth" class="radial-item" data-nav="login" id="radialLoginBtn" role="menuitem">
+            <i class="fas fa-sign-in-alt"></i>
+            <span class="radial-item-label">Login</span>
+        </a>
+        <!-- Dynamic items from backend will be added here by JS -->
+        <div id="radialDynamicItems" style="display: contents;"></div>
+    </div>
+    <button type="button" class="radial-close" id="radialClose" aria-label="Close menu">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
     <!-- Matrix Background -->
     <canvas id="matrixCanvas" class="matrix-bg"></canvas>
     <div class="code-background">
@@ -361,6 +387,13 @@
                     <div class="message-bubble">Hello! How can I help you today? 😊</div>
                 </div>
             </div>
+
+            <!-- ========== ✅ NEW: CONTACT ADMIN BUTTON ========== -->
+            <div class="chatbot-contact-admin" id="contactAdminBtn">
+                <i class="fas fa-headset"></i>
+                <span>Contact Admin</span>
+            </div>
+
             <div class="chatbot-input"><input type="text" id="chatbotInput" placeholder="Type your message..."><button
                     id="chatbotSend"><i class="fas fa-paper-plane"></i></button></div>
         </div>
@@ -376,6 +409,25 @@
             <p>Verification email sent. Please check your inbox.</p><button onclick="closeSignupPopup()">Close</button>
         </div>
     </div>
+
+    <!-- ========== ✅ NEW: LOGIN REQUIRED POPUP (for Contact Admin) ========== -->
+    <div class="popup-overlay" id="loginRequiredPopup" style="display:none">
+        <div class="popup-content">
+            <i class="fas fa-lock" style="font-size:2.5rem;color:var(--primary);margin-bottom:15px;display:block;"></i>
+            <h3>Login Required</h3>
+            <p>Admin se contact karne ke liye pehle login karein.</p>
+            <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
+                <button onclick="closeLoginRequiredPopup();openAuthFromChat();" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <button onclick="closeLoginRequiredPopup()" 
+                    style="background:transparent;border:1px solid var(--border);color:var(--text-secondary);padding:11px 28px;border-radius:50px;cursor:pointer;font-weight:600;font-size:0.9rem;">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
 <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
     <script src="main.js"></script>
     <script>

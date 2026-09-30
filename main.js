@@ -9,6 +9,7 @@ const API_BASE_URL = 'https://backend-glo6.onrender.com';
 document.addEventListener('DOMContentLoaded', function() {
     initTheme();
     initMobileNav();
+    initRadialMenu();      // ✅ NEW: Radial menu for mobile bottom nav
     initAuthModal();
     initChatbot();
     initUploadButton();
@@ -57,9 +58,9 @@ function initLoadingScreen() {
     }
 }
 
-// Theme Switcher
+// Theme Switcher — ✅ DEFAULT LIGHT MODE
 function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
+    const savedTheme = localStorage.getItem('theme') || 'light';  // ✅ Default light
     document.documentElement.setAttribute('data-theme', savedTheme);
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
@@ -118,6 +119,132 @@ function initMobileNav() {
     }
 }
 
+// ==========================================
+// ✅ NEW: RADIAL MENU (More button — mobile bottom nav)
+// ==========================================
+function initRadialMenu() {
+    const moreBtn = document.getElementById('bottomNavMore');
+    const overlay = document.getElementById('radialMenuOverlay');
+    const menu = document.getElementById('radialMenu');
+    const closeBtn = document.getElementById('radialClose');
+    const items = document.querySelectorAll('.radial-item');
+
+    if (!moreBtn || !menu || !overlay) return;
+
+    const OPEN_DURATION = 450; // ms (max delay)
+
+    function openRadialMenu() {
+        overlay.classList.add('active');
+        menu.classList.add('active');
+        moreBtn.classList.add('open');
+        document.body.style.overflow = 'hidden';
+
+        // Position items in arc (semi-circle going up-left from bottom-right)
+        const allItems = menu.querySelectorAll('.radial-item');
+        const total = allItems.length;
+        if (total === 0) return;
+
+        // Arc: from 180° (left) to 270° (top), but with slight adjustments
+        // We want items to fan out on the left/top-left of the More button
+        const radius = 130; // px
+        const startAngle = 180;  // left (pointing up-left)
+        const endAngle = 270;    // top
+
+        allItems.forEach((item, index) => {
+            // Spread items evenly
+            const t = total === 1 ? 0.5 : index / (total - 1);
+            const angle = startAngle + (endAngle - startAngle) * t;
+            const rad = (angle * Math.PI) / 180;
+
+            // Calculate offset from bottom-right corner
+            // x decreases (goes left), y decreases (goes up) as angle goes 180° → 270°
+            const x = Math.cos(rad) * radius; // cos(180°) = -1, cos(270°) = 0
+            const y = Math.sin(rad) * radius; // sin(180°) = 0, sin(270°) = -1
+
+            // Set CSS custom properties for transform
+            item.style.setProperty('--tx', `${x}px`);
+            item.style.setProperty('--ty', `${y}px`);
+            item.style.transitionDelay = `${index * 60}ms`;
+        });
+    }
+
+    function closeRadialMenu() {
+        overlay.classList.remove('active');
+        menu.classList.remove('active');
+        moreBtn.classList.remove('open');
+        document.body.style.overflow = 'auto';
+
+        // Reset delays and transforms
+        menu.querySelectorAll('.radial-item').forEach(item => {
+            item.style.transitionDelay = '0ms';
+            item.style.setProperty('--tx', '0px');
+            item.style.setProperty('--ty', '0px');
+        });
+    }
+
+    moreBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (menu.classList.contains('active')) {
+            closeRadialMenu();
+        } else {
+            openRadialMenu();
+        }
+    });
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            closeRadialMenu();
+        });
+    }
+
+    overlay.addEventListener('click', closeRadialMenu);
+
+    // Item click → close menu (let navigation happen)
+    menu.addEventListener('click', (e) => {
+        const item = e.target.closest('.radial-item');
+        if (item) {
+            // Let the link work, then close
+            setTimeout(closeRadialMenu, 100);
+        }
+    });
+
+    // Escape key closes
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && menu.classList.contains('active')) {
+            closeRadialMenu();
+        }
+    });
+
+    // Expose close function globally (for login button etc.)
+    window._closeRadialMenu = closeRadialMenu;
+
+    // ========== Radial Login Button — same logic as #authBtn ==========
+    const radialLoginBtn = document.getElementById('radialLoginBtn');
+    if (radialLoginBtn) {
+        radialLoginBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const token = localStorage.getItem('jwtToken');
+            if (token) {
+                window.location.href = './user-dashboard.html';
+                return;
+            }
+            // Close menu
+            closeRadialMenu();
+            // Open auth modal
+            setTimeout(() => {
+                const authModal = document.getElementById('authModal');
+                if (authModal) {
+                    authModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            }, 250);
+        });
+    }
+}
+
 // Dynamic Nav Items
 async function loadDynamicNavItems() {
     try {
@@ -132,29 +259,50 @@ async function loadDynamicNavItems() {
 
 function displayDynamicNavItems(items) {
     const container = document.getElementById('dynamicNavItems');
-    if (!container) return;
+    const radialContainer = document.getElementById('radialDynamicItems');
     
     if (!items || items.length === 0) {
-        container.innerHTML = '';
+        if (container) container.innerHTML = '';
+        if (radialContainer) radialContainer.innerHTML = '';
         return;
     }
     
-    container.innerHTML = items.map(item => {
-        let badgeHtml = '';
-        if (item.badge === 'live') badgeHtml = '<span class="badge-live">🔴 LIVE</span>';
-        else if (item.badge === 'new') badgeHtml = '<span class="badge-new">🟢 NEW</span>';
-        else if (item.badge === 'upcoming') badgeHtml = '<span class="badge-upcoming">🟡 UPCOMING</span>';
-        
-        const target = item.target === '_blank' ? 'target="_blank" rel="noopener noreferrer"' : '';
-        
-        return `
-            <li>
-                <a href="${escapeHtml(item.link)}" ${target} class="nav-link">
-                    <i class="fas ${item.icon}"></i> ${escapeHtml(item.name)} ${badgeHtml}
+    // ✅ Desktop nav — dynamic items
+    if (container) {
+        container.innerHTML = items.map(item => {
+            let badgeHtml = '';
+            if (item.badge === 'live') badgeHtml = '<span class="badge-live">🔴 LIVE</span>';
+            else if (item.badge === 'new') badgeHtml = '<span class="badge-new">🟢 NEW</span>';
+            else if (item.badge === 'upcoming') badgeHtml = '<span class="badge-upcoming">🟡 UPCOMING</span>';
+            
+            const target = item.target === '_blank' ? 'target="_blank" rel="noopener noreferrer"' : '';
+            
+            return `
+                <li>
+                    <a href="${escapeHtml(item.link)}" ${target} class="nav-link">
+                        <i class="fas ${item.icon}"></i> ${escapeHtml(item.name)} ${badgeHtml}
+                    </a>
+                </li>
+            `;
+        }).join('');
+    }
+
+    // ✅ Radial menu — dynamic items (same style as static radial items)
+    if (radialContainer) {
+        radialContainer.innerHTML = items.map(item => {
+            const target = item.target === '_blank' ? 'target="_blank" rel="noopener noreferrer"' : '';
+            // Icon: ensure fas prefix
+            let iconClass = item.icon || 'fa-link';
+            if (!iconClass.startsWith('fa-')) iconClass = 'fa-link';
+            
+            return `
+                <a href="${escapeHtml(item.link)}" ${target} class="radial-item dynamic-item" role="menuitem">
+                    <i class="fas ${iconClass}"></i>
+                    <span class="radial-item-label">${escapeHtml(item.name)}</span>
                 </a>
-            </li>
-        `;
-    }).join('');
+            `;
+        }).join('');
+    }
 }
 
 // Auth Modal
@@ -445,7 +593,7 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Chatbot
+// ========== CHATBOT with CONTACT ADMIN ==========
 function initChatbot() {
     const chatbotToggle = document.getElementById('chatbotToggle');
     const chatbotWindow = document.getElementById('chatbotWindow');
@@ -453,6 +601,7 @@ function initChatbot() {
     const chatbotSend = document.getElementById('chatbotSend');
     const chatbotInput = document.getElementById('chatbotInput');
     const chatbotMessages = document.getElementById('chatbotMessages');
+    const contactAdminBtn = document.getElementById('contactAdminBtn');
 
     // ✅ Generate/Load visitor ID
     let visitorId = localStorage.getItem('chatVisitorId');
@@ -470,6 +619,7 @@ function initChatbot() {
     // ✅ Socket connection
     let socket = null;
     let isChatOpen = false;
+    let adminMode = false;
 
     function connectSocket() {
         if (socket && socket.connected) return;
@@ -491,7 +641,6 @@ function initChatbot() {
         // ✅ Admin reply receive
         socket.on('admin-message', (data) => {
             addMessage(data.message, 'admin', data.senderName || 'Admin');
-            // Play sound
             playNotificationSound();
         });
 
@@ -520,6 +669,34 @@ function initChatbot() {
         }
     }
 
+    // ========== CONTACT ADMIN BUTTON LOGIC ==========
+    if (contactAdminBtn) {
+        contactAdminBtn.addEventListener('click', () => {
+            const token = localStorage.getItem('jwtToken');
+            
+            if (!token) {
+                // ❌ Not logged in → popup
+                document.getElementById('loginRequiredPopup').style.display = 'flex';
+                return;
+            }
+            
+            // ✅ Logged in → admin mode on
+            adminMode = true;
+            
+            if (chatbotInput) {
+                chatbotInput.placeholder = 'Message for admin...';
+                chatbotInput.focus();
+            }
+            
+            contactAdminBtn.innerHTML = '<i class="fas fa-check-circle"></i><span>Admin Mode Active</span>';
+            contactAdminBtn.style.background = 'rgba(16, 185, 129, 0.12)';
+            contactAdminBtn.style.borderColor = 'rgba(16, 185, 129, 0.5)';
+            contactAdminBtn.style.color = '#10b981';
+            
+            addMessage('✅ Admin mode active. Type your message and admin will reply soon.', 'bot', 'C3 Assistant');
+        });
+    }
+
     function sendMessage() {
         if (!chatbotInput || !chatbotMessages) return;
         const message = chatbotInput.value.trim();
@@ -536,27 +713,29 @@ function initChatbot() {
                 sender: 'user',
                 userName,
                 userEmail,
-                userId
+                userId,
+                isAdminMode: adminMode
             });
         }
 
-        // ✅ Bot reply (local)
-        setTimeout(() => {
-            const reply = getBotReply(message);
-            if (reply) {
-                addMessage(reply, 'bot', 'C3 Assistant');
-                
-                // Save bot message to backend
-                if (socket && socket.connected) {
-                    socket.emit('send-message', {
-                        visitorId,
-                        message: reply,
-                        sender: 'bot',
-                        userName: 'C3 Assistant'
-                    });
+        // ✅ Bot reply (only if NOT in admin mode)
+        if (!adminMode) {
+            setTimeout(() => {
+                const reply = getBotReply(message);
+                if (reply) {
+                    addMessage(reply, 'bot', 'C3 Assistant');
+                    
+                    if (socket && socket.connected) {
+                        socket.emit('send-message', {
+                            visitorId,
+                            message: reply,
+                            sender: 'bot',
+                            userName: 'C3 Assistant'
+                        });
+                    }
                 }
-            }
-        }, 500);
+            }, 500);
+        }
     }
 
     function addMessage(text, sender, senderName) {
@@ -591,7 +770,7 @@ function initChatbot() {
         if (msg.includes('thank')) 
             return 'You\'re welcome! 😊 Feel free to ask anything else.';
         
-        return null; // Let admin handle
+        return null;
     }
 
     function playNotificationSound() {
@@ -605,6 +784,20 @@ function initChatbot() {
         if (e.key === 'Enter') sendMessage();
     });
 }
+
+// ========== LOGIN REQUIRED POPUP HELPERS ==========
+window.closeLoginRequiredPopup = function() {
+    const popup = document.getElementById('loginRequiredPopup');
+    if (popup) popup.style.display = 'none';
+};
+
+window.openAuthFromChat = function() {
+    const authModal = document.getElementById('authModal');
+    if (authModal) {
+        authModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+};
 
 // Upload Button
 function initUploadButton() {
@@ -718,60 +911,50 @@ window.fetchEvents = fetchEvents;
 window.fetchNotices = fetchNotices;
 // ========== ADVANCED SCROLL FADE-IN ==========
 function initScrollReveal() {
-    // Section titles — from bottom
     document.querySelectorAll('.section-title, .section-description').forEach(el => {
         el.classList.add('reveal', 'from-bottom');
     });
 
-    // Event cards — staggered from bottom
     document.querySelectorAll('.event-card').forEach((el, i) => {
         el.classList.add('reveal', 'from-bottom');
         if (i < 6) el.classList.add(`delay-${(i % 3) + 1}`);
     });
 
-    // Member & faculty cards — alternate left/right
     document.querySelectorAll('.member-card, .faculty-card').forEach((el, i) => {
         el.classList.add('reveal', i % 2 === 0 ? 'from-left' : 'from-right');
         if (i < 6) el.classList.add(`delay-${(i % 3) + 1}`);
     });
 
-    // Recruit cards — scale in
     document.querySelectorAll('.recruit-card').forEach((el, i) => {
         el.classList.add('reveal', 'scale-in');
         if (i < 6) el.classList.add(`delay-${(i % 6) + 1}`);
     });
 
-    // Winner cards — scale in
     document.querySelectorAll('.winner-card').forEach((el, i) => {
         el.classList.add('reveal', 'scale-in');
         if (i < 6) el.classList.add(`delay-${(i % 3) + 1}`);
     });
 
-    // Notice items — from left
     document.querySelectorAll('.notice-item').forEach((el, i) => {
         el.classList.add('reveal', 'from-left');
         if (i < 6) el.classList.add(`delay-${(i % 3) + 1}`);
     });
 
-    // Priority notices — from bottom
     document.querySelectorAll('.recruitment-notice').forEach((el, i) => {
         el.classList.add('reveal', 'from-bottom');
         el.classList.add(`delay-${i + 1}`);
     });
 
-    // Reel items — scale in
     document.querySelectorAll('.reel-item').forEach((el, i) => {
         el.classList.add('reveal', 'scale-in');
         if (i < 6) el.classList.add(`delay-${(i % 3) + 1}`);
     });
 
-    // Footer sections — from bottom
     document.querySelectorAll('.footer-about, .footer-links, .footer-contact').forEach((el, i) => {
         el.classList.add('reveal', 'from-bottom');
         el.classList.add(`delay-${i + 1}`);
     });
 
-    // Intersection Observer
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -787,7 +970,7 @@ function initScrollReveal() {
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 }
 
-// Re-run reveal on dynamic content load (events/notices loaded via API)
+// Re-run reveal on dynamic content load
 function reinitReveal() {
     document.querySelectorAll('.event-card:not(.reveal), .notice-item:not(.reveal), .recruitment-notice:not(.reveal)').forEach((el, i) => {
         el.classList.add('reveal', 'from-bottom');
@@ -797,9 +980,10 @@ function reinitReveal() {
 }
 
 initScrollReveal();
+
 // ========== MOBILE BOTTOM NAV ACTIVE LINK ==========
 function updateActiveBottomNav() {
-    const sections = ['home', 'events', 'members', 'notices', 'contact'];
+    const sections = ['home', 'events', 'notices', 'contact'];
     const scrollPosition = window.scrollY + 150;
 
     for (const section of sections) {
@@ -809,12 +993,10 @@ function updateActiveBottomNav() {
             const offsetBottom = offsetTop + element.offsetHeight;
             
             if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
-                // Remove active class from all bottom nav items
                 document.querySelectorAll('.bottom-nav-item').forEach(item => {
                     item.classList.remove('active');
                 });
                 
-                // Add active class to matching item
                 const activeLink = document.querySelector(`.bottom-nav-item[href="#${section}"]`);
                 if (activeLink) {
                     activeLink.classList.add('active');
@@ -831,12 +1013,17 @@ if (window.location.pathname.includes('gallery.html')) {
     if (galleryBtn) galleryBtn.classList.add('active');
 }
 
+// For team page
+if (window.location.pathname.includes('team.html')) {
+    const teamBtn = document.querySelector('.bottom-nav-item[href="team.html"]');
+    if (teamBtn) teamBtn.classList.add('active');
+}
+
 // Smooth scroll for bottom nav items
 document.querySelectorAll('.bottom-nav-item').forEach(item => {
     item.addEventListener('click', function(e) {
         const href = this.getAttribute('href');
         
-        // Check if it's a section link (starts with #)
         if (href && href.startsWith('#')) {
             e.preventDefault();
             const targetId = href.substring(1);
@@ -848,7 +1035,6 @@ document.querySelectorAll('.bottom-nav-item').forEach(item => {
                     block: 'start'
                 });
                 
-                // Update active state
                 document.querySelectorAll('.bottom-nav-item').forEach(link => {
                     link.classList.remove('active');
                 });
@@ -861,8 +1047,7 @@ document.querySelectorAll('.bottom-nav-item').forEach(item => {
 // Listen to scroll events
 window.addEventListener('scroll', updateActiveBottomNav);
 window.addEventListener('load', updateActiveBottomNav);
-// Also re-run after dynamic content loads
-const originalDisplayEvents = window.displayEvents;
+
 window.addEventListener('load', () => {
     setTimeout(initScrollReveal, 1500);
 });
@@ -911,7 +1096,6 @@ async function initGalleryCarousel() {
             return;
         }
         
-        // Get latest 10 images
         const latestImages = images
             .sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate))
             .slice(0, 10);
@@ -1180,7 +1364,7 @@ function escapeHtmlCarousel(text) {
 window.initGalleryCarousel = initGalleryCarousel;
 
 // ==========================================
-// ========== ✅ NEW: CUSTOM SECTIONS ==========
+// ========== CUSTOM SECTIONS ==========
 // ==========================================
 
 async function initCustomSections() {
@@ -1204,7 +1388,6 @@ async function initCustomSections() {
             return;
         }
 
-        // Filter: only show sections that are published + showOnHomepage
         const visibleSections = sections.filter(s => s.isPublished && s.showOnHomepage !== false);
 
         if (visibleSections.length === 0) {
@@ -1212,7 +1395,6 @@ async function initCustomSections() {
             return;
         }
 
-        // Render all sections
         let html = '';
         visibleSections.forEach(section => {
             html += renderCustomSection(section);
@@ -1236,7 +1418,6 @@ function renderCustomSection(section) {
             <div class="custom-section-inner" style="max-width:${maxWidth};padding:${padding};">
     `;
 
-    // Section title (if not hidden)
     if (section.title) {
         html += `
             <div class="section-title">
@@ -1246,7 +1427,6 @@ function renderCustomSection(section) {
         `;
     }
 
-    // Render blocks
     if (section.blocks && section.blocks.length > 0) {
         const sortedBlocks = [...section.blocks].sort((a, b) => (a.order || 0) - (b.order || 0));
         sortedBlocks.forEach(block => {
@@ -1297,7 +1477,6 @@ function renderBlock(block) {
 
         case 'video':
             if (!c.url) return '';
-            // YouTube embed
             let videoUrl = c.url;
             if (videoUrl.includes('youtube.com/watch?v=')) {
                 const vid = videoUrl.split('v=')[1]?.split('&')[0];
@@ -1367,7 +1546,6 @@ function renderBlock(block) {
                 </div>
             `;
 
-        // ========== ✅ NEW: CARD GRID (multiple cards) ==========
         case 'cardgrid':
             if (!c.cards || c.cards.length === 0) return '';
             const gridCols = c.columns || 3;
@@ -1402,7 +1580,6 @@ function renderBlock(block) {
             `;
 
         case 'html':
-            // Raw HTML — as-is render
             return `<div class="custom-html">${c.code || ''}</div>`;
 
         case 'spacer':
@@ -1418,11 +1595,10 @@ function escapeAttr(text) {
     return String(text).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-// Expose globally for retry
 window.initCustomSections = initCustomSections;
 
 // ==========================================
-// ========== ✅ NEW: LATEST VIDEOS (REELS) ==========
+// ========== LATEST VIDEOS (REELS) ==========
 // ==========================================
 
 async function initLatestVideos() {
@@ -1466,7 +1642,6 @@ function renderReels(reels) {
     const container = document.getElementById('reelsContainer');
     if (!container) return;
 
-    // ✅ Single reel ke liye class add karo
     const isSingle = reels.length === 1;
     let html = '<div class="reels-scroll' + (isSingle ? ' single-reel' : '') + '">';
 
@@ -1494,7 +1669,6 @@ function renderReels(reels) {
     html += '</div>';
     container.innerHTML = html;
 
-    // Store reels globally for modal
     window._c3Reels = reels;
 }
 
@@ -1521,7 +1695,6 @@ function getEmbedUrl(url) {
     return url;
 }
 
-// ========== REEL MODAL (Full-screen play with sound) ==========
 function openReelModal(reelId) {
     var reels = window._c3Reels || [];
     var reel = reels.find(function (r) { return r._id === reelId; });
@@ -1549,7 +1722,6 @@ function openReelModal(reelId) {
     content.innerHTML = html;
     modal.classList.add('active');
     
-    // ✅ Single reel mode
     if (reels.length === 1) {
         modal.classList.add('single-reel-active');
     } else {
@@ -1564,20 +1736,18 @@ function closeReelModal() {
     var content = document.getElementById('reelModalContent');
     if (modal) {
         modal.classList.remove('active');
-        modal.classList.remove('single-reel-active');   // ✅ Remove single reel class
+        modal.classList.remove('single-reel-active');
     }
     if (content) content.innerHTML = '';
     document.body.style.overflow = 'auto';
 }
 
-// Close on outside click
 document.addEventListener('click', function (e) {
     if (e.target && e.target.id === 'reelModal') {
         closeReelModal();
     }
 });
 
-// Expose globally
 window.initLatestVideos = initLatestVideos;
 window.openReelModal = openReelModal;
 window.closeReelModal = closeReelModal;

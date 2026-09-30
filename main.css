@@ -150,6 +150,10 @@ button { font-family: inherit; }
     margin: 0 auto;
 }
 
+[data-theme="light"] .loading-bar-container {
+    background: rgba(0, 0, 0, 0.08);
+}
+
 .loading-bar {
     width: 0%;
     height: 100%;
@@ -233,6 +237,7 @@ header.scrolled {
     align-items: center;
 }
 
+/* ✅ Stylish desktop nav — pill hover + active glow */
 .nav-links a {
     text-decoration: none;
     color: var(--text-secondary);
@@ -242,15 +247,42 @@ header.scrolled {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 12px;
-    border-radius: 8px;
+    padding: 8px 14px;
+    border-radius: 50px;
     white-space: nowrap;
+    position: relative;
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%) scaleX(0);
+    width: 60%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 2px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+}
+
+.nav-links a:hover::after,
+.nav-links a.active::after {
+    transform: translateX(-50%) scaleX(1);
 }
 
 .nav-links a:hover,
 .nav-links a.active {
     color: var(--primary);
     background: rgba(0, 240, 255, 0.08);
+    box-shadow: 0 0 0 1px rgba(0, 240, 255, 0.15) inset;
+}
+
+[data-theme="light"] .nav-links a:hover,
+[data-theme="light"] .nav-links a.active {
+    background: rgba(0, 87, 217, 0.08);
+    box-shadow: 0 0 0 1px rgba(0, 87, 217, 0.15) inset;
 }
 
 .nav-links a i {
@@ -325,6 +357,7 @@ header.scrolled {
         width: 100%;
     }
 
+    .nav-links a::after { display: none; }
     .nav-links a i { width: 20px; font-size: 0.9rem; }
 
     .theme-switcher { width: 100%; justify-content: flex-start; margin-top: 8px; }
@@ -333,7 +366,6 @@ header.scrolled {
     .nav-links::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 }
 
-/* Nav overlay when mobile menu is open */
 .nav-overlay {
     display: none;
     position: fixed;
@@ -446,6 +478,23 @@ header.scrolled {
 .cta-button.outline:hover {
     background: rgba(0, 240, 255, 0.08);
     box-shadow: 0 8px 24px rgba(0, 240, 255, 0.2);
+}
+
+[data-theme="light"] .cta-button {
+    color: #ffffff;
+    box-shadow: 0 4px 20px rgba(0, 87, 217, 0.25);
+}
+
+[data-theme="light"] .cta-button:hover {
+    box-shadow: 0 14px 32px rgba(0, 87, 217, 0.35);
+}
+
+[data-theme="light"] .cta-button.outline {
+    color: var(--primary);
+}
+
+[data-theme="light"] .cta-button.outline:hover {
+    background: rgba(0, 87, 217, 0.08);
 }
 
 /* Floating shapes */
@@ -636,6 +685,11 @@ header.scrolled {
     box-shadow: 0 0 0 4px rgba(0, 240, 255, 0.15);
 }
 
+[data-theme="light"] .faculty-card:hover .faculty-img-box,
+[data-theme="light"] .member-card:hover .member-img-container {
+    box-shadow: 0 0 0 4px rgba(0, 87, 217, 0.15);
+}
+
 .faculty-img-box img, .member-img-container img {
     width: 100%; height: 100%;
     object-fit: cover;
@@ -681,6 +735,11 @@ header.scrolled {
     border-color: var(--primary);
     background: rgba(0, 240, 255, 0.08);
     transform: translateY(-2px);
+}
+
+[data-theme="light"] .member-social a:hover,
+[data-theme="light"] .faculty-links a:hover {
+    background: rgba(0, 87, 217, 0.08);
 }
 
 /* ========== NOTICES ========== */
@@ -1285,6 +1344,10 @@ footer::before {
     transform: translateY(-3px);
 }
 
+[data-theme="light"] .footer-social a:hover {
+    background: rgba(0, 87, 217, 0.08);
+}
+
 .footer-links h3, .footer-contact h3 {
     margin-bottom: 20px;
     font-size: 1rem;
@@ -1438,6 +1501,11 @@ footer::before {
     box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.1);
 }
 
+[data-theme="light"] .form-group input:focus,
+[data-theme="light"] .form-group select:focus {
+    box-shadow: 0 0 0 3px rgba(0, 87, 217, 0.1);
+}
+
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1553,6 +1621,10 @@ footer::before {
     flex-shrink: 0;
 }
 
+[data-theme="light"] .message-avatar {
+    background: rgba(0, 87, 217, 0.12);
+}
+
 .message-bubble {
     max-width: 72%;
     padding: 10px 14px;
@@ -1606,6 +1678,48 @@ footer::before {
 }
 
 .chatbot-input button:hover { transform: scale(1.08); }
+
+/* ========== ✅ NEW: CONTACT ADMIN BUTTON ========== */
+.chatbot-contact-admin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    margin: 0 14px 8px;
+    background: rgba(0, 240, 255, 0.08);
+    border: 1px dashed rgba(0, 240, 255, 0.4);
+    border-radius: var(--radius-sm);
+    color: var(--primary);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    user-select: none;
+}
+
+.chatbot-contact-admin:hover {
+    background: rgba(0, 240, 255, 0.15);
+    border-style: solid;
+    transform: translateY(-1px);
+}
+
+.chatbot-contact-admin:active {
+    transform: translateY(0);
+}
+
+.chatbot-contact-admin i {
+    font-size: 0.9rem;
+}
+
+[data-theme="light"] .chatbot-contact-admin {
+    background: rgba(0, 87, 217, 0.08);
+    border-color: rgba(0, 87, 217, 0.4);
+}
+
+[data-theme="light"] .chatbot-contact-admin:hover {
+    background: rgba(0, 87, 217, 0.15);
+}
 
 /* ========== FLOATING UPLOAD ========== */
 .float-upload {
@@ -2332,7 +2446,7 @@ footer::before {
         padding: 40px 12px 30px;
     }
 
-    /* ✅ Small mobile pe 1:1 aspect ratio */
+    /* ✅ Small mobile pe 4:3 aspect ratio */
     .carousel-container {
         aspect-ratio: 4 / 3;
         max-height: 380px;
@@ -3390,4 +3504,272 @@ footer::before {
 #reelModal.single-reel-active #reelModalContent video,
 #reelModal.single-reel-active #reelModalContent iframe {
     max-height: 85vh;
+}
+
+/* ==========================================
+   ========== MOBILE BOTTOM NAV (5 items + More) ==========
+   ========================================== */
+.bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--card-bg);
+    border-top: 1px solid var(--border);
+    z-index: 999;
+    padding: 6px 4px;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 8px 4px;
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-size: 0.62rem;
+    font-weight: 500;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.bottom-nav-item i {
+    font-size: 1.05rem;
+    transition: transform 0.2s ease;
+}
+
+.bottom-nav-item span {
+    font-size: 0.62rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.bottom-nav-item:hover,
+.bottom-nav-item.active {
+    color: var(--primary);
+}
+
+.bottom-nav-item.active i {
+    transform: translateY(-2px);
+}
+
+.bottom-nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: var(--primary);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--primary);
+}
+
+.bottom-nav-more i {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bottom-nav-more.open i {
+    transform: rotate(90deg);
+}
+
+/* ==========================================
+   ========== RADIAL / FAN MENU (More button) ==========
+   ========================================== */
+.radial-menu-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 1000;
+    animation: fadeIn 0.25s ease;
+}
+
+.radial-menu-overlay.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.radial-menu {
+    display: none;
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 300px;
+    height: 300px;
+    z-index: 1001;
+    pointer-events: none;
+}
+
+.radial-menu.active {
+    display: block;
+    pointer-events: auto;
+}
+
+.radial-menu-items {
+    position: absolute;
+    inset: 0;
+}
+
+/* Radial item — chhota circle button */
+.radial-item {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 0.55rem;
+    font-weight: 600;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 0;
+    transform: translate(0, 0) scale(0.5);
+    pointer-events: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.radial-item i {
+    font-size: 1.05rem;
+    color: var(--primary);
+    transition: transform 0.3s ease;
+}
+
+.radial-item-label {
+    font-size: 0.5rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    line-height: 1;
+}
+
+.radial-item:hover {
+    border-color: var(--primary);
+    transform: translate(var(--tx, 0), var(--ty, 0)) scale(1.12) !important;
+    box-shadow: 0 8px 30px rgba(0, 240, 255, 0.35);
+    z-index: 5;
+}
+
+.radial-item:hover i {
+    transform: scale(1.15);
+}
+
+/* Open animation — JS sets --tx, --ty and animates */
+.radial-menu.active .radial-item {
+    opacity: 1;
+    transform: translate(var(--tx, 0), var(--ty, 0)) scale(1);
+    pointer-events: auto;
+    animation: radialPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes radialPop {
+    0% { opacity: 0; transform: translate(0, 0) scale(0.3); }
+    100% { opacity: 1; transform: translate(var(--tx, 0), var(--ty, 0)) scale(1); }
+}
+
+/* Close button (center) */
+.radial-close {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 24px rgba(0, 240, 255, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 10;
+    font-family: inherit;
+}
+
+.radial-close:hover {
+    transform: rotate(90deg) scale(1.08);
+    box-shadow: 0 8px 30px rgba(0, 240, 255, 0.55);
+}
+
+.radial-close i {
+    font-size: 1.15rem;
+}
+
+/* Dynamic items — same style */
+.radial-item.dynamic-item {
+    background: var(--card-bg);
+    border-color: var(--border);
+}
+
+.radial-item.dynamic-item i {
+    color: var(--primary);
+}
+
+[data-theme="light"] .radial-item {
+    box-shadow: 0 6px 20px rgba(0, 87, 217, 0.15);
+}
+
+[data-theme="light"] .radial-item:hover {
+    box-shadow: 0 8px 30px rgba(0, 87, 217, 0.3);
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .bottom-nav {
+        display: flex;
+    }
+
+    body {
+        padding-bottom: 62px;
+    }
+}
+
+@media (max-width: 400px) {
+    .bottom-nav-item span {
+        font-size: 0.55rem;
+    }
+    .bottom-nav-item i {
+        font-size: 0.95rem;
+    }
+}
+
+@media (min-width: 769px) {
+    .bottom-nav,
+    .radial-menu,
+    .radial-menu-overlay {
+        display: none !important;
+    }
 }
